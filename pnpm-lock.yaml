@@ -2633,6 +2633,10 @@ importers:
         version: 18.3.1
 
   packages/client/ui-settings-models:
+    dependencies:
+      reicon-react:
+        specifier: ^1.2.0
+        version: 1.2.0(react@18.3.1)
     devDependencies:
       '@deepseek-ai/cordis':
         specifier: workspace:^
@@ -13876,6 +13880,11 @@ packages:
     resolution: {integrity: sha512-sZuz1dYW/ZsfG17WSAG7eS85r5a0dDsvg+7BiiYR5o6lKCAtUrEwdmRmaGF6rwVj3LcmAeYkOWKEPlbPzN3Y3A==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
 
+  reicon-react@1.2.0:
+    resolution: {integrity: sha512-1+6kKPSJPnNHYcA9rEbUVMpzKSXJuJPVHEkIo6l6DQnhNnEEpBXBn/XgBqEFniokMyXy+sitLv7vVpQ/xsJ26Q==}
+    peerDependencies:
+      react: '>=16.8.0'
+
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
@@ -19384,6 +19393,10 @@ snapshots:
     dependencies:
       '@eslint-community/regexpp': 4.12.2
       refa: 0.12.1
+
+  reicon-react@1.2.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   require-from-string@2.0.2: {}
 
