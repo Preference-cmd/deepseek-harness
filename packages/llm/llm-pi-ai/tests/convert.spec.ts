@@ -705,6 +705,23 @@ describe('toStreamChunks', () => {
     })
   })
 
+  it('reclassifies a caller-aborted setup error event as an aborted finish', async () => {
+    // pi-ai's lazy setup path reports a pre-abort as stopReason "error" with
+    // the abort reason as its message; the caller signal recovers the abort.
+    const error = assistant({ stopReason: 'error', errorMessage: 'already stopped' })
+    const controller = new AbortController()
+    controller.abort('already stopped')
+    const chunks = await collect(toStreamChunks(
+      feed({ type: 'error', reason: 'error', error }),
+      undefined,
+      controller.signal,
+    ))
+    expect(chunks.at(-1)).toEqual({
+      type: 'finish',
+      reason: { kind: 'aborted', failure: { message: 'already stopped', code: 'ABORTED' } },
+    })
+  })
+
   it('rejects a stream that ends without done or error', async () => {
     await expect(collect(toStreamChunks(feed({ type: 'start', partial: assistant() }))))
       .rejects.toThrow(/without done\/error/)
@@ -728,6 +745,26 @@ describe('mapStopReason / mapUsage', () => {
     ['aborted', { kind: 'aborted', failure: { message: 'pi-ai stream aborted', code: 'ABORTED' } }],
   ] as const)('maps %s', (stopReason, expected) => {
     expect(mapStopReason(assistant({ stopReason, content: [{ type: 'text', text: 'ok' }] }))).toEqual(expected)
+  })
+
+  it('maps a deferred response to an error finish, since the adapter cannot poll its handle', () => {
+    expect(mapStopReason(assistant({ stopReason: 'deferred' }))).toEqual({
+      kind: 'error',
+      failure: {
+        message: 'model "deepseek-v4-flash" returned a deferred response, which this adapter cannot poll',
+        code: 'DEFERRED_UNSUPPORTED',
+      },
+    })
+  })
+
+  it('maps a pending (non-terminal) response to an error finish', () => {
+    expect(mapStopReason(assistant({ stopReason: 'pending' }))).toEqual({
+      kind: 'error',
+      failure: {
+        message: 'model "deepseek-v4-flash" ended with a pending (non-terminal) response',
+        code: 'PI_AI_ERROR',
+      },
+    })
   })
 
   it('classifies a completed stop with no content as an EMPTY_RESPONSE error', () => {

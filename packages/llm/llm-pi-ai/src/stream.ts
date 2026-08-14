@@ -112,6 +112,27 @@ export function mapStopReason(message: AssistantMessage, contextWindow?: number)
       const text = message.errorMessage ?? 'pi-ai stream error'
       return { kind: 'error', failure: { message: text, code: classifyPiAiError(text) } }
     }
+    case 'deferred':
+      // A deferred response hands back a poll handle instead of a final
+      // message; this adapter reads one event stream and never polls, so the
+      // turn cannot complete.
+      return {
+        kind: 'error',
+        failure: {
+          message: `model "${message.model}" returned a deferred response, which this adapter cannot poll`,
+          code: 'DEFERRED_UNSUPPORTED',
+        },
+      }
+    case 'pending':
+      // Non-terminal: a done/error event must never carry it. Fail loud rather
+      // than manufacturing a completion from an unfinished message.
+      return {
+        kind: 'error',
+        failure: {
+          message: `model "${message.model}" ended with a pending (non-terminal) response`,
+          code: 'PI_AI_ERROR',
+        },
+      }
   }
 }
 
@@ -121,12 +142,16 @@ export function mapStopReason(message: AssistantMessage, contextWindow?: number)
  * `finish` chunks (the harness protocol's other error-delivery style).
  * @param events - one assistant turn's pi-ai event stream.
  * @param contextWindow - resolved catalog capacity for usage-based overflow detection.
+ * @param callerSignal - the caller's cancellation signal; when already aborted,
+ *   an `error` event reclassifies as an `aborted` finish because pi-ai's lazy
+ *   setup path reports a pre-abort as a plain error.
  * @returns the harness chunks, ending with `usage` then `finish`; throws
  *   `LlmError` (`STREAM_CLOSED`) if the source ends without a terminal event.
  */
 export async function* toStreamChunks(
   events: AsyncIterable<AssistantMessageEvent>,
   contextWindow?: number,
+  callerSignal?: AbortSignal,
 ): AsyncGenerator<StreamChunk> {
   // pi-ai contentIndex ↔ our block index map 1:1 (both count blocks from 0
   // in stream order), but we track ids per index for tool calls.
@@ -196,12 +221,19 @@ export async function* toStreamChunks(
           replayState: toPiReplayState(event.message),
         }
         return
-      case 'error':
+      case 'error': {
         // In-stream error delivery (pi-ai's style) → error finish chunk
-        // (the harness's other sanctioned error path besides throwing).
+        // (the harness's other sanctioned error path besides throwing). A
+        // caller abort that landed before the provider's stream started (its
+        // lazy auth setup) is reported by pi-ai as a plain `error` event, so
+        // the harness reclassifies from its own signal.
+        const reason: FinishReason = callerSignal?.aborted === true
+          ? { kind: 'aborted', failure: { message: event.error.errorMessage ?? 'pi-ai stream aborted', code: 'ABORTED' } }
+          : mapStopReason(event.error, contextWindow)
         yield { type: 'usage', usage: mapUsage(event.error.usage) }
-        yield { type: 'finish', reason: mapStopReason(event.error, contextWindow) }
+        yield { type: 'finish', reason }
         return
+      }
       // no default: AssistantMessageEvent is pi-ai's closed union; a new
       // event type should fail compilation here via tsc's exhaustiveness
       // when one is added (switch covers all current variants).
