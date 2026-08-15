@@ -2,7 +2,7 @@
  * Integration test for tool search plugin.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import {
   createSearchIndex,
   buildIndex,
@@ -164,7 +164,7 @@ describe('Tool Search Integration', () => {
 
     // Results should be ordered by score (descending)
     for (let i = 1; i < results.length; i++) {
-      expect(results[i].score).toBeLessThanOrEqual(results[i - 1].score)
+      expect(results[i]!.score).toBeLessThanOrEqual(results[i - 1]!.score)
     }
   })
 

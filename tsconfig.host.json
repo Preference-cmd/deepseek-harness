@@ -305,7 +305,7 @@
     { "path": "./packages/lsp/lsp" },
     { "path": "./packages/lsp/lsp-stdio" },
     { "path": "./packages/lsp/tool-lsp" },
-    { "path": "./apps/cli" }
-    { "path": "./packages/tool-search" },
+    { "path": "./apps/cli" },
+    { "path": "./packages/tool-search/tool-search" },
   ]
 }

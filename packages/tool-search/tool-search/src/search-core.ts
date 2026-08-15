@@ -340,9 +340,9 @@ export async function searchTools(
     filteredTools = new Map(
       Array.from(tools.entries()).filter(([name]) => {
         // Simple category matching based on tool name patterns
-        return options.categories!.some(category =>
+        return options.categories?.some(category =>
           name.toLowerCase().includes(category.toLowerCase()),
-        )
+        ) ?? false
       }),
     )
   }

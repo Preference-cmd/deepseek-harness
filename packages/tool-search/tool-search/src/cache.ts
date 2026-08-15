@@ -204,10 +204,10 @@ export function createSearchCache(config?: Partial<CacheConfig>): SearchCache {
  * Cache decorator for search functions.
  */
 export function withCache<
-  T extends (...args: any[]) => Promise<ToolSearchResult[]>,
+  T extends (...args: unknown[]) => Promise<ToolSearchResult[]>,
 >(fn: T, cache: SearchCache): T {
-  return (async (...args: any[]) => {
-    const [query, options] = args
+  return (async (...args: unknown[]) => {
+    const [query, options] = args as [string, Record<string, unknown>]
 
     // Try cache first
     const cached = cache.get(query, options)

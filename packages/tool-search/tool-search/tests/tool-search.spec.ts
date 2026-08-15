@@ -2,7 +2,7 @@
  * Tests for tool search plugin.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import {
   createSearchIndex,
   buildIndex,
@@ -13,48 +13,52 @@ import { SearchCache, createSearchCache } from '../src/cache.ts'
 import {
   invariants,
   validateSearchResults,
-  validateSearchOptions,
 } from '../src/invariant.ts'
 import type { ToolDefinition } from '@deepseek-ai/dsh-tools'
 import type { SearchOptions, ToolSearchConfig } from '../src/types.ts'
 
 // Mock tool definitions
+const mockWebSearch: ToolDefinition = {
+  name: 'web_search',
+  description: 'Search the web for current information',
+  parameters: { type: 'object', properties: {} },
+  output: { schema: { type: 'object' }, render: () => [] },
+  execute: async () => ({}),
+}
+const mockRead: ToolDefinition = {
+  name: 'read',
+  description: 'Read a file from the filesystem',
+  parameters: { type: 'object', properties: {} },
+  output: { schema: { type: 'object' }, render: () => [] },
+  execute: async () => ({}),
+}
+const mockWrite: ToolDefinition = {
+  name: 'write',
+  description: 'Write content to a file',
+  parameters: { type: 'object', properties: {} },
+  output: { schema: { type: 'object' }, render: () => [] },
+  execute: async () => ({}),
+}
+const mockBash: ToolDefinition = {
+  name: 'bash',
+  description: 'Execute a bash command',
+  parameters: { type: 'object', properties: {} },
+  output: { schema: { type: 'object' }, render: () => [] },
+  execute: async () => ({}),
+}
+const mockSessionSearch: ToolDefinition = {
+  name: 'session_search',
+  description: 'Search through session history',
+  parameters: { type: 'object', properties: {} },
+  output: { schema: { type: 'object' }, render: () => [] },
+  execute: async () => ({}),
+}
 const mockTools: ToolDefinition[] = [
-  {
-    name: 'web_search',
-    description: 'Search the web for current information',
-    parameters: { type: 'object', properties: {} },
-    output: { schema: { type: 'object' }, render: () => [] },
-    execute: async () => ({}),
-  },
-  {
-    name: 'read',
-    description: 'Read a file from the filesystem',
-    parameters: { type: 'object', properties: {} },
-    output: { schema: { type: 'object' }, render: () => [] },
-    execute: async () => ({}),
-  },
-  {
-    name: 'write',
-    description: 'Write content to a file',
-    parameters: { type: 'object', properties: {} },
-    output: { schema: { type: 'object' }, render: () => [] },
-    execute: async () => ({}),
-  },
-  {
-    name: 'bash',
-    description: 'Execute a bash command',
-    parameters: { type: 'object', properties: {} },
-    output: { schema: { type: 'object' }, render: () => [] },
-    execute: async () => ({}),
-  },
-  {
-    name: 'session_search',
-    description: 'Search through session history',
-    parameters: { type: 'object', properties: {} },
-    output: { schema: { type: 'object' }, render: () => [] },
-    execute: async () => ({}),
-  },
+  mockWebSearch,
+  mockRead,
+  mockWrite,
+  mockBash,
+  mockSessionSearch,
 ]
 
 const defaultConfig: ToolSearchConfig = {
@@ -104,7 +108,7 @@ describe('SearchCore', () => {
     )
 
     expect(results.length).toBeGreaterThan(0)
-    expect(results[0].tool.name).toBe('web_search')
+    expect(results[0]!.tool.name).toBe('web_search')
   })
 
   it('should find relevant tools by keyword search', async () => {
@@ -132,7 +136,7 @@ describe('SearchCore', () => {
     )
 
     expect(results.length).toBeGreaterThan(0)
-    expect(results[0].method).toBe('hybrid')
+    expect(results[0]!.method).toBe('hybrid')
   })
 
   it('should respect similarity threshold', async () => {
@@ -175,7 +179,7 @@ describe('SearchCore', () => {
   })
 
   it('should update index for removed tool', async () => {
-    await updateIndex(index, mockTools[0], 'remove')
+    await updateIndex(index, mockWebSearch, 'remove')
 
     expect(index.embeddings.has('web_search')).toBe(false)
   })
@@ -195,7 +199,7 @@ describe('SearchCache', () => {
 
   it('should set and get cache entries', () => {
     const results = [
-      { tool: mockTools[0], score: 0.9, rank: 1, method: 'semantic' as const },
+      { tool: mockWebSearch, score: 0.9, rank: 1, method: 'semantic' as const },
     ]
 
     cache.set('test query', {}, results)
@@ -203,7 +207,7 @@ describe('SearchCache', () => {
 
     expect(cached).toBeDefined()
     expect(cached!.length).toBe(1)
-    expect(cached![0].tool.name).toBe('web_search')
+    expect(cached![0]!.tool.name).toBe('web_search')
   })
 
   it('should return null for cache miss', () => {
@@ -214,7 +218,7 @@ describe('SearchCache', () => {
   it('should respect TTL', async () => {
     const shortTtlCache = createSearchCache({ ttl: 100 })
     const results = [
-      { tool: mockTools[0], score: 0.9, rank: 1, method: 'semantic' as const },
+      { tool: mockWebSearch, score: 0.9, rank: 1, method: 'semantic' as const },
     ]
 
     shortTtlCache.set('test query', {}, results)
@@ -228,7 +232,7 @@ describe('SearchCache', () => {
 
   it('should clear cache', () => {
     const results = [
-      { tool: mockTools[0], score: 0.9, rank: 1, method: 'semantic' as const },
+      { tool: mockWebSearch, score: 0.9, rank: 1, method: 'semantic' as const },
     ]
 
     cache.set('test query', {}, results)
@@ -240,7 +244,7 @@ describe('SearchCache', () => {
 
   it('should track statistics', () => {
     const results = [
-      { tool: mockTools[0], score: 0.9, rank: 1, method: 'semantic' as const },
+      { tool: mockWebSearch, score: 0.9, rank: 1, method: 'semantic' as const },
     ]
 
     cache.set('test query', {}, results)
@@ -280,7 +284,7 @@ describe('Invariants', () => {
 
   it('should validate search results', () => {
     const validResult = {
-      tool: mockTools[0],
+      tool: mockWebSearch,
       score: 0.9,
       rank: 1,
       method: 'semantic' as const,
@@ -292,7 +296,7 @@ describe('Invariants', () => {
 
   it('should reject invalid score', () => {
     const invalidResult = {
-      tool: mockTools[0],
+      tool: mockWebSearch,
       score: 1.5, // Invalid score
       rank: 1,
       method: 'semantic' as const,
@@ -321,8 +325,8 @@ describe('Invariants', () => {
 
   it('should validate search results ordering', () => {
     const orderedResults = [
-      { tool: mockTools[0], score: 0.9, rank: 1, method: 'semantic' as const },
-      { tool: mockTools[1], score: 0.8, rank: 2, method: 'semantic' as const },
+      { tool: mockWebSearch, score: 0.9, rank: 1, method: 'semantic' as const },
+      { tool: mockRead, score: 0.8, rank: 2, method: 'semantic' as const },
     ]
 
     const results = validateSearchResults(orderedResults)
@@ -334,8 +338,8 @@ describe('Invariants', () => {
 
   it('should detect unordered results', () => {
     const unorderedResults = [
-      { tool: mockTools[0], score: 0.9, rank: 2, method: 'semantic' as const },
-      { tool: mockTools[1], score: 0.8, rank: 1, method: 'semantic' as const },
+      { tool: mockWebSearch, score: 0.9, rank: 2, method: 'semantic' as const },
+      { tool: mockRead, score: 0.8, rank: 1, method: 'semantic' as const },
     ]
 
     const results = validateSearchResults(unorderedResults)

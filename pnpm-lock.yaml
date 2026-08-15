@@ -700,6 +700,9 @@ importers:
       '@deepseek-ai/dsh-tool-ralph':
         specifier: workspace:*
         version: link:../packages/workflow/tool-ralph
+      '@deepseek-ai/dsh-tool-search':
+        specifier: workspace:*
+        version: link:../packages/tool-search/tool-search
       '@deepseek-ai/dsh-tool-session-query':
         specifier: workspace:*
         version: link:../packages/session-query/tool-session-query
@@ -1464,9 +1467,15 @@ importers:
       '@deepseek-ai/dsh-storage-json':
         specifier: workspace:^
         version: link:../../storage/storage-json
+<<<<<<< HEAD
       '@deepseek-ai/dsh-subprocess':
         specifier: workspace:^
         version: link:../../subprocess/subprocess
+=======
+      '@deepseek-ai/dsh-tool-search':
+        specifier: workspace:^
+        version: link:../../tool-search/tool-search
+>>>>>>> 16a453726e (fix(tool-search): restructure to packages/*/* convention and fix lint errors)
       '@deepseek-ai/dsh-web-frontend':
         specifier: workspace:^
         version: link:../../../apps/web
@@ -8168,6 +8177,22 @@ importers:
       '@deepseek-ai/dsh-user-questions':
         specifier: workspace:^
         version: link:../../interaction/user-questions
+
+  packages/tool-search/tool-search:
+    dependencies:
+      '@deepseek-ai/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-invariants':
+        specifier: workspace:^
+        version: link:../../runtime-diagnostics/invariants
+      '@deepseek-ai/dsh-tools':
+        specifier: workspace:^
+        version: link:../../core/tools
 
   packages/typert/generator:
     dependencies:

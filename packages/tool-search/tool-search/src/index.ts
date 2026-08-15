@@ -170,14 +170,16 @@ class ToolSearchServiceImpl implements ToolSearchService {
         await updateIndex(this.index, tool, 'add')
       } else {
         // Existing tool
-        newToolsMap.set(schema.name, this.toolsMap.get(schema.name)!)
+        const existing = this.toolsMap.get(schema.name)
+        if (existing) newToolsMap.set(schema.name, existing)
       }
     }
 
     // Check for removed tools
     for (const [name] of this.toolsMap) {
       if (!newToolsMap.has(name)) {
-        await updateIndex(this.index, this.toolsMap.get(name)!, 'remove')
+        const removed = this.toolsMap.get(name)
+        if (removed) await updateIndex(this.index, removed, 'remove')
       }
     }
 
@@ -362,9 +364,11 @@ export function apply(ctx: Context, config: Config = {}): void {
     await searchService.indexTools()
   })
 
-  // Cleanup on dispose
-  ctx.on('dispose' as any, () => {
-    searchService.dispose()
+  // Cleanup on dispose via effect lifecycle
+  ctx.effect(() => {
+    return () => {
+      searchService.dispose()
+    }
   })
 }
 
