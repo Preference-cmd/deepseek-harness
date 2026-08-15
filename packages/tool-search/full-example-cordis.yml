@@ -1,0 +1,87 @@
+# Complete Tool Search Example Configuration
+# This shows how to integrate tool-search with other plugins
+
+# LLM Provider
+- id: llm-deepseek
+  name: '@deepseek-ai/dsh-llm-deepseek'
+  config:
+    thinking: enabled
+    reasoningEffort: max
+    models:
+      - id: deepseek-v4-flash
+      - id: deepseek-v4-pro
+
+# Sandbox Configuration
+- id: sandbox
+  name: '@deepseek-ai/dsh-sandbox-local'
+
+- id: sandbox-policy
+  name: '@deepseek-ai/dsh-sandbox-policy'
+  config:
+    mode: workspace-write
+    workspaceRoot: !!js process.cwd()
+
+# Subprocess Configuration
+- id: subprocess
+  name: '@deepseek-ai/dsh-subprocess-local'
+
+- id: bash
+  name: '@deepseek-ai/dsh-bash-sandbox'
+  config:
+    timeoutMs: 60000
+
+# Tool Search Plugin - Enable tool discovery
+- id: tool-search
+  name: '@deepseek-ai/dsh-tool-search'
+  config:
+    maxResults: 10
+    similarityThreshold: 0.3
+    cacheEnabled: true
+    cacheTTL: 300000
+    indexRefreshInterval: 60000
+    maxConcurrentSearches: 5
+
+# File System Tools
+- id: fs-sandbox
+  name: '@deepseek-ai/dsh-fs-sandbox'
+  config:
+    cwd: !!js process.cwd()
+
+- id: fs-observation-policy
+  name: '@deepseek-ai/dsh-fs-observation-policy'
+
+- id: tool-fs
+  name: '@deepseek-ai/dsh-tool-fs'
+
+# Web Search Tools
+- id: web-fetch
+  name: '@deepseek-ai/dsh-web-fetch-http'
+
+- id: web-search-deepseek
+  name: '@deepseek-ai/dsh-web-search-deepseek'
+
+- id: tool-web
+  name: '@deepseek-ai/dsh-tool-web'
+
+# Session Query Tools
+- id: session-query-sqlite
+  name: '@deepseek-ai/dsh-session-query-sqlite'
+
+- id: tool-session-query
+  name: '@deepseek-ai/dsh-tool-session-query'
+
+# Todo Tool
+- id: tool-todo
+  name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    allowParallelInProgress: true
+
+# Agent Spine Demo (includes agent loop, tools, and skills)
+- id: agent-spine-demo
+  name: '@deepseek-ai/dsh-agent-spine-demo'
+  config:
+    provider: deepseek-official
+    model: deepseek-v4-pro
+    persona: |
+      You are a coding assistant powered by the {{model}} model. Your working directory is {{cwd}}.
+      Use the tool_search tool to find relevant tools for your tasks.
