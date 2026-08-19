@@ -168,8 +168,7 @@ export function apply(ctx: ClientContext): void {
     }, WebSearchCard)
     yield ctx.slots.register({
       name: 'settings.plugin.item',
-      id: 'web-search-manager',
-      order: 25,
+      key: WEB_SEARCH_MANAGER_NS,
       locale: NS,
       inject: () => webSearchManager.inject(),
     }, WebSearchManagerCard)
