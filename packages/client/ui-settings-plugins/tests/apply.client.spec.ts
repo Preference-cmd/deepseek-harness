@@ -125,8 +125,12 @@ describe('ui-settings-plugins apply', () => {
 
     await ctx.plugin({ inject: [...inject], apply }).await()
 
+    // The plugin ships one card per supported settings section. Adding the
+    // web-search-manager card to this package (alongside the original
+    // shell / agent-loop / web-search-deepseek trio) extends the list; the
+    // keys here are the namespace names each card edits.
     expect(slots.entries('settings.plugin.item').map(entry => entry.options.key))
-      .toEqual(['shell', 'agent-loop', 'web-search-deepseek'])
+      .toEqual(['shell', 'agent-loop', 'web-search-deepseek', 'web-search-manager'])
   })
 
   it('dispatches the served namespaces its cards claim, and no others', async () => {
@@ -212,7 +216,10 @@ describe('ui-settings-plugins apply', () => {
     declareRoot(slots)
     const fiber = ctx.plugin({ inject: [...inject], apply })
     await fiber.await()
-    expect(slots.entries('settings.plugin.item')).toHaveLength(3)
+    // One slot entry per registered card: shell, agent-loop, web-search-deepseek,
+    // web-search-manager. The web-search-manager card is added by the same plugin
+    // (ui-settings-plugins) so it shows up here.
+    expect(slots.entries('settings.plugin.item')).toHaveLength(4)
 
     await fiber.dispose()
 
