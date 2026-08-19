@@ -619,7 +619,7 @@ export class SessionManager {
    */
   noteAgentPreset(sessionId: SessionId, agentPreset: string): void {
     this.recordMutation({ kind: 'upsert', summary: {
-      sessionId, updatedAt: Date.now(), running: false, blank: true, agentPreset,
+      sessionId, updatedAt: Date.now(), running: false, blank: false, agentPreset,
     } })
   }
 

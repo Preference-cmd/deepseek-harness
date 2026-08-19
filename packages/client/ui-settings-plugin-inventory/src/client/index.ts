@@ -34,7 +34,14 @@ export function apply(ctx: ClientContext): void {
     }
     return result.value
   }
-  const injected = (): PluginInventorySettingsTabInjected => ({ list })
+  const toggle: PluginInventorySettingsTabInjected['toggle'] = async (entryId) => {
+    const result = await ctx.remote.pluginInventory.toggle(entryId)
+    if (!result.ok) {
+      throw new Error(`pluginInventory.toggle failed: ${result.error.code}: ${result.error.message}`)
+    }
+    return result.value
+  }
+  const injected = (): PluginInventorySettingsTabInjected => ({ list, toggle })
 
   ctx.slots.inject('settings.plugins.tab', () => ctx.slots.register({
     name: 'settings.plugins.tab',
