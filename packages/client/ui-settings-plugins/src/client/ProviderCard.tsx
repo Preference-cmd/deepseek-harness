@@ -158,7 +158,7 @@ export function ProviderCard<T>({
                 type="button"
                 className={css.save}
                 disabled={!state.dirty || state.invalid || state.saving}
-                onClick={() => { void form.actions().save() }}
+                onClick={() => { form.actions().save() }}
               >
                 {t(state.saving ? 'saving' : 'save')}
               </button>

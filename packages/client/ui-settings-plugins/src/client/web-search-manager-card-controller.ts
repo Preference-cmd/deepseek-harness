@@ -198,7 +198,7 @@ export class WebSearchManagerCardController {
       hooks: { webSearchManagerCard: this.store },
       ...this.form.actions(),
       isProviderEnabled: key => this.isProviderEnabled(key),
-      toggleProvider: (key, enabled) => this.toggleProvider(key, enabled),
+      toggleProvider: (key, enabled) => { this.toggleProvider(key, enabled) },
       getScope: () => this.getScope(),
     }
   }

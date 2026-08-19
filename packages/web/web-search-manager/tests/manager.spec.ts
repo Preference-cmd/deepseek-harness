@@ -73,8 +73,12 @@ describe('web-search-manager', () => {
 
       const result = await ctx.web.search({ query: 'test' })
       expect(result.sources.length).toBeGreaterThan(0)
-      // Verify the Exa endpoint was called
-      const calledUrl = String(fetchSpy.mock.calls.at(-1)?.[0] ?? '')
+      // Verify the Exa endpoint was called. fetch's first argument is a string
+      // URL in this spec (not a Request object) so String() is unambiguous;
+      // the optional chaining preserves the existing assertion if no call
+      // landed.
+      const lastCallArg = fetchSpy.mock.calls.at(-1)?.[0]
+      const calledUrl = typeof lastCallArg === 'string' ? lastCallArg : ''
       expect(calledUrl).toContain('exa.ai')
       await ctx.fiber.dispose()
     })
