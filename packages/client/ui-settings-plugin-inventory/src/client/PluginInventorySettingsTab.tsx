@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useState, type ReactNode } from 'react'
-import type { PluginInventorySnapshot } from '@deepseek-ai/dsh-api-remotes/client'
+import type { PluginEntryId, PluginInventorySnapshot } from '@deepseek-ai/dsh-api-remotes/client'
 import {
   IconChevronDownOutline14,
   IconSearchOutline16,
@@ -12,6 +12,8 @@ import css from './PluginInventorySettingsTab.module.css'
 export interface PluginInventorySettingsTabInjected {
   /** Read a current Host inventory snapshot. */
   list: () => Promise<PluginInventorySnapshot>
+  /** Toggle a plugin entry's enabled state. */
+  toggle: (entryId: PluginEntryId) => Promise<PluginInventorySnapshot>
 }
 
 type PluginInventoryEntry = PluginInventorySnapshot['entries'][number]
@@ -61,11 +63,12 @@ function matches(entry: PluginInventoryEntry, normalizedQuery: string): boolean 
 }
 
 /** Render the read-only current Loader inventory. */
-export function PluginInventorySettingsTab({ list, t }: PluginInventorySettingsTabProps): ReactNode {
+export function PluginInventorySettingsTab({ list, toggle, t }: PluginInventorySettingsTabProps): ReactNode {
   const catalogId = useId()
   const [request, setRequest] = useState(0)
   const [query, setQuery] = useState('')
   const [expanded, setExpanded] = useState<PluginInventoryEntry['entryId'] | null>(null)
+  const [toggling, setToggling] = useState<PluginEntryId | null>(null)
   const [state, setState] = useState<ViewState>({ status: 'loading' })
 
   useEffect(() => {
@@ -90,6 +93,18 @@ export function PluginInventorySettingsTab({ list, t }: PluginInventorySettingsT
       setExpanded(null)
     }
   }, [expanded, filteredEntries])
+
+  const handleToggle = async (entryId: PluginEntryId): Promise<void> => {
+    setToggling(entryId)
+    try {
+      const snapshot = await toggle(entryId)
+      setState({ status: 'ready', snapshot })
+    } catch {
+      // Toggle failed, state unchanged
+    } finally {
+      setToggling(null)
+    }
+  }
 
   const retry = (): void => {
     setState({ status: 'loading' })
@@ -140,6 +155,7 @@ export function PluginInventorySettingsTab({ list, t }: PluginInventorySettingsT
                     key={entry.entryId}
                     data-plugin-entry={entry.entryId}
                     data-open={open ? 'true' : undefined}
+                    data-enabled={entry.enabled ? 'true' : 'false'}
                   >
                     <button
                       className={css.cardContent}
@@ -162,6 +178,15 @@ export function PluginInventorySettingsTab({ list, t }: PluginInventorySettingsT
                             title={status}
                           />
                         ) : null}
+                        <button
+                          type="button"
+                          className={css.toggleButton}
+                          disabled={toggling === entry.entryId}
+                          onClick={(e) => { e.stopPropagation(); void handleToggle(entry.entryId) }}
+                          aria-label={entry.enabled ? t('disable') : t('enable')}
+                        >
+                          {toggling === entry.entryId ? t('toggling') : (entry.enabled ? t('disable') : t('enable'))}
+                        </button>
                         <span className={css.configTag} data-enabled={entry.enabled ? 'true' : 'false'}>
                           {configuration}
                         </span>

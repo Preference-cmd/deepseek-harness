@@ -463,5 +463,58 @@ describe('the new-session chip controller', () => {
     })
   })
 
+  it('keeps the chip on the applied preset across a load before the session summary catches up', async () => {
+    // Simulates the timing bug: user picks a custom preset, the RPC succeeds,
+    // staged is cleared, but the session summary has not yet been updated by
+    // noteAgentPreset. A load() fired during this window must NOT regress the
+    // display back to the deployment default.
+    const writes: Recorded[] = []
+    let currentSession: { id: string; blank: boolean; agentPreset?: string } = {
+      id: 's1', blank: true, agentPreset: 'standard',
+    }
+    const api = {
+      agentPresets: {
+        list: () => Promise.resolve({
+          rpcId: 'r',
+          result: {
+            ok: true as const,
+            value: {
+              presets: [
+                { id: 'standard', trust: 'system', isDefault: true },
+                { id: 'custom', trust: 'user', isDefault: false },
+              ],
+            },
+          },
+        }),
+        select: (payload: { agentPreset: string }) => {
+          writes.push({ ns: 'select', patch: payload.agentPreset })
+          return Promise.resolve({
+            rpcId: 'r',
+            result: { ok: true as const, value: { agentPreset: payload.agentPreset } },
+          })
+        },
+      },
+    } as unknown as IApiClient
+    const controller = new AgentPresetSeatController(api, () => currentSession as SeatSessionSummary | undefined)
+
+    await controller.load()
+    // Initial state: deployment default.
+    expect(controller.store.getSnapshot().current).toBe('standard')
+
+    // User picks 'custom'. The RPC succeeds, staged is cleared.
+    await controller.select('custom')
+    expect(writes).toEqual([{ ns: 'select', patch: 'custom' }])
+    expect(controller.store.getSnapshot().current).toBe('custom')
+
+    // Session summary has NOT yet been updated (noteAgentPreset hasn't fired).
+    // A load() fired now must keep the chip on 'custom'.
+    await controller.load()
+    expect(controller.store.getSnapshot().current).toBe('custom')
+
+    // Now the session summary catches up (simulating noteAgentPreset).
+    currentSession = { id: 's1', blank: true, agentPreset: 'custom' }
+    await controller.load()
+    expect(controller.store.getSnapshot().current).toBe('custom')
+  })
 
 })

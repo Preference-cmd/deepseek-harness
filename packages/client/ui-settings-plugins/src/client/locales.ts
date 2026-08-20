@@ -11,6 +11,13 @@ export type PluginsSettingsLocaleKey =
   | 'webSearchTitle' | 'webSearchDescription'
   | 'webSearchApiKey' | 'webSearchApiKeyHint' | 'webSearchApiKeySet' | 'webSearchApiKeyUnset'
   | 'webSearchBaseUrl' | 'webSearchBaseUrlHint' | 'webSearchMaxUses' | 'webSearchMaxUsesHint'
+  | 'webSearchManagerTitle' | 'webSearchManagerDescription'
+  | 'webSearchManagerDeepSeek' | 'webSearchManagerDeepSeekDescription'
+  | 'webSearchManagerExa' | 'webSearchManagerExaDescription'
+  | 'webSearchManagerPerplexity' | 'webSearchManagerPerplexityDescription'
+  | 'webSearchManagerBaseUrl' | 'webSearchManagerBaseUrlHint'
+  | 'webSearchManagerModel' | 'webSearchManagerModelHint'
+  | 'webSearchManagerMaxUses' | 'webSearchManagerMaxUsesHint'
 
 /** English copy. */
 export const en: Record<PluginsSettingsLocaleKey, string> = {
@@ -51,6 +58,20 @@ export const en: Record<PluginsSettingsLocaleKey, string> = {
   webSearchBaseUrlHint: 'Leave blank to use the provider default.',
   webSearchMaxUses: 'Max searches per request',
   webSearchMaxUsesHint: 'How many times one request may search before it must answer.',
+  webSearchManagerTitle: 'Web search',
+  webSearchManagerDescription: 'Unified web search provider configuration.',
+  webSearchManagerDeepSeek: 'DeepSeek',
+  webSearchManagerDeepSeekDescription: 'DeepSeek search provider',
+  webSearchManagerExa: 'Exa',
+  webSearchManagerExaDescription: 'Neural/keyword search',
+  webSearchManagerPerplexity: 'Perplexity',
+  webSearchManagerPerplexityDescription: 'AI-powered search',
+  webSearchManagerBaseUrl: 'Endpoint',
+  webSearchManagerBaseUrlHint: 'Leave blank to use the provider default.',
+  webSearchManagerModel: 'Model',
+  webSearchManagerModelHint: 'The model used for search queries.',
+  webSearchManagerMaxUses: 'Max searches per request',
+  webSearchManagerMaxUsesHint: 'How many times one request may search before it must answer.',
 }
 
 /** Simplified Chinese copy. */
@@ -92,4 +113,18 @@ export const zh: Record<PluginsSettingsLocaleKey, string> = {
   webSearchBaseUrlHint: '留空则使用提供方默认地址。',
   webSearchMaxUses: '单次请求最多搜索次数',
   webSearchMaxUsesHint: '一次请求在必须作答前最多可以搜索多少次。',
+  webSearchManagerTitle: '网页搜索',
+  webSearchManagerDescription: '统一的网页搜索提供方配置。',
+  webSearchManagerDeepSeek: 'DeepSeek',
+  webSearchManagerDeepSeekDescription: 'DeepSeek 搜索提供方',
+  webSearchManagerExa: 'Exa',
+  webSearchManagerExaDescription: '神经/关键词搜索',
+  webSearchManagerPerplexity: 'Perplexity',
+  webSearchManagerPerplexityDescription: 'AI 驱动搜索',
+  webSearchManagerBaseUrl: '接口地址',
+  webSearchManagerBaseUrlHint: '留空则使用提供方默认地址。',
+  webSearchManagerModel: '模型',
+  webSearchManagerModelHint: '用于搜索查询的模型。',
+  webSearchManagerMaxUses: '单次请求最多搜索次数',
+  webSearchManagerMaxUsesHint: '一次请求在必须作答前最多可以搜索多少次。',
 }

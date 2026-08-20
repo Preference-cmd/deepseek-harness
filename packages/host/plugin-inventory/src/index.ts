@@ -67,6 +67,34 @@ export class PluginInventoryGateway extends TypertRemoteService {
     }
     return { entries }
   }
+
+  /**
+   * Toggle a plugin entry's enabled state. When disabling, the entry's fiber
+   * is disposed and its registrations are cleaned up. When enabling, the entry
+   * is re-initialized and its registrations are restored.
+   * @param entryId - the entry to toggle.
+   * @returns the updated snapshot.
+   */
+  @Remote('toggle')
+  async toggle(entryId: PluginEntryId): Promise<PluginInventorySnapshot> {
+    const entry = this.findEntry(entryId)
+    if (!entry) throw new Error('entry "' + entryId + '" not found')
+    const newDisabled = !entry.disabled
+    await entry.update({ disabled: newDisabled })
+    return this.list()
+  }
+
+  /**
+   * Find an entry by its id.
+   * @param entryId - the entry id to find.
+   * @returns the entry, or undefined if not found.
+   */
+  private findEntry(entryId: PluginEntryId): import('@deepseek-ai/cordis-plugin-loader').Entry | undefined {
+    for (const entry of this.ctx.loader.entries()) {
+      if (entry.id === entryId) return entry
+    }
+    return undefined
+  }
 }
 
 export default PluginInventoryGateway

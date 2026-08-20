@@ -62,6 +62,13 @@ export class AgentPresetSeatController {
   /** Set while a pick is waiting for a session; cleared once applied. */
   private staged: string | undefined
 
+  /**
+   * The preset id most recently applied via RPC. Prevents a late-landing
+   * load() from overwriting the display with stale session-summary data
+   * between the staged-pick consumption and the summary update.
+   */
+  private applied: string | undefined
+
   constructor(
     private readonly api: Pick<IApiClient, 'agentPresets'>,
     /** The session the hero is about to hand over to, when there is one. */
@@ -99,7 +106,11 @@ export class AgentPresetSeatController {
         // an applied stage was consumed — the chip mounts (and loads) only
         // once the flow's session is current, so the reply can arrive after
         // apply() already composed it.
-        current: this.staged ?? this.currentSession()?.agentPreset ?? this.fallback,
+        // The applied term covers the window between consuming the staged
+        // pick and the session summary catching up: without it, a roster or
+        // settings event firing during that window would read the old
+        // summary preset and overwrite the chip display.
+        current: this.staged ?? this.applied ?? this.currentSession()?.agentPreset ?? this.fallback,
         error: null,
       })
     } catch (error) {
@@ -132,6 +143,8 @@ export class AgentPresetSeatController {
    */
   stage(id: string, introduce = false): void {
     this.staged = id
+    // Clear any lingering applied mark: the user is making a fresh pick.
+    this.applied = undefined
     this.set({ current: id, error: null, introduce })
   }
 
@@ -156,21 +169,37 @@ export class AgentPresetSeatController {
     // host refuses the swap, so the stage is no longer meaningful.
     if (!session.blank || session.agentPreset === staged) {
       this.staged = undefined
+      // When the session already runs the staged preset (or a different
+      // preset on a non-blank session), clear any lingering applied mark
+      // so the next load() falls through to the session summary.
+      this.applied = undefined
       return
     }
     this.set({ busy: true, error: null })
+    // Optimistically record the intended preset BEFORE the RPC. A
+    // load() fired while the RPC is in flight will read this instead of
+    // falling back to the stale session summary. The RPC response
+    // overwrites it with the host-confirmed id (which may differ if the
+    // host resolved an alias), and a failure clears it.
+    this.applied = staged
+    this.set({ current: staged })
     try {
       const response = await this.api.agentPresets.select({ sessionId: session.id, agentPreset: staged })
       this.staged = undefined
       if (!response.result.ok) {
+        this.applied = undefined
         this.set({ busy: false, error: response.result.error.message, current: this.fallback })
         return
       }
       // Consumed: the next new session opens on the deployment default again.
+      // Record the host-confirmed preset id so load() keeps the chip on
+      // the new value until the session summary catches up.
+      this.applied = response.result.value.agentPreset
       this.set({ busy: false, current: response.result.value.agentPreset })
       this.onApplied?.(session.id, response.result.value.agentPreset)
     } catch (error) {
       this.staged = undefined
+      this.applied = undefined
       this.set({ busy: false, error: messageOf(error), current: this.fallback })
     }
   }

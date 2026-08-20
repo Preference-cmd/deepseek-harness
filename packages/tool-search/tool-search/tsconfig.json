@@ -1,0 +1,28 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib/types",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "declarationDir": "lib/types"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib",
+    "tests"
+  ],
+  "references": [
+    {
+      "path": "../../core/tools"
+    },
+    {
+      "path": "../../../vendor/cordis"
+    }
+  ]
+}

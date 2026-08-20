@@ -679,3 +679,28 @@ select.input {
   font-size: 13px;
   overflow-wrap: anywhere;
 }
+
+/* The toggle chips (input modality + reasoning levels) wrap beside each other. */
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+/* A rounded rectangle rather than the Pill primitive's full capsule: the
+   descendant form outranks the primitive's own border-radius regardless of
+   bundle order. */
+.chipRow .chip {
+  border-radius: 6px;
+}
+
+/* Icon-only chips keep a tighter horizontal padding than text chips. */
+.chipRow .iconChip {
+  padding: 0 6px;
+}
+
+.checkHint {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+}

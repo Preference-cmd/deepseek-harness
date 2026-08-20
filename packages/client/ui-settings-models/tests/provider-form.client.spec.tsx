@@ -33,6 +33,8 @@ const PiAiConfig = Schema.object({
       name: Schema.string(),
       contextWindow: Schema.number(),
       maxTokens: Schema.number(),
+      input: Schema.array(Schema.union(['text', 'image'])),
+      reasoningEfforts: Schema.union([Schema.const(false), Schema.dict(Schema.union([Schema.string(), Schema.const(null)]))]),
     })),
     reasoning: Schema.union(['off', 'high']),
   })),
@@ -385,6 +387,74 @@ describe('model list editing', () => {
     await waitFor(() => { expect(mutate).toHaveBeenCalled() })
     expect(firstMutate(mutate).ops)
       .toContainEqual({ op: 'unset', path: ['providers', 'openai', 'models'] })
+  })
+
+  it('declares image input and reasoning levels on a hand-added model', async () => {
+    const { mutate } = await mountSection()
+    openEditor('openai')
+
+    fireEvent.click(screen.getByRole('button', { name: en.addModel }))
+    fireEvent.change(screen.getByLabelText(`${en.modelId} 1`), { target: { value: 'vision-reasoner' } })
+    expandModel(1)
+    fireEvent.click(screen.getByRole('button', { name: en.modelModalityImage }))
+    fireEvent.click(screen.getByRole('button', { name: 'low' }))
+    fireEvent.click(screen.getByRole('button', { name: 'high' }))
+    fireEvent.click(screen.getByText(en.apply))
+
+    await waitFor(() => { expect(mutate).toHaveBeenCalled() })
+    expect(firstMutate(mutate).ops[0]?.value).toEqual([
+      {
+        id: 'vision-reasoner',
+        input: ['text', 'image'],
+        reasoningEfforts: { off: null, low: 'low', high: 'high' },
+      },
+    ])
+  })
+
+  it('unchecking the last reasoning level stores a non-reasoning model', async () => {
+    const { mutate } = await mountSection()
+    openEditor('openai')
+
+    fireEvent.click(screen.getByRole('button', { name: en.addModel }))
+    fireEvent.change(screen.getByLabelText(`${en.modelId} 1`), { target: { value: 'plain' } })
+    expandModel(1)
+    // Turning the only level off declares a non-reasoning model, not an empty
+    // reasoning dict the adapter would refuse.
+    fireEvent.click(screen.getByRole('button', { name: 'high' }))
+    fireEvent.click(screen.getByRole('button', { name: 'high' }))
+    fireEvent.click(screen.getByText(en.apply))
+
+    await waitFor(() => { expect(mutate).toHaveBeenCalled() })
+    expect(firstMutate(mutate).ops[0]?.value).toEqual([{ id: 'plain', reasoningEfforts: false }])
+  })
+
+  it('reads stored image input and reasoning levels back into the row', async () => {
+    await mountSection({
+      providers: {
+        openai: {
+          baseURL: 'https://proxy.example/v1',
+          models: [{
+            id: 'vision',
+            input: ['text', 'image'],
+            reasoningEfforts: { off: null, high: 'high' },
+          }],
+        },
+      },
+    })
+    openEditor('openai')
+    expandModel(1)
+
+    expect(screen.getByRole('button', { name: en.modelModalityImage, pressed: true })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'high', pressed: true })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'low', pressed: false })).toBeTruthy()
+    // The always-selected text chip appears once per modality group and cannot
+    // be toggled off: both are disabled and pressed.
+    const textChips = screen.getAllByRole('button', { name: en.modelModalityText })
+    expect(textChips).toHaveLength(2)
+    for (const chip of textChips) {
+      expect(chip.getAttribute('aria-pressed')).toBe('true')
+      expect((chip as HTMLButtonElement).disabled).toBe(true)
+    }
   })
 
 })

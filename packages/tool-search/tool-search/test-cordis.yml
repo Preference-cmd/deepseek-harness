@@ -1,0 +1,11 @@
+# Simple Test Configuration for Tool Search
+# This is a minimal configuration to test tool search functionality
+
+# Tool Search Plugin
+- id: tool-search
+  name: '@deepseek-ai/dsh-tool-search'
+  config:
+    maxResults: 5
+    similarityThreshold: 0.2
+    cacheEnabled: false  # Disable cache for testing
+    indexRefreshInterval: 10000  # 10 seconds for testing
