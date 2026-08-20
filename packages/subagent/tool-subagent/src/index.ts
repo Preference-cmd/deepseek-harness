@@ -12,6 +12,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { AgentOptions } from '@deepseek-ai/dsh-agent'
+import { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
 import type { ContentBlock } from '@deepseek-ai/dsh-llm'
 import type { JsonValue } from '@deepseek-ai/dsh-session'
 import { assertSubagentMaxDepth, settleRun } from '@deepseek-ai/dsh-subagent'
@@ -48,6 +49,9 @@ export interface Config {
   backgroundMode?: 'one-shot' | 'continuable'
   /**
    * Agent options applied to every child; omitted fields use child-loop defaults.
+   * When `reasoningEffort` is set, that effort is used; when omitted and the
+   * child inherits the parent's model, the parent's last persisted effort is
+   * inherited to avoid `pi-ai`'s `off:"none"` fallback.
    */
   agentOptions?: AgentOptions
   /**
@@ -84,11 +88,12 @@ export const Config: z<Config> = z.object({
   enableRunInBackground: z.boolean().default(true),
   backgroundMode: z.union(['one-shot', 'continuable'] as const).default('one-shot'),
   // Prevent Schemastery from materializing omitted agentOptions as `{}`.
-  agentOptions: z.object({
+  agentOptions: (z.object({
     provider: z.string(),
     model: z.string(),
     maxTokens: z.number().step(1).min(1).max(Number.MAX_SAFE_INTEGER),
-  }).default(undefined as unknown as { provider: string; model: string; maxTokens: number }),
+    reasoningEffort: z.string(),
+  }) as unknown as z<AgentOptions>).default(undefined as unknown as AgentOptions),
   persona: z.string(),
   // Preserve omission; Schemastery's `{ allow: [] }` default would deny every tool.
   toolFilter: z.object({
@@ -324,6 +329,10 @@ export function apply(ctx: Context, config: Config): void {
           required: true,
           description: wording.promptDescription,
         },
+        reasoningEffort: {
+          type: 'string' as const,
+          description: 'Reasoning effort for the subagent (e.g., off, low, medium, high, max, minimal, xhigh). When omitted, inherits the parent\'s effort if the model is the same, otherwise uses the provider default. Use off to disable reasoning.',
+        },
         ...backgroundEnabled ? {
           run_in_background: {
             type: 'boolean' as const,
@@ -383,11 +392,24 @@ export function apply(ctx: Context, config: Config): void {
         }
 
         const maxDepth = typeof config.maxDepth === 'number' ? config.maxDepth : undefined
+        // Tool-level reasoningEffort overrides config-level; both are strings
+        // that must be branded for the `AgentOptions` seam. When neither is
+        // set, `resolveChildAgentOptions` inherits the parent's effort if the
+        // model is unchanged, avoiding `pi-ai`'s `off:"none"` auto-injection.
+        const toolReasoningEffort = (args as { reasoningEffort?: string }).reasoningEffort
+        const configReasoningEffort = (config.agentOptions as { reasoningEffort?: string } | undefined)?.reasoningEffort
+        const requestedEffort = toolReasoningEffort ?? configReasoningEffort
+        const agentOptions: AgentOptions | undefined = (() => {
+          if (config.agentOptions === undefined && requestedEffort === undefined) return undefined
+          const base = config.agentOptions ?? {} as AgentOptions
+          if (requestedEffort === undefined) return base as AgentOptions
+          return { ...(base as AgentOptions), reasoningEffort: ReasoningEffortId(requestedEffort) }
+        })()
         const request = {
           label: args.description,
           prompt: [{ type: 'text', text: args.prompt }] as ContentBlock[],
           parent,
-          ...config.agentOptions !== undefined ? { agentOptions: config.agentOptions } : {},
+          ...agentOptions !== undefined ? { agentOptions } : {},
           ...config.persona !== undefined ? { persona: config.persona } : {},
           ...config.toolFilter !== undefined ? { toolFilter: config.toolFilter } : {},
           ...maxDepth !== undefined ? { maxDepth } : {},

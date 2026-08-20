@@ -58,8 +58,10 @@ export function resolveChildDepth(parent: Agent, maxDepth: number | undefined): 
 
 /**
  * Resolve the child's `AgentOptions`: the parent's provider/model/maxTokens
- * route unless the request overrides it, stamped with the child's own
- * delegation depth.
+ * and reasoning effort unless the request overrides it, stamped with the
+ * child's own delegation depth. When the child inherits the model, an
+ * unspecified effort inherits the parent's last persisted reasoning effort so
+ * `pi-ai`'s `!reasoningEffort → off:"none"` fallback is avoided.
  * @param parent - the delegating parent whose route the child inherits.
  * @param requested - per-child overrides, if any.
  * @param childDepth - the resolved delegation depth to stamp.
@@ -73,10 +75,24 @@ export function resolveChildAgentOptions(
   const parentProvider = parent.options.provider
   const parentModel = parent.options.model
   const parentMaxTokens = parent.options.maxTokens
+  const parentReasoningEffort = parent.options.reasoningEffort
+  // Inherit the last persisted reasoning effort when the child keeps the
+  // parent's route and no explicit effort is supplied. This prefers the
+  // durable `request/header` value (which `host/apiproxy` and `agent-loop`
+  // keep in sync) and falls back to the live `parent.options`.
+  const persistedEffort = parent.session.requestHeader()?.config.reasoningEffort
+  const inheritedReasoningEffort = parentReasoningEffort ?? persistedEffort
+  const inheritsRoute = (requested?.provider === undefined && requested?.model === undefined)
+    || ((requested?.provider ?? parentProvider) === parentProvider
+      && (requested?.model ?? parentModel) === parentModel)
+  const effectiveReasoningEffort = requested?.reasoningEffort !== undefined
+    ? requested.reasoningEffort
+    : inheritsRoute ? inheritedReasoningEffort : undefined
   return {
     ...parentProvider !== undefined ? { provider: parentProvider } : {},
     ...parentModel !== undefined ? { model: parentModel } : {},
     ...parentMaxTokens !== undefined ? { maxTokens: parentMaxTokens } : {},
+    ...effectiveReasoningEffort !== undefined ? { reasoningEffort: effectiveReasoningEffort } : {},
     ...requested,
     subagentDepth: childDepth,
   }
