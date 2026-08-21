@@ -214,6 +214,63 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
       : schema.setPath(current, [key], value))
   }
 
+  const [retryInput, setRetryInput] = useState<string>(() => {
+    const v = schema.getPath(draftAt(schema, namespace, settingsPath), ['retryPolicy', 'maxRetries'])
+    return typeof v === 'number' ? String(v) : ''
+  })
+
+  useEffect(() => {
+    const v = schema.getPath(draftAt(schema, namespace, settingsPath), ['retryPolicy', 'maxRetries'])
+    setRetryInput(typeof v === 'number' ? String(v) : '')
+  }, [props.provider])
+
+  const retryMaxRetriesFallback = (() => {
+    const v = schema.getPath(fallback, ['retryPolicy', 'maxRetries'])
+    return typeof v === 'number' ? String(v) : '5'
+  })()
+
+  const retryError = (() => {
+    const trimmed = retryInput.trim()
+    if (trimmed === '') return undefined
+    if (!/^\d+$/.test(trimmed)) return 'retryMaxRetriesInvalid' as const
+    const n = Number(trimmed)
+    if (!Number.isSafeInteger(n) || n < 0) return 'retryMaxRetriesInvalid' as const
+    return undefined
+  })()
+
+  const setRetryMaxRetries = (text: string): void => {
+    setRetryInput(text)
+    const trimmed = text.trim()
+    if (trimmed === '') {
+      setDraft((current) => {
+        let next = schema.deletePath(current, ['retryPolicy', 'maxRetries'])
+        const policy = schema.getPath(next, ['retryPolicy'])
+        if (policy !== undefined && typeof policy === 'object' && policy !== null) {
+          const keys = Object.keys(policy as object)
+          const soleNormalMode = keys.length === 1 && keys[0] === 'mode'
+            && (policy as Record<string, unknown>)['mode'] === 'normal'
+          if (keys.length === 0 || soleNormalMode) {
+            next = schema.deletePath(next, ['retryPolicy'])
+          }
+        }
+        return next
+      })
+      return
+    }
+    if (!/^\d+$/.test(trimmed)) return
+    const n = Number(trimmed)
+    if (!Number.isSafeInteger(n) || n < 0) return
+    setDraft((current) => {
+      const existing = schema.getPath(current, ['retryPolicy'])
+      const base = typeof existing === 'object' && existing !== null && !Array.isArray(existing) ? existing as Record<string, unknown> : {}
+      const mode = typeof base['mode'] === 'string' && (base['mode'] === 'normal' || base['mode'] === 'always') ? base['mode'] as string : 'normal'
+      const effectiveMode = mode === 'always' ? 'normal' : mode
+      let next = schema.setPath(current, ['retryPolicy', 'mode'], effectiveMode)
+      next = schema.setPath(next, ['retryPolicy', 'maxRetries'], n)
+      return next
+    })
+  }
+
   // The model list is validated by the same per-row checker for both families,
   // so a bad row is named by its position rather than by a blanket message.
   const modelFailure = validateDeepSeekModels(schema.getPath(draft, ['models']))
@@ -265,6 +322,7 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
       if (failure !== undefined) {
         return `${t('model')} ${String(failure.index + 1)}: ${t(failure.key)}`
       }
+      if (retryError !== undefined) return t(retryError)
     }
     /* v8 ignore next -- apply is only reachable from the rendered card, which required a resolved node */
     if (props.credentialOnly !== true && node !== undefined && settingsPath.length === 0) {
@@ -435,6 +493,21 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
                 }}
               />
             </div>
+            <div className={styles['field']}>
+              <span className={styles['fieldLabel']}>{t('retryMaxRetries')}</span>
+              <input
+                className={styles['input']}
+                type="text"
+                inputMode="numeric"
+                value={retryInput}
+                placeholder={retryMaxRetriesFallback}
+                aria-label={t('retryMaxRetries')}
+                aria-invalid={retryError !== undefined}
+                disabled={disabled}
+                onChange={(event) => { setRetryMaxRetries(event.target.value) }}
+              />
+              {retryError === undefined ? null : <p className={styles['error']}>{t(retryError)}</p>}
+            </div>
             {/* The protocol sits beside the endpoint it describes, as it does
                 on the create card. */}
             {ownsIdentity
@@ -508,6 +581,7 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
         busy={busy}
         submitDisabled={disabled || layout === 'unknown'
           || (props.credentialOnly !== true && modelFailure !== undefined)
+          || (props.credentialOnly !== true && retryError !== undefined)
           || shownKeyFailure !== undefined
           || (props.credentialRequired === true && keyValue.length === 0)}
         submitLabel={props.submitLabel ?? 'apply'}
