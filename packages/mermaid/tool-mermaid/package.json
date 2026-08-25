@@ -12,11 +12,15 @@
   },
   "files": ["lib"],
   "scripts": { "build": "tsdown" },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "workspace:^"
+  },
   "peerDependencies": {
     "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@deepseek-ai/cordis": "workspace:^",
+    "@deepseek-ai/dsh-tools": "workspace:^"
   },
   "publishConfig": { "access": "public" }
 }

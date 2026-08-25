@@ -1,7 +1,8 @@
-import type { Context } from '@deepseek-ai/cordis'
-import type { MermaidRenderConfig, MermaidRenderResult } from './types.ts'
+import { defineTool } from '@deepseek-ai/dsh-tools'
+import type { MermaidRenderConfig } from './types.ts'
 
 export const name = 'tool-mermaid'
+export const inject = ['tools']
 
 function detectDiagramType(source: string): string {
   const trimmed = source.trim().toLowerCase()
@@ -19,19 +20,6 @@ function detectDiagramType(source: string): string {
   return 'flowchart'
 }
 
-export function apply(ctx: Context): void {
-  ctx.effect(() => {
-    ctx.service('tool-mermaid', {
-      render: async (cfg: MermaidRenderConfig): Promise<MermaidRenderResult> => {
-        const detectedType = cfg.type ?? detectDiagramType(cfg.diagram)
-        const svg = generatePlaceholderSvg(cfg.diagram, detectedType)
-        return { output: svg, format: 'svg', warnings: [] }
-      },
-    })
-    return () => {}
-  })
-}
-
 function generatePlaceholderSvg(diagram: string, type: string): string {
   const lines = diagram.split('\n').slice(0, 5)
   const escaped = lines
@@ -46,4 +34,37 @@ function generatePlaceholderSvg(diagram: string, type: string): string {
       </div>
     </foreignObject>
   </svg>`
+}
+
+export function apply(ctx: { tools: { register: (tool: unknown) => void } }): void {
+  ctx.tools.register(defineTool({
+    name: 'mermaid_render',
+    description: 'Render a Mermaid diagram to SVG. Accepts Mermaid syntax and returns an SVG image.',
+    parameters: {
+      diagram: {
+        type: 'string',
+        required: true,
+        description: 'The Mermaid diagram source code.',
+      },
+      type: {
+        type: 'string',
+        required: false,
+        description: 'The diagram type hint (flowchart, sequence, class, etc.). Auto-detected if omitted.',
+      },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        properties: {
+          svg: { type: 'string', description: 'The rendered SVG image.' },
+          type: { type: 'string', description: 'The detected or specified diagram type.' },
+        },
+      },
+    },
+    execute: async (args: MermaidRenderConfig) => {
+      const detectedType = args.type ?? detectDiagramType(args.diagram)
+      const svg = generatePlaceholderSvg(args.diagram, detectedType)
+      return { svg, type: detectedType }
+    },
+  }))
 }
