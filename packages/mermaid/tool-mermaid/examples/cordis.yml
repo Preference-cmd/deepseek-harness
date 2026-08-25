@@ -1,0 +1,6 @@
+# Minimal cordis.yml using the mermaid tool
+plugins:
+  - name: tool-mermaid
+    config:
+      defaultFormat: svg
+      defaultTheme: default
