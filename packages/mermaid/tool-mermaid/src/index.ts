@@ -62,6 +62,10 @@ export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineT
           type: { type: 'string', description: 'The detected or specified diagram type.' },
         },
       },
+      render: (_args, value) => [{
+        type: 'text' as const,
+        text: value.svg,
+      }],
     },
     execute(args) {
       const detectedType = args.type ?? detectDiagramType(args.diagram)
