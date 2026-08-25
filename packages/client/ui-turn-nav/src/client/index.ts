@@ -1,10 +1,8 @@
-import type { ConversationSessionNavigatorOwnerProps } from '../contract/slots.ts'
-import { TurnNavigator } from './TurnNavigator.tsx'
-
-export type { ConversationSessionNavigatorOwnerProps }
-
+/**
+ * Client entry point for the turn navigation rail.
+ */
 export function apply(): void {
   // Plugin registration handled by the parent conversation package
 }
 
-export { TurnNavigator }
+export { TurnNavigator } from './TurnNavigator.tsx'

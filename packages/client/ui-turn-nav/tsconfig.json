@@ -5,21 +5,9 @@
     "outDir": "lib/types",
     "composite": true
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "references": [
-    {
-      "path": "../../../vendor/cordis"
-    },
-    {
-      "path": "../ui-slots"
-    },
-    {
-      "path": "../ui-conversation"
-    },
-    {
-      "path": "../../runtime-diagnostics/invariants"
-    }
+    { "path": "../../../vendor/cordis" },
+    { "path": "../../runtime-diagnostics/invariants" }
   ]
 }

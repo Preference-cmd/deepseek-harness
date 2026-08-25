@@ -1,22 +1,49 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
-import css from './TurnNavigator.module.css'
 
 interface Turn {
-  /** 1-based turn number */
   turn: number
-  /** Optional label for the turn */
   label?: string
 }
 
 interface TurnNavigatorProps {
-  /** Resolve the current session scrollport */
   getScrollport: () => HTMLElement | null
 }
 
-/**
- * A vertical rail displayed alongside the conversation scroll area,
- * showing loaded turn numbers and allowing quick navigation between them.
- */
+const styles = {
+  nav: {
+    position: 'absolute' as const,
+    right: 4,
+    top: 0,
+    bottom: 0,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
+    zIndex: 10,
+    padding: '8px 0',
+  },
+  dot: {
+    width: 24,
+    height: 18,
+    border: 'none',
+    borderRadius: 4,
+    background: 'transparent',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 0,
+    fontSize: 9,
+    fontWeight: 600,
+    color: '#6b7280',
+  },
+  active: {
+    background: '#3b82f6',
+    color: '#fff',
+  },
+}
+
 export const TurnNavigator = memo(function TurnNavigator({
   getScrollport,
 }: TurnNavigatorProps) {
@@ -25,7 +52,6 @@ export const TurnNavigator = memo(function TurnNavigator({
   const observerRef = useRef<MutationObserver | null>(null)
   const rafRef = useRef<number>(0)
 
-  // Scan the scrollport for turn markers and build the turn list
   const scanTurns = useCallback(() => {
     const scrollport = getScrollport()
     if (!scrollport) return
@@ -43,12 +69,10 @@ export const TurnNavigator = memo(function TurnNavigator({
       found.push({ turn })
     })
 
-    // Sort ascending
     found.sort((a, b) => a.turn - b.turn)
     setTurns(found)
   }, [getScrollport])
 
-  // Determine which turn is most visible in the viewport
   const updateActiveTurn = useCallback(() => {
     const scrollport = getScrollport()
     if (!scrollport || turns.length === 0) return
@@ -75,7 +99,6 @@ export const TurnNavigator = memo(function TurnNavigator({
     if (closest) setActiveTurn(closest.turn)
   }, [getScrollport, turns])
 
-  // Set up MutationObserver to detect new turn markers
   useEffect(() => {
     const scrollport = getScrollport()
     if (!scrollport) return
@@ -95,7 +118,6 @@ export const TurnNavigator = memo(function TurnNavigator({
     }
   }, [getScrollport, scanTurns])
 
-  // Update active turn on scroll
   useEffect(() => {
     const scrollport = getScrollport()
     if (!scrollport) return
@@ -110,7 +132,6 @@ export const TurnNavigator = memo(function TurnNavigator({
     return () => scrollport.removeEventListener('scroll', onScroll)
   }, [getScrollport, updateActiveTurn, turns])
 
-  // Scroll to a specific turn
   const scrollToTurn = useCallback(
     (turn: number) => {
       const scrollport = getScrollport()
@@ -129,17 +150,20 @@ export const TurnNavigator = memo(function TurnNavigator({
   if (turns.length === 0) return null
 
   return (
-    <nav className={css.nav} aria-label="Turn navigation">
+    <nav style={styles.nav} aria-label="Turn navigation">
       {turns.map(({ turn, label }) => (
         <button
           key={turn}
-          className={`${css.dot} ${turn === activeTurn ? css.active : ''}`}
+          style={{
+            ...styles.dot,
+            ...(turn === activeTurn ? styles.active : {}),
+          }}
           onClick={() => scrollToTurn(turn)}
           title={label ?? `Turn ${turn}`}
           aria-label={label ?? `Go to turn ${turn}`}
           data-turn-nav-turn={String(turn)}
         >
-          <span className={css.label}>{turn}</span>
+          <span>{turn}</span>
         </button>
       ))}
     </nav>
