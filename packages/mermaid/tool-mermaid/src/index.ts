@@ -1,5 +1,4 @@
 import { defineTool } from '@deepseek-ai/dsh-tools'
-import type { MermaidRenderConfig } from './types.ts'
 
 export const name = 'tool-mermaid'
 export const inject = ['tools']
@@ -25,18 +24,20 @@ function generatePlaceholderSvg(diagram: string, type: string): string {
   const escaped = lines
     .map(l => l.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
     .join('\n  ')
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
-    <rect width="600" height="400" fill="#f9fafb" rx="8"/>
-    <text x="20" y="30" font-family="monospace" font-size="12" fill="#6b7280">[${type} diagram]</text>
-    <foreignObject x="20" y="45" width="560" height="340">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:monospace;font-size:11px;color:#374151;white-space:pre-wrap">
-        ${escaped}
-      </div>
-    </foreignObject>
-  </svg>`
+  return [
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">',
+    '  <rect width="600" height="400" fill="#f9fafb" rx="8"/>',
+    '  <text x="20" y="30" font-family="monospace" font-size="12" fill="#6b7280">[' + type + ' diagram]</text>',
+    '  <foreignObject x="20" y="45" width="560" height="340">',
+    '    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:monospace;font-size:11px;color:#374151;white-space:pre-wrap">',
+    '      ' + escaped,
+    '    </div>',
+    '  </foreignObject>',
+    '</svg>',
+  ].join('\n')
 }
 
-export function apply(ctx: { tools: { register: (tool: unknown) => void } }): void {
+export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineTool>) => void } }): void {
   ctx.tools.register(defineTool({
     name: 'mermaid_render',
     description: 'Render a Mermaid diagram to SVG. Accepts Mermaid syntax and returns an SVG image.',
@@ -55,16 +56,23 @@ export function apply(ctx: { tools: { register: (tool: unknown) => void } }): vo
     output: {
       schema: {
         type: 'object',
+        additionalProperties: false,
         properties: {
           svg: { type: 'string', description: 'The rendered SVG image.' },
           type: { type: 'string', description: 'The detected or specified diagram type.' },
         },
       },
     },
-    execute: async (args: MermaidRenderConfig) => {
+    execute(args) {
       const detectedType = args.type ?? detectDiagramType(args.diagram)
       const svg = generatePlaceholderSvg(args.diagram, detectedType)
-      return { svg, type: detectedType }
+      return Promise.resolve({ svg, type: detectedType })
     },
+    presentCall: args => ({
+      card: 'generic',
+      title: 'Render Mermaid diagram',
+      kind: 'other',
+      rawInput: args.diagram,
+    }),
   }))
 }
