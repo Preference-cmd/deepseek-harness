@@ -151,19 +151,19 @@ export const TurnNavigator = memo(function TurnNavigator({
 
   return (
     <nav style={styles.nav} aria-label="Turn navigation">
-      {turns.map(({ turn, label }) => (
+      {turns.map(({ turn: turnNum, label }) => (
         <button
-          key={turn}
+          key={turnNum}
           style={{
             ...styles.dot,
-            ...(turn === activeTurn ? styles.active : {}),
+            ...(turnNum === activeTurn ? styles.active : {}),
           }}
-          onClick={() => scrollToTurn(turn)}
-          title={label ?? `Turn ${turn}`}
-          aria-label={label ?? `Go to turn ${turn}`}
-          data-turn-nav-turn={String(turn)}
+          onClick={() => scrollToTurn(turnNum)}
+          title={label ?? `Turn ${turnNum}`}
+          aria-label={label ?? `Go to turn ${turnNum}`}
+          data-turn-nav-turn={String(turnNum)}
         >
-          <span>{turn}</span>
+          <span>{turnNum}</span>
         </button>
       ))}
     </nav>
