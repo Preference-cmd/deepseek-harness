@@ -44,13 +44,7 @@ export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineT
     parameters: {
       diagram: {
         type: 'string',
-        required: true,
         description: 'The Mermaid diagram source code.',
-      },
-      type: {
-        type: 'string',
-        required: false,
-        description: 'The diagram type hint (flowchart, sequence, class, etc.). Auto-detected if omitted.',
       },
     },
     output: {
@@ -59,24 +53,24 @@ export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineT
         additionalProperties: true,
         properties: {
           svg: { type: 'string' },
-          type: { type: 'string' },
         },
       },
       render: (_args, value) => [{
         type: 'text' as const,
-        text: value.svg ?? '',
+        text: String(value.svg ?? ''),
       }],
     },
     execute(args) {
-      const detectedType = args.type ?? detectDiagramType(args.diagram)
-      const svg = generatePlaceholderSvg(args.diagram, detectedType)
+      const diagram = String(args.diagram)
+      const detectedType = detectDiagramType(diagram)
+      const svg = generatePlaceholderSvg(diagram, detectedType)
       return Promise.resolve({ svg, type: detectedType })
     },
     presentCall: args => ({
       card: 'generic',
       title: 'Render Mermaid diagram',
       kind: 'other',
-      rawInput: args.diagram,
+      rawInput: String(args.diagram),
     }),
   }))
 }
