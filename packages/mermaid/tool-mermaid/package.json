@@ -1,0 +1,26 @@
+{
+  "name": "@deepseek-ai/dsh-tool-mermaid",
+  "version": "0.1.0-rc.5",
+  "description": "Mermaid diagram generation tool for the DeepSeek Harness",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "files": ["lib"],
+  "scripts": { "build": "tsdown" },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "workspace:^"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "workspace:^"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "workspace:^",
+    "@deepseek-ai/dsh-tools": "workspace:^"
+  },
+  "publishConfig": { "access": "public" }
+}

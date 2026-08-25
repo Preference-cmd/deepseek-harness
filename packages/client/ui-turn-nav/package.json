@@ -1,0 +1,22 @@
+{
+  "name": "@deepseek-ai/dsh-client-ui-turn-nav",
+  "version": "0.1.0-rc.5",
+  "description": "Turn navigation rail for jumping between loaded conversation rounds",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "files": ["lib"],
+  "scripts": { "build": "tsdown" },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "workspace:^"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "workspace:^"
+  },
+  "publishConfig": { "access": "public" }
+}
