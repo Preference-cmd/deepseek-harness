@@ -56,15 +56,15 @@ export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineT
     output: {
       schema: {
         type: 'object',
-        additionalProperties: false,
+        additionalProperties: true,
         properties: {
-          svg: { type: 'string', description: 'The rendered SVG image.' },
-          type: { type: 'string', description: 'The detected or specified diagram type.' },
+          svg: { type: 'string' },
+          type: { type: 'string' },
         },
       },
       render: (_args, value) => [{
         type: 'text' as const,
-        text: value.svg,
+        text: value.svg ?? '',
       }],
     },
     execute(args) {
