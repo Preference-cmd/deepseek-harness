@@ -1280,6 +1280,15 @@ importers:
       '@deepseek-ai/dsh-web-search-deepseek':
         specifier: workspace:^
         version: link:../../web/web-search-deepseek
+      '@deepseek-ai/dsh-web-search-exa':
+        specifier: workspace:^
+        version: link:../../web/web-search-exa
+      '@deepseek-ai/dsh-web-search-manager':
+        specifier: workspace:^
+        version: link:../../web/web-search-manager
+      '@deepseek-ai/dsh-web-search-perplexity':
+        specifier: workspace:^
+        version: link:../../web/web-search-perplexity
       '@deepseek-ai/dsh-workflow-worker-thread':
         specifier: workspace:^
         version: link:../../workflow/workflow-worker-thread
@@ -1545,6 +1554,9 @@ importers:
       '@deepseek-ai/dsh-client-ui-trajectory':
         specifier: workspace:^
         version: link:../../client/ui-trajectory
+      '@deepseek-ai/dsh-client-ui-turn-nav':
+        specifier: workspace:^
+        version: link:../../client/ui-turn-nav
       '@deepseek-ai/dsh-client-ui-user-questions':
         specifier: workspace:^
         version: link:../../client/ui-user-questions
@@ -1608,6 +1620,9 @@ importers:
       '@deepseek-ai/dsh-subprocess':
         specifier: workspace:^
         version: link:../../subprocess/subprocess
+      '@deepseek-ai/dsh-tool-search':
+        specifier: workspace:^
+        version: link:../../tool-search/tool-search
       '@deepseek-ai/dsh-tool-subagent':
         specifier: workspace:^
         version: link:../../subagent/tool-subagent
@@ -3570,6 +3585,12 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
+
+  packages/client/ui-turn-nav:
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
 
   packages/client/ui-user-questions:
     dependencies:
@@ -6631,6 +6652,16 @@ importers:
         specifier: ^2026.7.4
         version: 2026.7.10(zod@4.4.3)
 
+  packages/mermaid/tool-mermaid:
+    dependencies:
+      '@deepseek-ai/dsh-tools':
+        specifier: workspace:^
+        version: link:../../core/tools
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+
   packages/plan/plan-mode:
     dependencies:
       zod:
@@ -9319,6 +9350,22 @@ importers:
         specifier: workspace:^
         version: link:../../interaction/user-questions
 
+  packages/tool-search/tool-search:
+    dependencies:
+      '@deepseek-ai/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-invariants':
+        specifier: workspace:^
+        version: link:../../runtime-diagnostics/invariants
+      '@deepseek-ai/dsh-tools':
+        specifier: workspace:^
+        version: link:../../core/tools
+
   packages/typert/generator:
     dependencies:
       '@jridgewell/gen-mapping':
@@ -9620,6 +9667,40 @@ importers:
       '@deepseek-ai/dsh-web':
         specifier: workspace:^
         version: link:../web
+
+  packages/web/web-search-manager:
+    dependencies:
+      '@deepseek-ai/dsh-credentials':
+        specifier: workspace:^
+        version: link:../../credentials/credentials
+      '@deepseek-ai/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-invariants':
+        specifier: workspace:^
+        version: link:../../runtime-diagnostics/invariants
+      '@deepseek-ai/dsh-launch-environment':
+        specifier: workspace:^
+        version: link:../../util/launch-environment
+      '@deepseek-ai/dsh-settings':
+        specifier: workspace:^
+        version: link:../../settings/settings
+      '@deepseek-ai/dsh-web':
+        specifier: workspace:^
+        version: link:../web
+      '@deepseek-ai/dsh-web-search-deepseek':
+        specifier: workspace:^
+        version: link:../web-search-deepseek
+      '@deepseek-ai/dsh-web-search-exa':
+        specifier: workspace:^
+        version: link:../web-search-exa
+      '@deepseek-ai/dsh-web-search-perplexity':
+        specifier: workspace:^
+        version: link:../web-search-perplexity
 
   packages/web/web-search-perplexity:
     dependencies:
