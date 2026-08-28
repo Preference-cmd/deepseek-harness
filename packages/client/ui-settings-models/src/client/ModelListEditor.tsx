@@ -16,20 +16,17 @@
 
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import type { DiscoveredModelView, IApiClient } from '@deepseek-ai/dsh-api-remotes/client'
-import { Button, Modal, Pill } from '@deepseek-ai/dsh-client-ui-primitives'
-import { Image as ImageIcon, Text as TextIcon } from 'reicon-react'
+import type { LlmDiscoveredModel } from '@deepseek-ai/dsh-api-remotes/client'
+import { Button, Modal } from '@deepseek-ai/dsh-client-ui-primitives'
 import { formatCapacity, parseCapacity } from './DeepSeekModelsEditor.tsx'
 import type { DeepSeekModelDraft } from './DeepSeekModelsEditor.tsx'
-import { messageOf } from './store.ts'
+import { messageOf, type ModelsWire } from './store.ts'
 import type { en } from './locales.ts'
 import styles from './ModelsSection.module.css'
 
 /**
- * One configured model row. Structurally open, exactly like the DeepSeek
- * catalog editor's rows: a profile field this card does not edit — one a future
- * schema adds, or one hand-written in `settings.yaml` — has to survive being
- * edited here rather than being dropped by a rebuild.
+ * One configured model row. Fields this card does not edit must survive an
+ * edit rather than being dropped by a rebuild.
  */
 export type ModelDraft = DeepSeekModelDraft
 
@@ -83,7 +80,7 @@ export interface ModelListEditorProps {
    */
   probeBlocked?: keyof typeof en | undefined
   /** Wire face the fetch action calls. */
-  api: Pick<IApiClient, 'llm'>
+  api: Pick<ModelsWire, 'llm'>
   /** Section copy. */
   t: (key: keyof typeof en) => string
   /** Disable every control (read-only deployment or a pending write). */
@@ -134,35 +131,6 @@ const CAPACITY_HINT: Readonly<Record<CapacityField, string>> = {
 }
 
 /**
- * The pi-ai reasoning levels a model row may declare, in escalation order.
- * `off` is never offered: a reasoning model always has it (the editor writes it
- * as `off: null`, "supported, send nothing"), and a non-reasoning one has
- * nothing to turn off. Each declared level is written at its own name — the
- * wire spelling most OpenAI-compatible gateways accept as `reasoning_effort` —
- * which keeps per-level spellings out of the card for now.
- */
-const REASONING_LEVELS = ['minimal', 'low', 'medium', 'high', 'xhigh', 'max'] as const
-type ReasoningLevel = typeof REASONING_LEVELS[number]
-
-/** Whether a draft value is a reasoning-efforts dict rather than `false` or absent. */
-function isReasoningDict(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
-}
-
-/** The positive levels a reasoning-efforts draft declares. */
-function declaredLevels(value: unknown): readonly ReasoningLevel[] {
-  if (!isReasoningDict(value)) return []
-  return REASONING_LEVELS.filter(level => value[level] !== undefined && value[level] !== null)
-}
-
-/** A reasoning-efforts dict: the implicit `off` plus each declared level at its own name. */
-function reasoningEfforts(levels: readonly ReasoningLevel[]): Record<string, string | null> {
-  const efforts: Record<string, string | null> = { off: null }
-  for (const level of levels) efforts[level] = level
-  return efforts
-}
-
-/**
  * Spell a stored count for a field that may be unset. The spelling itself is
  * {@link formatCapacity}, shared with the DeepSeek catalog editor so both
  * surfaces read and write one K/M vocabulary.
@@ -174,7 +142,7 @@ function capacitySpelling(value: number | undefined): string {
 }
 
 /** Adopt a candidate, keeping whatever capacities the provider disclosed. */
-function adopt(candidate: DiscoveredModelView): ModelDraft {
+function adopt(candidate: LlmDiscoveredModel): ModelDraft {
   return {
     id: candidate.id,
     ...candidate.name === undefined ? {} : { name: candidate.name },
@@ -192,7 +160,7 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
   const { models, onChange, probe, api, t, disabled } = props
   const [busy, setBusy] = useState(false)
   const [failure, setFailure] = useState<string | undefined>(undefined)
-  const [candidates, setCandidates] = useState<readonly DiscoveredModelView[] | undefined>(undefined)
+  const [candidates, setCandidates] = useState<readonly LlmDiscoveredModel[] | undefined>(undefined)
   const [picked, setPicked] = useState<ReadonlySet<string>>(new Set())
   // Rows carry an id and a name; capacities are the exception, so they stay
   // folded until asked for rather than crowding every row with four inputs.
@@ -240,7 +208,7 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
     })
   }
 
-  const patch = (index: number, next: Record<string, unknown>): void => {
+  const patch = (index: number, next: Record<string, string | number | undefined>): void => {
     onChange(models.map((model, at) => {
       if (at !== index) return model
       // Rebuilt rather than spread over: an emptied optional field has to leave
@@ -257,44 +225,21 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
     }))
   }
 
-  /** Whether one row's input modalities include images. */
-  const hasImageInput = (model: ModelDraft): boolean =>
-    Array.isArray(model['input']) && (model['input'] as readonly unknown[]).includes('image')
-
-  /** Whether one row declares `level` as a supported reasoning level. */
-  const declaresLevel = (model: ModelDraft, level: ReasoningLevel): boolean =>
-    isReasoningDict(model['reasoningEfforts'])
-    && model['reasoningEfforts'][level] !== undefined
-    && model['reasoningEfforts'][level] !== null
-
-  /** Toggle a row's image-input declaration between text-only and text-plus-image. */
-  const toggleImageInput = (index: number, enabled: boolean): void => {
-    patch(index, { input: enabled ? ['text', 'image'] : ['text'] })
-  }
-
-  /** Toggle one reasoning level; a row with none left is a non-reasoning model. */
-  const toggleReasoningLevel = (index: number, level: ReasoningLevel, enabled: boolean): void => {
-    const current = declaredLevels(models[index]?.['reasoningEfforts'])
-    const next = enabled ? [...current, level] : current.filter(existing => existing !== level)
-    patch(index, { reasoningEfforts: next.length === 0 ? false : reasoningEfforts(next) })
-  }
-
   const fetchModels = async (): Promise<void> => {
     setBusy(true)
     setFailure(undefined)
     try {
-      const response = await api.llm.discoverModels({
-        settingsNs: probe.settingsNs,
+      const response = await api.llm.discoverModels(probe.settingsNs, {
         ...probe.provider === undefined ? {} : { provider: probe.provider },
         ...probe.baseURL === undefined || probe.baseURL.length === 0 ? {} : { baseURL: probe.baseURL },
         ...probe.api === undefined ? {} : { api: probe.api },
         ...probe.apiKey === undefined ? {} : { apiKey: probe.apiKey },
       })
-      if (!response.result.ok) {
-        setFailure(response.result.error.message)
+      if (!response.ok) {
+        setFailure(response.error.message)
         return
       }
-      const found = response.result.value.models
+      const found = response.value
       if (found.length === 0) {
         setFailure(t('fetchEmpty'))
         return
@@ -481,66 +426,6 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
                     onChange={(event) => { editCapacity(index, 'maxTokens', event.target.value) }}
                   />
                 </label>
-                <div className={styles['modelField']}>
-                  <span className={styles['modelFieldLabel']}>{t('modelInputModalities')}</span>
-                  <span className={styles['chipRow']}>
-                    <Pill
-                      className={`${styles['chip']} ${styles['iconChip']}`}
-                      active
-                      aria-pressed
-                      aria-label={t('modelModalityText')}
-                      title={t('modelModalityText')}
-                      disabled
-                      onClick={() => {}}
-                    >
-                      <TextIcon size={16} />
-                    </Pill>
-                    <Pill
-                      className={`${styles['chip']} ${styles['iconChip']}`}
-                      active={hasImageInput(model)}
-                      aria-pressed={hasImageInput(model)}
-                      aria-label={t('modelModalityImage')}
-                      disabled={disabled}
-                      onClick={() => { toggleImageInput(index, !hasImageInput(model)) }}
-                    >
-                      <ImageIcon size={16} />
-                    </Pill>
-                  </span>
-                </div>
-                <div className={styles['modelField']}>
-                  <span className={styles['modelFieldLabel']}>{t('modelOutputModalities')}</span>
-                  <span className={styles['chipRow']}>
-                    <Pill
-                      className={`${styles['chip']} ${styles['iconChip']}`}
-                      active
-                      aria-pressed
-                      aria-label={t('modelModalityText')}
-                      title={t('modelModalityText')}
-                      disabled
-                      onClick={() => {}}
-                    >
-                      <TextIcon size={16} />
-                    </Pill>
-                  </span>
-                </div>
-                <div className={styles['modelField']}>
-                  <span className={styles['modelFieldLabel']}>{t('modelReasoningLevels')}</span>
-                  <span className={styles['chipRow']}>
-                    {REASONING_LEVELS.map(level => (
-                      <Pill
-                        key={level}
-                        className={styles['chip']}
-                        active={declaresLevel(model, level)}
-                        aria-pressed={declaresLevel(model, level)}
-                        disabled={disabled}
-                        onClick={() => { toggleReasoningLevel(index, level, !declaresLevel(model, level)) }}
-                      >
-                        {level}
-                      </Pill>
-                    ))}
-                  </span>
-                  <span className={styles['checkHint']}>{t('modelReasoningLevelsHint')}</span>
-                </div>
               </div>
             )
             : null}
