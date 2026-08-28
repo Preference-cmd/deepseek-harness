@@ -8,7 +8,7 @@
 
 import clsx from 'clsx'
 import { IconChevronDownOutline14 } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { SettingsScope } from '@deepseek-ai/dsh-client-runtime/client'
+import type { SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
 import { CardForm, textField, numberField, type CardFieldSpec } from './card-form.ts'
 import { ToggleSwitch } from './ToggleSwitch.tsx'
 import { ValueField } from './fields.tsx'

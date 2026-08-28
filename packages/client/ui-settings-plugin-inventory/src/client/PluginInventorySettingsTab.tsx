@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useState, type ReactNode } from 'react'
-import type { PluginEntryId, PluginInventorySnapshot } from '@deepseek-ai/dsh-api-remotes/client'
+import type { PluginInventorySnapshot } from '@deepseek-ai/dsh-api-remotes/client'
+import type { PluginEntryId } from '@deepseek-ai/dsh-host-plugin-inventory'
 import {
   IconChevronDownOutline14,
   IconSearchOutline16,
