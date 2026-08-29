@@ -112,6 +112,16 @@ function rejectPreset(error: unknown, agentPreset: string, fallbackMessage: stri
   throw presetFailure(error, agentPreset) ?? remotePresetFailure('internal', fallbackMessage, {})
 }
 
+/**
+ * Preset ids a session recorded before the id was renamed. The composition is
+ * unchanged — only the id moved — so resolution maps the old id to the preset
+ * that now owns it. This is the counterpart of the session-persistent rename
+ * vocabulary: durable headers keep the old id until the v0→v1 session-format
+ * migration, and resolve() must still answer it. A directory that actually
+ * supplies the old id wins, because an authored preset may reuse any name.
+ */
+const RENAMED_PRESET_IDS: Readonly<Record<string, string>> = { code: 'ptc' }
+
 /** The user-writable slice of this plugin's config. */
 export interface AgentPresetSettings {
   /** Preset mounted when a session names none. */
@@ -335,19 +345,26 @@ export class AgentPresets extends TypertRemoteService {
    *
    * A broken preset resolves — deleting one, reading one, and reporting one
    * all need the row — and the mounting paths refuse it AFTER resolution
-   * through {@link resolveMountable}.
+   * through {@link resolveMountable}. A pre-rename id (see
+   * {@link RENAMED_PRESET_IDS}) resolves to the preset that now owns its
+   * composition, which is what lets a durable session header keep the old id.
    * @param id - the preset id, or `undefined` for {@link defaultId}.
    * @returns the resolved preset.
-   * @throws when no configured root supplies that id.
+   * @throws when no configured root supplies that id or the renamed target.
    */
   async resolve(id?: string): Promise<AgentPreset> {
     const wanted = id ?? this.defaultId
     const presets = await this.list()
     const found = presets.find(preset => preset.id === wanted)
-    if (found === undefined) {
-      throw new UnknownPresetError(wanted, presets.map(preset => preset.id))
+    if (found !== undefined) return found
+    // A session recorded the preset under its pre-rename id; the composition
+    // resolve() returns is the one that now owns it (see {@link RENAMED_PRESET_IDS}).
+    const renamed = RENAMED_PRESET_IDS[wanted]
+    if (renamed !== undefined) {
+      const legacy = presets.find(preset => preset.id === renamed)
+      if (legacy !== undefined) return legacy
     }
-    return found
+    throw new UnknownPresetError(wanted, presets.map(preset => preset.id))
   }
 
   /**

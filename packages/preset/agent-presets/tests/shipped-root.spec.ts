@@ -9,7 +9,7 @@
  * suite: the derived writable root is resolved in the constructor.
  */
 
-import { mkdtemp, readFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -18,7 +18,9 @@ import Loader from '@deepseek-ai/cordis-plugin-loader'
 import Include, { entryListSchema } from '@deepseek-ai/cordis-plugin-include'
 import * as yaml from 'js-yaml'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import AgentPresets, { SHIPPED_PRESET_ROOT, type Config } from '@deepseek-ai/dsh-agent-presets'
+import AgentPresets, {
+  COMPOSITION_FILE, SHIPPED_PRESET_ROOT, UnknownPresetError, type Config,
+} from '@deepseek-ai/dsh-agent-presets'
 
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), 'fixtures')
 const SYSTEM_ROOT = join(FIXTURES, 'system')
@@ -108,5 +110,41 @@ describe('the shipped preset root', () => {
       }
       expect(toolWeb.config.fetch, id).toBe(true)
     }
+  })
+})
+
+describe('preset ids a durable session header recorded before a rename', () => {
+  it('maps the pre-rename `code` id to the `ptc` preset that owns the composition', async () => {
+    const ctx = await roster({ includeUserRoot: false })
+
+    const legacy = await ctx.agentPresets.resolve('code')
+    expect(legacy.id).toBe('ptc')
+    expect(legacy.path.startsWith(SHIPPED_PRESET_ROOT)).toBe(true)
+  })
+
+  it('resolves the deployment default under its legacy name', async () => {
+    const ctx = await roster({ default: 'code', includeUserRoot: false })
+
+    expect((await ctx.agentPresets.resolve()).id).toBe('ptc')
+  })
+
+  it('lets a directory that really supplies the old id win over the rename', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'dsh-legacy-code-'))
+    await mkdir(join(root, 'code'), { recursive: true })
+    await writeFile(join(root, 'code', COMPOSITION_FILE), '[]\n')
+    const ctx = await roster({ roots: [{ path: root, trust: 'user' }], includeUserRoot: false })
+
+    const legacy = await ctx.agentPresets.resolve('code')
+    expect(legacy.id).toBe('code')
+    expect(legacy.path.startsWith(root)).toBe(true)
+  })
+
+  it('still refuses an id no root supplies, legacy or not', async () => {
+    const ctx = await roster({ includeUserRoot: false })
+
+    await expect(ctx.agentPresets.resolve('no-such-preset'))
+      .rejects.toBeInstanceOf(UnknownPresetError)
+    await expect(ctx.agentPresets.resolve('code'))
+      .resolves.toMatchObject({ id: 'ptc' })
   })
 })
