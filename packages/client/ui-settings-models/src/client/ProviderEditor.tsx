@@ -245,7 +245,7 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
         let next = schema.deletePath(current, ['retryPolicy', 'maxRetries'])
         const policy = schema.getPath(next, ['retryPolicy'])
         if (policy !== undefined && typeof policy === 'object' && policy !== null) {
-          const keys = Object.keys(policy as object)
+          const keys = Object.keys(policy)
           const soleNormalMode = keys.length === 1 && keys[0] === 'mode'
             && (policy as Record<string, unknown>)['mode'] === 'normal'
           if (keys.length === 0 || soleNormalMode) {

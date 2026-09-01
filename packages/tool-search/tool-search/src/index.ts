@@ -336,10 +336,9 @@ export function apply(ctx: Context, config: Config = {}): void {
     execute: async (args, exec) => {
       const options: SearchOptions = {
         query: args.query,
-        scope: exec.agent as unknown as object,
-        limit: args.limit as number | undefined,
-        method: args.method as
-          'semantic' | 'keyword' | 'hybrid' | 'auto' | undefined,
+        scope: exec.agent,
+        limit: args.limit,
+        method: args.method,
       }
 
       const results = await searchService.search(options)

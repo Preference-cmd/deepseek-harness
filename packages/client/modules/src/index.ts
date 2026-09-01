@@ -31,7 +31,7 @@ import { dirname, isAbsolute, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { Service } from '@deepseek-ai/cordis'
 import type { Context } from '@deepseek-ai/cordis'
-import type { Entry, ModuleLoader, ModuleLoaderV1, ModuleLoaderV2 } from '@deepseek-ai/cordis-plugin-loader'
+import type { Entry } from '@deepseek-ai/cordis-plugin-loader'
 import type { IndexInjection } from '@deepseek-ai/dsh-host-webserver'
 import { optionalStringArray, stripClientSuffix } from './client/manifest.ts'
 import type { WebBootBatch, WebBootBatchPhase, WebBootEntry, WebBootGraph } from './client/manifest.ts'
@@ -530,43 +530,6 @@ window.__ModuleLoader__={
  * already-loaded entries aggregates into one loud throw (FAILED fiber; the
  * boot activation audit reports it).
  */
-/**
- * Resolve one specifier through the Node-internal loader across the two
- * `resolveSync` parameter orders Node has shipped. `ModuleLoader.fromInternal`
- * only tags the raw object, and Node 24.11 still pairs the `v2` tag with the
- * `(specifier, parentURL, attributes)` order the tag claims replaced, so the
- * stamped order is attempted first and the other order covers the mismatch.
- * @param internal - the Loader's wrapped Node-internal module loader.
- * @param loaderName - bare or path-like specifier to resolve.
- * @param baseUrl - resolution base of the tree that owns the row.
- * @returns the resolved module URL, or `undefined` when both orders reject the name.
- */
-export function resolveInternalModuleUrl(internal: ModuleLoader, loaderName: string, baseUrl: string): string | undefined {
-  const attempts: (() => string)[] = internal.version === 'v2'
-    ? [
-      // Each attempt invokes `resolveSync` as a method of `internal`: the
-      // Node-internal implementation depends on its receiver, so extracting
-      // the function would break the working order too.
-      () => (internal as ModuleLoaderV2).resolveSync(baseUrl, { specifier: loaderName, attributes: {} }).url,
-      () => (internal as unknown as ModuleLoaderV1).resolveSync(loaderName, baseUrl, {}).url,
-    ]
-    : [
-      () => (internal as ModuleLoaderV1).resolveSync(loaderName, baseUrl, {}).url,
-      () => (internal as unknown as ModuleLoaderV2).resolveSync(baseUrl, { specifier: loaderName, attributes: {} }).url,
-    ]
-  for (const attempt of attempts) {
-    try {
-      return attempt()
-    } catch {
-      // The first attempt carries the order this Node release may not
-      // implement; the second covers the mismatch. Both rejections mean the
-      // name does not resolve for this tree, and the caller classifies the
-      // row as permanently not a client row.
-    }
-  }
-  return undefined
-}
-
 export class ClientModuleRegistry extends Service {
   static inject = ['webServer', 'loader']
 
@@ -618,6 +581,7 @@ export class ClientModuleRegistry extends Service {
     if (failures.length > 0) {
       throw new ClientPackageCompositionError(failures)
     }
+
     ctx.effect(
       () => ctx.webServer.register({ kind: 'prefix', path: '/plugins', handler: this.serveBundle }),
       'client-modules: bundle route',
@@ -843,8 +807,12 @@ export class ClientModuleRegistry extends Service {
         return undefined
       }
     }
-    const moduleUrl = resolveInternalModuleUrl(internal, loaderName, baseUrl)
-    if (moduleUrl === undefined) {
+    let moduleUrl: string
+    try {
+      moduleUrl = internal.version === 'v2'
+        ? internal.resolveSync(baseUrl, { specifier: loaderName, attributes: {} }).url
+        : internal.resolveSync(loaderName, baseUrl, {}).url
+    } catch {
       // The Loader cannot resolve the name: its row cannot have imported, so
       // the name is permanently not a client row.
       return undefined

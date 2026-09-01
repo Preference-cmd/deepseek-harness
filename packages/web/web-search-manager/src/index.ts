@@ -17,7 +17,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
 import { credentialRef } from '@deepseek-ai/dsh-credentials'
 import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
-import { installSettingsSection, settingsNamespace } from '@deepseek-ai/dsh-settings'
+import type {} from '@deepseek-ai/dsh-settings'
 import type {} from '@deepseek-ai/dsh-web'
 import {
   DeepSeekSearchProvider,
@@ -160,7 +160,7 @@ export const Config: z<Config> = z.object({
 // ---------------------------------------------------------------------------
 
 /** Settings namespace carrying all provider configurations. */
-export const WEB_SEARCH_MANAGER_SETTINGS_NAMESPACE = settingsNamespace('web-search-manager')
+export const WEB_SEARCH_MANAGER_SETTINGS_NAMESPACE = 'web-search-manager'
 
 // ---------------------------------------------------------------------------
 // Provider resolution helpers
@@ -235,13 +235,15 @@ export function apply(ctx: Context, config: Config): void {
   let current: () => Config = () => config
   const disposers = new Map<string, () => void>()
 
-  installSettingsSection(ctx, WEB_SEARCH_MANAGER_SETTINGS_NAMESPACE, Config, config, {
-    setSource: (source) => {
-      current = source
-    },
-    onChange: () => {
-      syncProviders(ctx, current, disposers)
-    },
+  ctx.inject(['settings'], (settingsCtx) => {
+    settingsCtx.settings.installSection(ctx, WEB_SEARCH_MANAGER_SETTINGS_NAMESPACE, Config, config, {
+      setSource: (source: () => Config) => {
+        current = source
+      },
+      onChange: () => {
+        syncProviders(ctx, current, disposers)
+      },
+    })
   })
 
   // Initial registration.

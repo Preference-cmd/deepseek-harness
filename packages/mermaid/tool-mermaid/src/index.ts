@@ -57,7 +57,7 @@ export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineT
       },
       render: (_args, value) => [{
         type: 'text' as const,
-        text: String(value.svg ?? ''),
+        text: value.svg ?? '',
       }],
     },
     execute(args) {

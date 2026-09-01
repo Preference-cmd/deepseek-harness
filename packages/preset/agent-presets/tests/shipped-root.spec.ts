@@ -20,7 +20,7 @@ import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
 import * as yaml from 'js-yaml'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import AgentPresets, {
-  COMPOSITION_FILE, SHIPPED_PRESET_ROOT, UnknownPresetError, type Config,
+  COMPOSITION_FILE, SHIPPED_PRESET_ROOT, type Config,
 } from '@deepseek-ai/dsh-agent-presets'
 
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), 'fixtures')
@@ -145,7 +145,7 @@ describe('preset ids a durable session header recorded before a rename', () => {
     const ctx = await roster({ includeUserRoot: false })
 
     await expect(ctx.agentPresets.resolve('no-such-preset'))
-      .rejects.toBeInstanceOf(UnknownPresetError)
+      .rejects.toMatchObject({ code: 'agent-preset/not-found' })
     await expect(ctx.agentPresets.resolve('code'))
       .resolves.toMatchObject({ id: 'ptc' })
   })
