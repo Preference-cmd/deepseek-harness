@@ -24,7 +24,7 @@
 import { stat } from 'node:fs/promises'
 import { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
-import { Remote, TypertRemoteFailure, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
+import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import { bindScopeParent, createScope, scopeOf, type Scope, type ScopeKey, type ScopeParentBinding } from '@deepseek-ai/dsh-scope'
 // Type-only: resolves the `agent/created` lifecycle event this service watches.
 import type {} from '@deepseek-ai/dsh-agent'
@@ -51,65 +51,11 @@ export type * from './types.ts'
 /** Settings namespace carrying the user's chosen default preset. */
 export const SETTINGS_NAMESPACE = 'agent-presets'
 
-/** Construct one typed preset failure for the Remote carrier. */
-function remotePresetFailure<Code extends keyof AgentPresetErrorDetailsMap>(
-  code: Code,
-  message: string,
-  details: AgentPresetErrorDetailsMap[Code],
-): TypertRemoteFailure {
-  return new TypertRemoteFailure({ code, message, details })
-}
-
-/** Map one preset rejection to its stable Remote code and details. */
-function presetFailure(error: unknown, agentPreset: string): TypertRemoteFailure | undefined {
-  if (error instanceof UnknownPresetError) {
-    return remotePresetFailure(
-      'agent-preset-not-found',
-      error.message,
-      { agentPreset: error.presetId, available: [...error.available] },
-    )
-  }
-  if (error instanceof PresetMountError) {
-    return remotePresetFailure(
-      'agent-preset-invalid',
-      error.message,
-      { agentPreset: error.presetId, reason: error.reason },
-    )
-  }
-  if (error instanceof InvalidPresetIdError || error instanceof PresetExistsError) {
-    return remotePresetFailure(
-      'agent-preset-invalid',
-      error.message,
-      { agentPreset: error.presetId, reason: error.message },
-    )
-  }
-  if (error instanceof PresetNotWritableError) {
-    return remotePresetFailure(
-      'agent-preset-read-only',
-      error.message,
-      { agentPreset, reason: error.message },
-    )
-  }
-  if (error instanceof PresetLockedError) {
-    return remotePresetFailure(
-      'agent-preset-locked',
-      `session "${error.sessionId}" has already started; its agent preset is fixed`,
-      { sessionId: error.sessionId, agentPreset: error.presetId },
-    )
-  }
-  return undefined
-}
-
 /** Refuse an empty preset id before invoking a domain operation. */
 function validatePresetId(value: string, field: 'agentPreset' | 'from'): void {
   if (value.length === 0) {
-    throw remotePresetFailure('bad-request', `${field} must be a non-empty string`, {})
+    throw new RemoteError('gateway/bad-request', `${field} must be a non-empty string`, {})
   }
-}
-
-/** Throw the stable preset failure or the caller's operation-specific fallback. */
-function rejectPreset(error: unknown, agentPreset: string, fallbackMessage: string): never {
-  throw presetFailure(error, agentPreset) ?? remotePresetFailure('internal', fallbackMessage, {})
 }
 
 /**
@@ -364,7 +310,12 @@ export class AgentPresets extends TypertRemoteService {
       const legacy = presets.find(preset => preset.id === renamed)
       if (legacy !== undefined) return legacy
     }
-    throw new UnknownPresetError(wanted, presets.map(preset => preset.id))
+    const available = presets.map(preset => preset.id)
+    throw new RemoteError(
+      'agent-preset/not-found',
+      `agent-presets: preset "${wanted}" not found (available: ${available.join(', ') || 'none'})`,
+      { agentPreset: wanted, available },
+    )
   }
 
   /**

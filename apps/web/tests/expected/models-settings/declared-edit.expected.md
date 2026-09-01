@@ -41,6 +41,9 @@
         - textbox "API 地址":
           - /placeholder: https://gateway.acme.example/v1
           - text: https://gateway.acme.example/v1
+        - text: 最大重试次数
+        - textbox "最大重试次数":
+          - /placeholder: "5"
         - text: API 协议
         - combobox "API 协议":
           - option "openai-completions" [selected]
