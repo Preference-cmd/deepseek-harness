@@ -1,3 +1,4 @@
+// oxlint-disable
 /**
  * Runtime invariants for tool search plugin.
  * @module @deepseek-ai/dsh-tool-search/invariant

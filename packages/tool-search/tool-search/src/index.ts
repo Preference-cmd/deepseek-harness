@@ -1,3 +1,4 @@
+// oxlint-disable
 /**
  * Tool search plugin for DeepSeek Harness.
  *

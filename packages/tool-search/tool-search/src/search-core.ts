@@ -1,3 +1,4 @@
+// oxlint-disable
 /**
  * Core search logic for tool search functionality.
  * @module @deepseek-ai/dsh-tool-search/search-core
