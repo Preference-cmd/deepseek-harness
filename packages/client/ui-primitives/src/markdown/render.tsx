@@ -24,6 +24,7 @@ import type {} from 'mdast-util-math'
 import { normalizeUri } from 'micromark-util-sanitize-uri'
 import { CodeBlock } from './CodeBlock.tsx'
 import { renderTexToReact } from './katex.tsx'
+import { useMermaidDiagram } from './mermaid.tsx'
 import type { PositionedBlock } from './incremental.ts'
 import css from './MarkdownText.module.css'
 
@@ -309,6 +310,30 @@ function renderNode(node: Md.RootContent, key: Key, context: MarkdownRenderConte
   }
 }
 
+/** A settled mermaid fence: the rendered diagram, or the code fallback. */
+function MermaidBlock({ source, code, lang, copyLabel, copiedLabel }: {
+  source: string
+  code: string
+  lang: string | undefined
+  copyLabel: string
+  copiedLabel: string
+}): ReactNode {
+  const diagram = useMermaidDiagram(source)
+  if (diagram === null || diagram === undefined) {
+    // Loading, load failure, or an unparseable source: the fence every other
+    // grammar gets, so the source stays visible and copyable.
+    return (
+      <CodeBlock
+        code={code}
+        lang={lang}
+        copyLabel={copyLabel}
+        copiedLabel={copiedLabel}
+      />
+    )
+  }
+  return <div className={css.mermaidDiagram}>{diagram}</div>
+}
+
 function renderCode(node: Md.Code, key: Key, context: MarkdownRenderContext): ReactNode {
   const language = node.lang ?? undefined
   if (node.value === '') {
@@ -326,6 +351,18 @@ function renderCode(node: Md.Code, key: Key, context: MarkdownRenderContext): Re
     // ```math fences render as display TeX once settled (rehype-katex parity);
     // its text extraction saw the code block's trailing newline.
     return <Fragment key={key}>{renderTexToReact(`${node.value}\n`, true)}</Fragment>
+  }
+  if (!context.streaming && lang === 'mermaid') {
+    return (
+      <MermaidBlock
+        key={key}
+        source={node.value}
+        code={`${node.value}\n`}
+        lang={lang}
+        copyLabel={context.labels.code.copyLabel}
+        copiedLabel={context.labels.code.copiedLabel}
+      />
+    )
   }
   return (
     <CodeBlock

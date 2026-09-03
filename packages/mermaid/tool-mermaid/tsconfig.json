@@ -2,21 +2,15 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "lib/types",
-    "composite": true
+    "outDir": "lib/types"
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "references": [
     {
       "path": "../../../vendor/cordis"
     },
     {
       "path": "../../core/tools"
-    },
-    {
-      "path": "../../runtime-diagnostics/invariants"
     }
   ]
 }

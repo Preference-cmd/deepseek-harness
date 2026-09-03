@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/mermaid/tool-mermaid/README.md
-README.md: 823f2c2c187b00f1aa91c3e15fb8c39ba3d894de
-README.zh.md: 63bf4f5161736b31636471d21448954b3e288787
+README.md: d03d03a1e08856a634d091a73bb7f8240291ef13
+README.zh.md: 6db4e016f8f658a6d32eeba70d77dd1688e96ae1

@@ -104,6 +104,8 @@ flowchart LR
   cfg --> plugin_dsh_base_skill_badge
   plugin_dsh_base_tool_skill["tool-skill<br/>@deepseek-ai/dsh-tool-skill"]
   cfg --> plugin_dsh_base_tool_skill
+  plugin_dsh_base_tool_mermaid["tool-mermaid<br/>@deepseek-ai/dsh-tool-mermaid"]
+  cfg --> plugin_dsh_base_tool_mermaid
   plugin_dsh_base_commands["commands<br/>@deepseek-ai/dsh-commands"]
   cfg --> plugin_dsh_base_commands
   plugin_dsh_base_command_feedback["command-feedback<br/>@deepseek-ai/dsh-command-feedback"]
@@ -230,6 +232,7 @@ flowchart LR
 | `skill-filesystem` | `@deepseek-ai/dsh-skill-filesystem` |
 | `skill-badge` | `@deepseek-ai/dsh-skill-badge` |
 | `tool-skill` | `@deepseek-ai/dsh-tool-skill` |
+| `tool-mermaid` | `@deepseek-ai/dsh-tool-mermaid` |
 | `commands` | `@deepseek-ai/dsh-commands` |
 | `command-feedback` | `@deepseek-ai/dsh-command-feedback` |
 | `goal` | `@deepseek-ai/dsh-goal` |

@@ -1226,6 +1226,9 @@ importers:
       '@deepseek-ai/dsh-tool-jobs':
         specifier: workspace:^
         version: link:../../jobs/tool-jobs
+      '@deepseek-ai/dsh-tool-mermaid':
+        specifier: workspace:^
+        version: link:../../mermaid/tool-mermaid
       '@deepseek-ai/dsh-tool-pwsh':
         specifier: workspace:^
         version: link:../../shell/tool-pwsh
@@ -2805,6 +2808,9 @@ importers:
       mdast-util-math:
         specifier: ^3.0.0
         version: 3.0.0
+      mermaid:
+        specifier: ^11.16.0
+        version: 11.16.0
       micromark-core-commonmark:
         specifier: ^2.0.3
         version: 2.0.3
@@ -6475,14 +6481,19 @@ importers:
         version: 2026.7.10(zod@4.4.3)
 
   packages/mermaid/tool-mermaid:
-    dependencies:
-      '@deepseek-ai/dsh-tools':
-        specifier: workspace:^
-        version: link:../../core/tools
     devDependencies:
       '@deepseek-ai/cordis':
         specifier: workspace:^
         version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-llm':
+        specifier: workspace:^
+        version: link:../../llm/llm
+      '@deepseek-ai/dsh-system-prompt':
+        specifier: workspace:^
+        version: link:../../core/system-prompt
+      '@deepseek-ai/dsh-tools':
+        specifier: workspace:^
+        version: link:../../core/tools
 
   packages/plan/plan-mode:
     dependencies:
@@ -7120,6 +7131,9 @@ importers:
 
   packages/session/session-persistence-jsonl:
     dependencies:
+      '@deepseek-ai/dsh-llm':
+        specifier: workspace:^
+        version: link:../../llm/llm
       '@deepseek-ai/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery

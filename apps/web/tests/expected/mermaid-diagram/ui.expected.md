@@ -1,0 +1,43 @@
+- banner:
+  - navigation "Session hierarchy":
+    - button "Mermaid diagram" [disabled]
+  - button "Session log":
+    - text: Session log
+    - img
+  - tablist:
+    - tab "Chat" [selected]
+    - tab "Trajectory"
+- text: Draw the login flow. {{clock}}
+- button "Copy":
+  - img
+- heading "Login flow" [level=2]
+- document:
+  - paragraph: "Yes"
+  - paragraph: "No"
+  - paragraph: User
+  - paragraph: Logged in?
+  - paragraph: Dashboard
+  - paragraph: Login form
+- document: B A B A login token
+- paragraph: MERMAID_DIAGRAM_DONE
+- button "Copy":
+  - img
+- button "Good response":
+  - img
+- button "Bad response":
+  - img
+- button "Branch into a new conversation":
+  - img
+- button "Ran for {{duration}}":
+  - img
+  - text: Ran for {{duration}}
+- text: {{clock}}
+- textbox "Message or run a task... / commands, @ files or sessions"
+- button "Commands":
+  - img
+- 'button "Access mode, current: Workspace Write"': Workspace Write
+- button "Select model, current DeepSeek-V4-Flash":
+  - text: DeepSeek-V4-Flash
+  - img
+- button "Send message" [disabled]
+- text: 1 turns · 1 steps LLM {{duration}}
