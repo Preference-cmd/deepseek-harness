@@ -39,7 +39,6 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-tool-search": "workspace:^",
     "@deepseek-ai/dsh-agent-presets": "workspace:^",
     "@deepseek-ai/dsh-tool-subagent": "workspace:^",
     "@deepseek-ai/dsh-api-remotes": "workspace:^",

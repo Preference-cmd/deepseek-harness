@@ -102,7 +102,6 @@
     { "path": "./packages/client/ui-session" },
     { "path": "./packages/client/web" },
     { "path": "./packages/context/file-reference" },
-    { "path": "./packages/tool-search/tool-search" },
     { "path": "./apps/web" }
   ]
 }

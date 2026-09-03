@@ -452,15 +452,8 @@
 
     - id: web-search-deepseek
       name: '@deepseek-ai/dsh-web-search-deepseek'
-      disabled: true
-
-    # Unified search provider manager: conditionally registers DeepSeek, Exa,
-    # and Perplexity providers based on their sub-config presence. Each provider
-    # section is optional — an omitted section means that provider is not
-    # registered. Provider selection remains the `web` service's `searchProvider`
-    # config; this plugin registers providers, it does not own selection.
-    - id: web-search-manager
-      name: '@deepseek-ai/dsh-web-search-manager'
+      config:
+        apiKeyEnv: DEEPSEEK_API_KEY
 
     - id: web-fetch-http
       name: '@deepseek-ai/dsh-web-fetch-http'

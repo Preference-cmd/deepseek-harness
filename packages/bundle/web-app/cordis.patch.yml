@@ -295,17 +295,6 @@
     - id: ui-settings-plugins
       name: '@deepseek-ai/dsh-client-ui-settings-plugins'
 
-    # Tool search: the model-facing tool_search tool for discovering relevant tools.
-    - id: tool-search
-      name: '@deepseek-ai/dsh-tool-search'
-      config:
-        maxResults: 10
-        similarityThreshold: 0.3
-        cacheEnabled: true
-        cacheTTL: 300000
-        indexRefreshInterval: 60000
-        maxConcurrentSearches: 5
-
     # Plan control: the composer plan seat over the plan projection + /plan channel.
     - id: ui-plan
       name: '@deepseek-ai/dsh-client-ui-plan'
