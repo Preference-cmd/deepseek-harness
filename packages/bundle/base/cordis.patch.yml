@@ -289,6 +289,9 @@
     - id: tool-skill
       name: '@deepseek-ai/dsh-tool-skill'
 
+    - id: tool-mermaid
+      name: '@deepseek-ai/dsh-tool-mermaid'
+
     - id: commands
       name: '@deepseek-ai/dsh-commands'
 

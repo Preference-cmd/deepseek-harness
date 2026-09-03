@@ -3,6 +3,7 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 export const name = 'tool-mermaid'
 export const inject = ['tools']
 
+/** Diagram families the tool recognizes, by first keyword. */
 function detectDiagramType(source: string): string {
   const trimmed = source.trim().toLowerCase()
   if (trimmed.startsWith('graph ') || trimmed.startsWith('flowchart ')) return 'flowchart'
@@ -19,31 +20,14 @@ function detectDiagramType(source: string): string {
   return 'flowchart'
 }
 
-function generatePlaceholderSvg(diagram: string, type: string): string {
-  const lines = diagram.split('\n').slice(0, 5)
-  const escaped = lines
-    .map(l => l.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
-    .join('\n  ')
-  return [
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">',
-    '  <rect width="600" height="400" fill="#f9fafb" rx="8"/>',
-    '  <text x="20" y="30" font-family="monospace" font-size="12" fill="#6b7280">[' + type + ' diagram]</text>',
-    '  <foreignObject x="20" y="45" width="560" height="340">',
-    '    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:monospace;font-size:11px;color:#374151;white-space:pre-wrap">',
-    '      ' + escaped,
-    '    </div>',
-    '  </foreignObject>',
-    '</svg>',
-  ].join('\n')
-}
-
 export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineTool>) => void } }): void {
   ctx.tools.register(defineTool({
     name: 'mermaid_render',
-    description: 'Render a Mermaid diagram to SVG. Accepts Mermaid syntax and returns an SVG image.',
+    description: 'Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram.',
     parameters: {
       diagram: {
         type: 'string',
+        required: true,
         description: 'The Mermaid diagram source code.',
       },
     },
@@ -52,19 +36,21 @@ export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineT
         type: 'object',
         additionalProperties: true,
         properties: {
-          svg: { type: 'string' },
+          diagram: { type: 'string' },
+          type: { type: 'string' },
         },
       },
       render: (_args, value) => [{
         type: 'text' as const,
-        text: value.svg ?? '',
+        text: typeof value.diagram === 'string' && value.diagram.length > 0
+          ? `\`\`\`mermaid\n${value.diagram}\n\`\`\``
+          : '',
       }],
     },
     execute(args) {
       const diagram = String(args.diagram)
-      const detectedType = detectDiagramType(diagram)
-      const svg = generatePlaceholderSvg(diagram, detectedType)
-      return Promise.resolve({ svg, type: detectedType })
+      if (diagram.trim().length === 0) throw new Error('mermaid_render: diagram must not be empty')
+      return Promise.resolve({ diagram, type: detectDiagramType(diagram) })
     },
     presentCall: args => ({
       card: 'generic',

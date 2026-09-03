@@ -166,6 +166,16 @@
   overflow-y: hidden;
 }
 
+.mermaidDiagram {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.mermaidDiagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .markdown input[type='checkbox'] {
   margin: 0 8px 0 0;
   accent-color: var(--dsw-alias-label-secondary);
