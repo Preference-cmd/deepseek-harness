@@ -132,7 +132,10 @@ Validate Mermaid diagram source. Returns the source; the web client renders it a
       "type": "string",
       "description": "The Mermaid diagram source code."
     }
-  }
+  },
+  "required": [
+    "diagram"
+  ]
 }
 ```
 

@@ -142,6 +142,11 @@ interface ToolArgsMap {
     /** children (default) lists direct children only; descendants walks the complete tree below you. */
     scope?: "children" | "descendants";
   } & Record<string, JsonValue>;
+  /** Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram. */
+  mermaid_render: {
+    /** The Mermaid diagram source code. */
+    diagram: string;
+  } & Record<string, JsonValue>;
   /** Run a foreground fresh-agent Ralph loop toward one immutable objective. Use only when the direct human explicitly asks for Ralph or fresh-agent iteration. Each round opens a new child with no parent conversation or prior child session; the shared workspace is long-term memory, and only a bounded structured report crosses rounds. The call returns when a worker reports completion or a concrete blocker, or at the round limit. Ordinary long-running same-session work belongs to goal tools. */
   ralph: {
     /** The immutable completion objective for every fresh Ralph round. */
@@ -414,6 +419,10 @@ interface ToolOutputMap {
     parent?: string;
     depth?: number;
   })[];
+  mermaid_render: {
+    diagram?: string;
+    type?: string;
+  } & Record<string, JsonValue>;
   ralph: {
     runId: string;
     agentsStarted: number;

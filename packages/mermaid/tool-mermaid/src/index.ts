@@ -27,6 +27,7 @@ export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineT
     parameters: {
       diagram: {
         type: 'string',
+        required: true,
         description: 'The Mermaid diagram source code.',
       },
     },
