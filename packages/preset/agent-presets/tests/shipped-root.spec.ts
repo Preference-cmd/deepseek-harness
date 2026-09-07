@@ -9,7 +9,7 @@
  * suite: the derived writable root is resolved in the constructor.
  */
 
-import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -26,16 +26,19 @@ import AgentPresets, {
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), 'fixtures')
 const SYSTEM_ROOT = join(FIXTURES, 'system')
 
+let home: string
 let previousHome: string | undefined
 
 beforeEach(async () => {
   previousHome = process.env.DSH_HOME
-  process.env.DSH_HOME = await mkdtemp(join(tmpdir(), 'dsh-shipped-root-'))
+  home = await mkdtemp(join(tmpdir(), 'dsh-shipped-root-'))
+  process.env.DSH_HOME = home
 })
 
-afterEach(() => {
+afterEach(async () => {
   if (previousHome === undefined) delete process.env.DSH_HOME
   else process.env.DSH_HOME = previousHome
+  await rm(home, { recursive: true, force: true })
 })
 
 /** Boot a roster with the shipped root left to the plugin's default. */
