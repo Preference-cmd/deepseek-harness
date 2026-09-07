@@ -48,7 +48,7 @@ export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineT
       }],
     },
     execute(args) {
-      const diagram = String(args.diagram)
+      const diagram = args.diagram
       if (diagram.trim().length === 0) throw new Error('mermaid_render: diagram must not be empty')
       return Promise.resolve({ diagram, type: detectDiagramType(diagram) })
     },
@@ -56,7 +56,7 @@ export function apply(ctx: { tools: { register: (tool: ReturnType<typeof defineT
       card: 'generic',
       title: 'Render Mermaid diagram',
       kind: 'other',
-      rawInput: String(args.diagram),
+      rawInput: args.diagram,
     }),
   }))
 }
