@@ -1,6 +1,6 @@
 /** Shared repository file discovery and line-oriented reference scanning. */
 
-import { globSync, readFileSync, realpathSync } from 'node:fs'
+import { globSync, readFileSync, realpathSync, statSync } from 'node:fs'
 import { relative, resolve, sep } from 'node:path'
 
 /** One authored path plus its canonical target for symlink deduplication. */
@@ -33,6 +33,63 @@ export function isArchivedAgentNotePath(path: string): boolean {
  * @param isExcluded - optional predicate over each matched relative path.
  * @returns matched files in stable first-seen order.
  */
+/**
+ * Glob one pattern, working around the Node 24 native glob crash with ENOTDIR
+ * when a symlink occupies a path segment the pattern wants to descend into
+ * (a symlinked system-prompt.expected.md file beside a star-star pattern). The
+ * fallback expands `**` one level at a time over real directories only, so a
+ * symlink to a file is never descended into; deeper symlink-to-directory
+ * cycles are cut by the visited set.
+ * @param root - absolute repository root used as the glob cwd.
+ * @param pattern - repository-relative glob pattern containing a star-star segment.
+ * @param visited - canonical real-directory paths already expanded.
+ * @returns matched repository-relative paths.
+ */
+function safeGlobStarStar(root: string, pattern: string, visited: Set<string>): string[] {
+  const star = pattern.indexOf('**')
+  if (star === -1) return globSync(pattern, { cwd: root })
+  const head = pattern.slice(0, star)
+  const tail = pattern.slice(star + 2).replaceAll('/', '')
+  const out: string[] = []
+  for (const sub of safeGlob(root, head + tail, visited)) out.push(sub)
+  const level = head === '' ? '*' : head + '*'
+  let entries: string[]
+  try {
+    entries = globSync(level, { cwd: root })
+  } catch {
+    return out
+  }
+  for (const entry of entries) {
+    const abs = resolve(root, entry)
+    let real: string
+    try {
+      if (!statSync(abs).isDirectory()) continue
+      real = realpathSync(abs)
+    } catch {
+      continue
+    }
+    if (visited.has(real)) continue
+    visited.add(real)
+    for (const sub of safeGlob(root, entry + '/**/' + tail, visited)) out.push(sub)
+  }
+  return out
+}
+
+/**
+ * Glob one pattern, falling back to symlink-safe `**` expansion on ENOTDIR.
+ * @param root - absolute repository root used as the glob cwd.
+ * @param pattern - repository-relative glob pattern.
+ * @param visited - canonical real-directory paths already expanded.
+ * @returns matched repository-relative paths.
+ */
+function safeGlob(root: string, pattern: string, visited: Set<string>): string[] {
+  try {
+    return globSync(pattern, { cwd: root })
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOTDIR') throw error
+    return safeGlobStarStar(root, pattern, visited)
+  }
+}
 export function uniqueRepoFiles(
   root: string,
   patterns: readonly string[],
@@ -40,8 +97,9 @@ export function uniqueRepoFiles(
 ): RepoFile[] {
   const seen = new Set<string>()
   const files: RepoFile[] = []
+  const visited = new Set<string>([realpathSync(root)])
   for (const pattern of patterns) {
-    for (const match of globSync(pattern, { cwd: root })) {
+    for (const match of safeGlob(root, pattern, visited)) {
       const repoPath = match.split(sep).join('/')
       if (isExcluded(repoPath)) continue
       const abs = resolve(root, repoPath)
