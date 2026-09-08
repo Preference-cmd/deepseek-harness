@@ -6,7 +6,7 @@ Status: implemented
 
 ## 问题
 
-2026-08-25 的 code-mode→ptc 重命名把随附 preset 的 id 从 `code` 改为 `ptc`,并且按[重命名笔记](../architecture/2026-08-25-rename-code-mode-to-ptc.zh.md)的约定,会话持久化词汇有意保留旧名,直到 `SESSION_FORMAT_VERSION` v0→v1 迁移落地。但持久化会话**头的 `agentPreset` id** 也是该持久化词汇的一部分,而重命名后没有任何机制继续应答它:`agentPresets.resolve('code')` 抛 `UnknownPresetError`,导致所有需要恢复(resume)一个记录为 `code` 的会话的操作都以 `resume failed ... preset "code" not found` 失败。
+2026-08-25 的 code-mode→ptc 重命名把随附 preset 的 id 从 `code` 改为 `ptc`,并且按[重命名笔记](../../archived/architecture/2026-08-25-rename-code-mode-to-ptc.md)的约定,会话持久化词汇有意保留旧名,直到 `SESSION_FORMAT_VERSION` v0→v1 迁移落地。但持久化会话**头的 `agentPreset` id** 也是该持久化词汇的一部分,而重命名后没有任何机制继续应答它:`agentPresets.resolve('code')` 抛 `UnknownPresetError`,导致所有需要恢复(resume)一个记录为 `code` 的会话的操作都以 `resume failed ... preset "code" not found` 失败。
 
 在 Web 应用中,这一根因呈现为用户报告的三连症状:重命名前创建的空白会话(新会话页的当前会话)无法恢复,预设芯片显示裸 id `code`(未知预设没有显示名),点任何预设都失败;`session/selectModel` 同样失败,模型座保持不变;若 `settings.default` 仍然写 `code`,新建会话也会以同样方式失败。
 
