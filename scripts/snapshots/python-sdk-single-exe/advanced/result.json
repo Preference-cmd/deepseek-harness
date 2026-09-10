@@ -155,6 +155,7 @@
             "job_kill",
             "job_list",
             "job_output",
+            "mermaid_render",
             "run_code",
             "subagent",
             "workflow"
@@ -582,6 +583,7 @@
             "job_kill",
             "job_list",
             "job_output",
+            "mermaid_render",
             "run_code",
             "snapshot_double",
             "subagent",
@@ -1404,6 +1406,7 @@
             "job_kill",
             "job_list",
             "job_output",
+            "mermaid_render",
             "run_code",
             "subagent",
             "workflow"
@@ -1815,6 +1818,7 @@
                 "job_kill",
                 "job_list",
                 "job_output",
+                "mermaid_render",
                 "run_code",
                 "subagent",
                 "workflow"
@@ -2338,6 +2342,7 @@
                 "job_kill",
                 "job_list",
                 "job_output",
+                "mermaid_render",
                 "run_code",
                 "snapshot_double",
                 "subagent",
@@ -2992,6 +2997,7 @@
                 "job_kill",
                 "job_list",
                 "job_output",
+                "mermaid_render",
                 "run_code",
                 "snapshot_double",
                 "subagent",
@@ -3697,6 +3703,7 @@
                 "job_kill",
                 "job_list",
                 "job_output",
+                "mermaid_render",
                 "run_code",
                 "snapshot_double",
                 "subagent",
@@ -4275,6 +4282,7 @@
                 "job_kill",
                 "job_list",
                 "job_output",
+                "mermaid_render",
                 "run_code",
                 "subagent",
                 "workflow"
