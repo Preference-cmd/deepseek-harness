@@ -22,4 +22,5 @@ The sync branch takes upstream wholesale and resolves the 8 merge conflicts by r
 
 - The fork runs on 0.1.5-alpha.2 with Session Log V3, the reworked Sidebar and delivered-file stack, and the `present` delivery tool.
 - The mermaid tool, its web rendering, its e2e, and the settings-models editors remain fork-only and pass the merged gates (`verify-tool-catalog`, `verify-tsconfig-paths`, `verify-third-party-notices`, translation pairing, typecheck, lint).
+- The fork-only browser icon input `reicon-react` (used only by `ModelListEditor.tsx`, with an empty Host `apply()`) moves from `dependencies` to `devDependencies` in `ui-settings-models`, following the same upstream browser-dependency convention as `mermaid`; the `Dependency layout` CI gate caught the old placement.
 - `pnpm run test` is 22127 passed with 1 failure in `scripts/browser-bundled-externals.spec.ts` ("follows shell workspace aliases"); the failure reproduces on a clean upstream tree (a Vite path assertion against the macOS `/private/var` temporary directory), so it is owned upstream and not by this sync.

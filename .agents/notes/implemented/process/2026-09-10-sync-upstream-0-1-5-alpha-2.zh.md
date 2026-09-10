@@ -22,4 +22,5 @@ Status: implemented
 
 - fork 运行在 0.1.5-alpha.2，带有 Session Log V3、重构后的 Sidebar 与交付文件栈，以及 `present` 交付工具。
 - mermaid 工具及其网页渲染、e2e 与 settings-models 编辑器仍是 fork 独有，且通过合并后的门禁（`verify-tool-catalog`、`verify-tsconfig-paths`、`verify-third-party-notices`、translation pairing、typecheck、lint）。
+- fork 独有的浏览器图标输入 `reicon-react`（仅 `ModelListEditor.tsx` 使用，Host 侧是空 `apply()`）在 `ui-settings-models` 中从 `dependencies` 搬到 `devDependencies`，与 `mermaid` 遵循同一上游浏览器依赖约定；旧位置由 `Dependency layout` CI 门禁捕获。
 - `pnpm run test` 为 22127 通过、1 个失败（`scripts/browser-bundled-externals.spec.ts` 的 "follows shell workspace aliases"）；该失败在干净上游树上可复现（Vite 对 macOS `/private/var` 临时目录的路径断言），因此归上游所有，不归本次同步。
