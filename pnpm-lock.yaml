@@ -3630,10 +3630,6 @@ importers:
         version: 18.3.1
 
   packages/client/ui-settings-models:
-    dependencies:
-      reicon-react:
-        specifier: ^1.2.0
-        version: 1.2.5(react@18.3.1)
     devDependencies:
       '@deepseek-ai/cordis':
         specifier: workspace:^
@@ -3671,6 +3667,9 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.3.1
+      reicon-react:
+        specifier: ^1.2.0
+        version: 1.2.5(react@18.3.1)
 
   packages/client/ui-settings-plugin-inventory:
     devDependencies:
