@@ -212,6 +212,31 @@ function requestHeaders(headers: Readonly<Record<string, string>> | undefined): 
 }
 
 /**
+ * The `x-opencode-session` header for the opencode-go route. OpenCode Go requires
+ * a stable per-conversation id on every inference request for routing and
+ * prompt-cache affinity; the value is the harness session id, which is the
+ * same id the DeepSeek adapter sends as `x-deepseek-harness-session-id` and
+ * is stable for the session's lifetime. Only the opencode-go route sends it
+ * (the `opencode` Zen catalog is a different endpoint without this requirement),
+ * and only when the request names a session; a deployment-configured header of
+ * the same name wins, because an explicit deployment choice outranks an
+ * adapter default.
+ * @param provider - the request's provider route key.
+ * @param headers - the merged deployment and attribution headers.
+ * @param sessionId - the request's session id, when one is named.
+ * @returns the headers with the session header added for the opencode-go route.
+ */
+function opencodeSessionHeaders(
+  provider: string,
+  headers: Record<string, string>,
+  sessionId: string | undefined,
+): Record<string, string> {
+  if (provider !== 'opencode-go' || sessionId === undefined) return headers
+  if (Object.keys(headers).some(name => name.toLowerCase() === 'x-opencode-session')) return headers
+  return { ...headers, 'x-opencode-session': sessionId }
+}
+
+/**
  * pi-ai-backed multi-provider adapter. Each operation reads the current
  * profiles, so a configuration change reaches the next request without a
  * restart; model descriptors come from the collection those profiles built.
@@ -384,8 +409,13 @@ export class PiAiAdapter extends LlmAdapter {
         ...options.sessionId === undefined ? {} : { sessionId: String(options.sessionId) },
         signal: watchdog.signal,
         // Profile headers are deployment-owned; attribution names are
-        // Harness-owned and therefore win collisions.
-        headers: requestHeaders(profile.headers),
+        // Harness-owned and therefore win collisions. The opencode-go route
+        // additionally carries the session id OpenCode Go requires.
+        headers: opencodeSessionHeaders(
+          options.provider,
+          requestHeaders(profile.headers),
+          options.sessionId === undefined ? undefined : String(options.sessionId),
+        ),
       })
       const iterator = toStreamChunks(events, model.contextWindow, options.signal, model.id)[Symbol.asyncIterator]()
       let exhausted = false
