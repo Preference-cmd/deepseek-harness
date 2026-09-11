@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-09-11-pi-ai-opencode-session-header.md
-2026-09-11-pi-ai-opencode-session-header.md: ee3cca138ad1f90ac8d8c750e6543b7c6a0c3f77
-2026-09-11-pi-ai-opencode-session-header.zh.md: 55faea2bafaaeb2280cab6883fd7f1ce7e8163e4
+2026-09-11-pi-ai-opencode-session-header.md: 8a1b812331a4721bee61aa729340473ee4c413a7
+2026-09-11-pi-ai-opencode-session-header.zh.md: 6c491000331f71e7c0a21dad4bcf38bcb52f70a5
