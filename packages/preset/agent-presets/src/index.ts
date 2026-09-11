@@ -51,7 +51,7 @@ export type {
   AgentPresetComposition, AgentPresetCompositionRow, CompositionRowEnablement,
 } from './composition-inventory.ts'
 
-/** Settings namespace carrying the user's chosen default preset. */
+/** Settings namespace carrying the user's preset-picker preference and chosen default. */
 export const SETTINGS_NAMESPACE = 'agent-presets'
 
 /** Refuse an empty preset id before invoking a domain operation. */
@@ -61,25 +61,20 @@ function validatePresetId(value: string, field: 'agentPreset' | 'from'): void {
   }
 }
 
-/**
- * Preset ids a session recorded before the id was renamed. The composition is
- * unchanged - only the id moved - so resolution maps the old id to the preset
- * that now owns it. This is the counterpart of the session-persistent rename
- * vocabulary: durable headers keep the old id until the v0->v1 session-format
- * migration, and resolve() must still answer it. A directory that actually
- * supplies the old id wins, because an authored preset may reuse any name.
- */
 const RENAMED_PRESET_IDS: Readonly<Record<string, string>> = { code: 'ptc' }
 
-/** The user-writable slice of this plugin's config. */
+/** Resolved preset-selection settings; the registration base supplies both fields. */
 export interface AgentPresetSettings {
-  /** Preset mounted when a session names none. */
-  default?: string
+  /** Saved default used when mode selection is enabled. */
+  default: string
+  /** Whether visible mode selection and the saved user default govern unnamed new sessions. */
+  modeSelectionEnabled: boolean
 }
 
 /** Runtime schema for the user-writable slice. */
 export const AgentPresetSettingsSchema: z<AgentPresetSettings> = z.object({
   default: z.string(),
+  modeSelectionEnabled: z.boolean(),
 })
 
 export { COMPOSITION_FILE, discoverPresets, scanRoot, SHIPPED_PRESET_ROOT } from './discovery.ts'
@@ -199,7 +194,7 @@ export class AgentPresets extends TypertRemoteService {
       this.settings = settingsCtx.settings.register(
         SETTINGS_NAMESPACE,
         AgentPresetSettingsSchema,
-        { base: { default: config.default } },
+        { base: { default: config.default, modeSelectionEnabled: true } },
       )
       this.settingsService = settingsCtx.settings
       settingsCtx.effect(() => () => {
@@ -248,7 +243,21 @@ export class AgentPresets extends TypertRemoteService {
    * every running session on the preset it was composed from.
    */
   get defaultId(): string {
-    return this.settings?.get().default ?? this.config.default
+    // Hiding the picker is also the product's safe-default boundary: a stale
+    // user choice from an older build must not silently compose a non-standard
+    // new session while there is no control that reports that choice.
+    return this.selectionPolicy().defaultId
+  }
+
+  /** Read one internally consistent snapshot of the selection policy. */
+  private selectionPolicy(): { enabled: boolean; defaultId: string } {
+    const settings = this.settings?.get()
+    if (settings === undefined) return { enabled: true, defaultId: this.config.default }
+    const enabled = settings.modeSelectionEnabled
+    return {
+      enabled,
+      defaultId: enabled ? settings.default : this.config.default,
+    }
   }
 
   /**
@@ -261,25 +270,30 @@ export class AgentPresets extends TypertRemoteService {
 
   /**
    * The roster off the Host: {@link list} projected to path-free rows, with
-   * the default marked and this deployment's authoring capability beside it.
+   * the policy-effective default marked, this deployment's authoring
+   * capability, and its mode-selection policy beside it.
    *
    * Whether a client can open a preset's directory is the Host's own opener
    * capability, not a roster property — a caller needing both joins them.
-   * @returns the rows and the authoring capability.
+   * @returns the rows, authoring capability, and effective selection policy.
    */
   @Remote('list')
   async remoteExportList(): Promise<AgentPresetRoster> {
-    const defaultId = this.defaultId
+    // Keep the visible policy and marked default from the same settings
+    // snapshot even when discovery yields while settings are hot-reloaded.
+    const policy = this.selectionPolicy()
+    const presets = await this.list()
     return {
-      presets: (await this.list()).map(preset => ({
+      presets: presets.map(preset => ({
         id: preset.id,
         trust: preset.trust,
-        isDefault: preset.id === defaultId,
+        isDefault: preset.id === policy.defaultId,
         ...preset.name === undefined ? {} : { name: preset.name },
         ...preset.description === undefined ? {} : { description: preset.description },
         ...preset.broken === undefined ? {} : { broken: preset.broken },
       })),
       authorable: this.authorable,
+      modeSelectionEnabled: policy.enabled,
     }
   }
 
