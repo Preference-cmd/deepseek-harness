@@ -123,6 +123,66 @@ describe('PiAiAdapter provider routing', () => {
     expect(server.headers[0]?.['user-agent']).toBe(userAgent())
   })
 
+  it('sends x-opencode-session on the opencode-go route when a session is named', async () => {
+    const server = await mockServer([{ events: textEvents }])
+    const ctx = new Context()
+    await ctx.plugin(LlmRuntime)
+    await ctx.plugin(LlmPiAi, {
+      providers: { 'opencode-go': { apiKeyEnv: 'PI_TEST_KEY', baseURL: `${server.url}/v1` } },
+    })
+    await assemble(ctx, {
+      provider: 'opencode-go',
+      model: 'deepseek-v4-flash',
+      messages: [],
+      sessionId: 'session-opencode-go' as never,
+    })
+    expect(server.headers[0]?.['x-opencode-session']).toBe('session-opencode-go')
+  })
+
+  it('omits x-opencode-session off the opencode-go route and without a session', async () => {
+    const goServer = await mockServer([{ events: textEvents }])
+    const deepseekServer = await mockServer([{ events: textEvents }])
+    const ctx = new Context()
+    await ctx.plugin(LlmRuntime)
+    await ctx.plugin(LlmPiAi, {
+      providers: {
+        'opencode-go': { apiKeyEnv: 'PI_TEST_KEY', baseURL: `${goServer.url}/v1` },
+        deepseek: { apiKeyEnv: 'PI_TEST_KEY', baseURL: deepseekServer.url },
+      },
+    })
+    await assemble(ctx, { provider: 'opencode-go', model: 'deepseek-v4-flash', messages: [] })
+    expect(goServer.headers[0]?.['x-opencode-session']).toBeUndefined()
+    await assemble(ctx, {
+      provider: 'deepseek',
+      model: 'deepseek-v4-flash',
+      messages: [],
+      sessionId: 'session-elsewhere' as never,
+    })
+    expect(deepseekServer.headers[0]?.['x-opencode-session']).toBeUndefined()
+  })
+
+  it('lets a deployment-configured x-opencode-session win over the adapter default', async () => {
+    const server = await mockServer([{ events: textEvents }])
+    const ctx = new Context()
+    await ctx.plugin(LlmRuntime)
+    await ctx.plugin(LlmPiAi, {
+      providers: {
+        'opencode-go': {
+          apiKeyEnv: 'PI_TEST_KEY',
+          baseURL: `${server.url}/v1`,
+          headers: { 'x-opencode-session': 'deployment-pinned' },
+        },
+      },
+    })
+    await assemble(ctx, {
+      provider: 'opencode-go',
+      model: 'deepseek-v4-flash',
+      messages: [],
+      sessionId: 'session-opencode-go' as never,
+    })
+    expect(server.headers[0]?.['x-opencode-session']).toBe('deployment-pinned')
+  })
+
   it('forwards common stream options and profile reasoning', async () => {
     const server = await mockServer([{ events: textEvents }])
     const ctx = await harness(server.url, {
