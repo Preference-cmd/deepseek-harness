@@ -212,26 +212,27 @@ function requestHeaders(headers: Readonly<Record<string, string>> | undefined): 
 }
 
 /**
- * The `x-opencode-session` header for the opencode-go route. OpenCode Go requires
+ * The `x-opencode-session` header for opencode routes. OpenCode Go requires
  * a stable per-conversation id on every inference request for routing and
  * prompt-cache affinity; the value is the harness session id, which is the
  * same id the DeepSeek adapter sends as `x-deepseek-harness-session-id` and
- * is stable for the session's lifetime. Only the opencode-go route sends it
- * (the `opencode` Zen catalog is a different endpoint without this requirement),
- * and only when the request names a session; a deployment-configured header of
- * the same name wins, because an explicit deployment choice outranks an
- * adapter default.
+ * is stable for the session's lifetime. Any route whose key contains
+ * `opencode` sends it (covering both the `opencode` Zen catalog and the
+ * `opencode-go` catalog, plus a renamed route still pointing at an opencode
+ * endpoint), and only when the request names a session; a
+ * deployment-configured header of the same name wins, because an explicit
+ * deployment choice outranks an adapter default.
  * @param provider - the request's provider route key.
  * @param headers - the merged deployment and attribution headers.
  * @param sessionId - the request's session id, when one is named.
- * @returns the headers with the session header added for the opencode-go route.
+ * @returns the headers with the session header added for opencode routes.
  */
 function opencodeSessionHeaders(
   provider: string,
   headers: Record<string, string>,
   sessionId: string | undefined,
 ): Record<string, string> {
-  if (provider !== 'opencode-go' || sessionId === undefined) return headers
+  if (!provider.includes('opencode') || sessionId === undefined) return headers
   if (Object.keys(headers).some(name => name.toLowerCase() === 'x-opencode-session')) return headers
   return { ...headers, 'x-opencode-session': sessionId }
 }

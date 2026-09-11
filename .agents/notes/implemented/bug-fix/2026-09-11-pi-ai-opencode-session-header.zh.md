@@ -10,7 +10,7 @@ OpenCode Go 要求推理请求携带稳定的每会话 `x-opencode-session` head
 
 ## 决策
 
-pi-ai adapter 在 `streamSimple` 调用点自己注入该 header（`packages/llm/llm-pi-ai/src/adapter.ts`，`opencodeSessionHeaders`）。值取 harness session id —— 与 DeepSeek adapter 以 `x-deepseek-harness-session-id` 发送的是同一个 `options.sessionId`，会话生命周期内稳定，且已可从 session log 重建，因此不需要新 session event。pi-ai 把 per-request header 最后合并、覆盖 defaults，所以无需改 SDK 即可原样透传。作用域规则：只在 `opencode-go` 路由发送（`opencode` Zen catalog 是另一个端点，没有该要求）；只在请求带 session 时发送；部署配置的同名 header 优先于 adapter 默认值。`adapter.spec.ts` 中三个测试锁定三条规则（opencode-go + session 则有、非本路由或无 session 则无、部署值获胜）。
+pi-ai adapter 在 `streamSimple` 调用点自己注入该 header（`packages/llm/llm-pi-ai/src/adapter.ts`，`opencodeSessionHeaders`）。值取 harness session id —— 与 DeepSeek adapter 以 `x-deepseek-harness-session-id` 发送的是同一个 `options.sessionId`，会话生命周期内稳定，且已可从 session log 重建，因此不需要新 session event。pi-ai 把 per-request header 最后合并、覆盖 defaults，所以无需改 SDK 即可原样透传。作用域规则：路由 key 包含 `opencode` 的都发送（同时覆盖 `opencode` Zen catalog 与 `opencode-go` catalog，以及改了名但仍指向 opencode 端点的路由）；只在请求带 session 时发送；部署配置的同名 header 优先于 adapter 默认值。`adapter.spec.ts` 中四个测试锁定规则（opencode-go 与 opencode + session 则有、非本路由或无 session 则无、部署值获胜）。
 
 ## 备选方案
 
