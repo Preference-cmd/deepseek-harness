@@ -6,7 +6,7 @@ Status: implemented
 
 ## 问题
 
-上游相对 fork 的 0.1.5-alpha.2 基线前进了 90 个 first-parent PR 合并（`b2e3b2a012` 到 `c291e7961a`）：0.1.5-rc.1/rc.2 两个发布、composer-plus-menu 与 sidebar/document-preview/composer-preview UI 浪潮（含新增的 `ui-sidebar-documentpreview` 包）、feedback-dialog 交付物回搬、agent-preset 模式选择门控、DeepSeek V41 Flash 默认目录、`dshCachePath` home-paths 变更、新增的 `test-support/remote-mock` 组装层，以及 CI/构建可靠性工作（Blacksmith 托管镜像、macOS 并行公证、bundle-speed）。fork 侧存活的独有工作（`tool-mermaid` 包及其网页渲染与 e2e、settings-models 编辑器、preset 改名回退）必须在合并中存活，且不能破坏门禁。另有一个麻烦：alpha.2 同步是以单 parent 提交落地的，因此朴素 merge-base 回退到 `c389f96bf3` 并报出 795 个冲突；相对 alpha.2 树真正分叉的只有 18 个文件。
+上游相对 fork 的 0.1.5-alpha.2 基线前进了 90 个 first-parent PR 合并（0.1.5-alpha.2 到 0.1.5-rc.2）：0.1.5-rc.1/rc.2 两个发布、composer-plus-menu 与 sidebar/document-preview/composer-preview UI 浪潮（含新增的 `ui-sidebar-documentpreview` 包）、feedback-dialog 交付物回搬、agent-preset 模式选择门控、DeepSeek V41 Flash 默认目录、`dshCachePath` home-paths 变更、新增的 `test-support/remote-mock` 组装层，以及 CI/构建可靠性工作（Blacksmith 托管镜像、macOS 并行公证、bundle-speed）。fork 侧存活的独有工作（`tool-mermaid` 包及其网页渲染与 e2e、settings-models 编辑器、preset 改名回退）必须在合并中存活，且不能破坏门禁。另有一个麻烦：alpha.2 同步是以单 parent 提交落地的，因此朴素 merge-base 回退到 0.1.3-alpha.2 并报出 795 个冲突；相对 alpha.2 树真正分叉的只有 18 个文件。
 
 ## 决策
 

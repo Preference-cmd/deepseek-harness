@@ -6,7 +6,7 @@ Status: implemented
 
 ## 问题
 
-2026-08-28 的上游同步合并(`65ca80f16c`,dsh-0.1.2-alpha.1)采用了上游重写后的 `ModelListEditor.tsx`,覆盖了 fork 的逐行 disclosure——它原本编辑自定义 provider 模型的输入模态与推理档位([特性笔记](../feature/2026-08-14-model-row-input-and-reasoning-editor.zh.md))。周边词表幸存——locale key、chips 的 CSS、`Pill` 原语与组件测试都在——但编辑器本体及其 `reicon-react` 依赖丢失了,模型设置页再次只能声明 `id`、`name` 与两个容量。三个幸存的测试变红;在真实 GUI 中,自定义 provider 的视觉与推理声明无法再编辑(无法标记视觉模型,部署配置声明的模型也不出现推理档位选择)。
+2026-08-28 的上游同步合并(dsh-0.1.2-alpha.1)采用了上游重写后的 `ModelListEditor.tsx`,覆盖了 fork 的逐行 disclosure——它原本编辑自定义 provider 模型的输入模态与推理档位([特性笔记](../feature/2026-08-14-model-row-input-and-reasoning-editor.zh.md))。周边词表幸存——locale key、chips 的 CSS、`Pill` 原语与组件测试都在——但编辑器本体及其 `reicon-react` 依赖丢失了,模型设置页再次只能声明 `id`、`name` 与两个容量。三个幸存的测试变红;在真实 GUI 中,自定义 provider 的视觉与推理声明无法再编辑(无法标记视觉模型,部署配置声明的模型也不出现推理档位选择)。
 
 ## 决策
 

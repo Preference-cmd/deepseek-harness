@@ -6,7 +6,7 @@ Status: implemented
 
 ## 问题
 
-上游相对 fork 的 0.1.3-alpha.1 基线前进了 449 个提交（`d347e70390` 到 `c389f96bf3`）：Sidebar 工作区文件栈（dockkit、resources、workspace-files、sidebar-files/textpreview/right、open-in-app、deliverables）、Electron 桌面端、subprocess 原生隔离、session 流式迁移加一系列性能优化、durable inbox 恢复、0.1.3-alpha.2 发布，以及 pi-ai 0.85.1 和默认 `str_replace_editor` 移除。fork 侧存活的独有工作（mermaid 工具及客户端渲染、settings-models 编辑器、preset 改名兼容、Node 24.11 `resolveSync` 修复）必须在合并中存活，且不能破坏收紧后的门禁。
+上游相对 fork 的 0.1.3-alpha.1 基线前进了 449 个提交（0.1.3-alpha.1 到 0.1.3-alpha.2）：Sidebar 工作区文件栈（dockkit、resources、workspace-files、sidebar-files/textpreview/right、open-in-app、deliverables）、Electron 桌面端、subprocess 原生隔离、session 流式迁移加一系列性能优化、durable inbox 恢复、0.1.3-alpha.2 发布，以及 pi-ai 0.85.1 和默认 `str_replace_editor` 移除。fork 侧存活的独有工作（mermaid 工具及客户端渲染、settings-models 编辑器、preset 改名兼容、Node 24.11 `resolveSync` 修复）必须在合并中存活，且不能破坏收紧后的门禁。
 
 ## 决策
 

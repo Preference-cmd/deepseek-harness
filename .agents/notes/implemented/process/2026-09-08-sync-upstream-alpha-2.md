@@ -6,7 +6,7 @@ English | [中文](2026-09-08-sync-upstream-alpha-2.zh.md)
 
 ## Problem
 
-Upstream advanced 449 commits past the fork's 0.1.3-alpha.1 base (`d347e70390` to `c389f96bf3`): the Sidebar workspace-file stack (dockkit, resources, workspace-files, sidebar-files/textpreview/right, open-in-app, deliverables), the Electron desktop app, subprocess native containment, session streaming migration plus a performance series, durable inbox recovery, the 0.1.3-alpha.2 release, and pi-ai 0.85.1 with the default `str_replace_editor` removal. The fork's surviving unique work (mermaid tool plus client rendering, settings-models editors, preset-rename compatibility, the Node 24.11 `resolveSync` fix) had to survive the merge without breaking the tightened gates.
+Upstream advanced 449 commits past the fork's 0.1.3-alpha.1 base (0.1.3-alpha.1 to 0.1.3-alpha.2): the Sidebar workspace-file stack (dockkit, resources, workspace-files, sidebar-files/textpreview/right, open-in-app, deliverables), the Electron desktop app, subprocess native containment, session streaming migration plus a performance series, durable inbox recovery, the 0.1.3-alpha.2 release, and pi-ai 0.85.1 with the default `str_replace_editor` removal. The fork's surviving unique work (mermaid tool plus client rendering, settings-models editors, preset-rename compatibility, the Node 24.11 `resolveSync` fix) had to survive the merge without breaking the tightened gates.
 
 ## Decision
 

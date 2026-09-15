@@ -6,7 +6,7 @@ Status: implemented
 
 ## 问题
 
-上游相对 fork 的 0.1.3-alpha.2 基线前进了 692 个提交（`c389f96bf3` 到 `b2e3b2a012`）：Session Log V3 格式发布（`SESSION_FORMAT_VERSION` 从 2 到 3，含 canonical envelopes、content-admission 修复与 migration coverage）、Sidebar 与交付文件栈重构（sidebarfeat、leftsideslot、artifact file actions、图片预览）、上线后又整体回滚的 Mermaid/Graphviz/SVG/HTML chat 预览、experimental Agent Teams 发布、新增 `tool-present` 交付工具、code-dispatch 到 ptc-dispatch 事件改名、客户端浏览器依赖约定迁移（运行时 `dependencies` 并入 `devDependencies`，通过随产品发布的打包器配置解析），以及 0.1.5-alpha.1/alpha.2 两个发布。fork 侧存活的独有工作（`tool-mermaid` 包及其网页渲染与 e2e、settings-models 编辑器）必须在合并中存活，且不能破坏收紧后的门禁。
+上游相对 fork 的 0.1.3-alpha.2 基线前进了 692 个提交（0.1.3-alpha.2 到 0.1.5-alpha.2）：Session Log V3 格式发布（`SESSION_FORMAT_VERSION` 从 2 到 3，含 canonical envelopes、content-admission 修复与 migration coverage）、Sidebar 与交付文件栈重构（sidebarfeat、leftsideslot、artifact file actions、图片预览）、上线后又整体回滚的 Mermaid/Graphviz/SVG/HTML chat 预览、experimental Agent Teams 发布、新增 `tool-present` 交付工具、code-dispatch 到 ptc-dispatch 事件改名、客户端浏览器依赖约定迁移（运行时 `dependencies` 并入 `devDependencies`，通过随产品发布的打包器配置解析），以及 0.1.5-alpha.1/alpha.2 两个发布。fork 侧存活的独有工作（`tool-mermaid` 包及其网页渲染与 e2e、settings-models 编辑器）必须在合并中存活，且不能破坏收紧后的门禁。
 
 ## 决策
 

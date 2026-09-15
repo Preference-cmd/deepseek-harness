@@ -6,7 +6,7 @@ English | [中文](2026-09-07-sync-upstream-0-1-3-alpha-1.md)
 
 ## Problem
 
-上游在 fork 的 alpha.5 基点之后前进了 292 个提交（`49a606bc5b` 到 `d347e70390`）：session format v2（含迁移链与内嵌 assistant streams）、通用文件上传、代理收敛为 util 库、skill 模糊搜索、可点击链接统一、session 写租约、测试 tmp 清理。fork 的 60 个独有提交（mermaid 工具与客户端渲染、settings-models 编辑器、preset 重命名兼容、Node 24.11 `resolveSync` 修复）必须在合并后存活，且不能破坏收紧后的门禁。
+上游在 fork 的 alpha.5 基点之后前进了 292 个提交（alpha.5 到 0.1.3-alpha.1）：session format v2（含迁移链与内嵌 assistant streams）、通用文件上传、代理收敛为 util 库、skill 模糊搜索、可点击链接统一、session 写租约、测试 tmp 清理。fork 的 60 个独有提交（mermaid 工具与客户端渲染、settings-models 编辑器、preset 重命名兼容、Node 24.11 `resolveSync` 修复）必须在合并后存活，且不能破坏收紧后的门禁。
 
 ## Decision
 
