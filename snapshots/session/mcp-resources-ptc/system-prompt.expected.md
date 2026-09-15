@@ -162,6 +162,11 @@ interface ToolArgsMap {
     /** Continuation cursor returned by this server. */
     cursor?: string;
   } & Record<string, JsonValue>;
+  /** Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram. */
+  mermaid_render: {
+    /** The Mermaid diagram source code. */
+    diagram: string;
+  } & Record<string, JsonValue>;
   /** Read a UTF-8 text file and return line-numbered content. */
   read: {
     /** Path to read, resolved by the filesystem backend. */
@@ -419,6 +424,10 @@ interface ToolOutputMap {
   })[];
   list_mcp_resource_templates: JsonValue;
   list_mcp_resources: JsonValue;
+  mermaid_render: {
+    diagram?: string;
+    type?: string;
+  } & Record<string, JsonValue>;
   read: {
     path: string;
     offset: number;

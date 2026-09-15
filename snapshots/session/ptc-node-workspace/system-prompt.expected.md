@@ -140,6 +140,11 @@ interface ToolArgsMap {
     /** children (default) lists direct children only; descendants walks the complete tree below you. */
     scope?: "children" | "descendants";
   } & Record<string, JsonValue>;
+  /** Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram. */
+  mermaid_render: {
+    /** The Mermaid diagram source code. */
+    diagram: string;
+  } & Record<string, JsonValue>;
   /** Read a UTF-8 text file and return line-numbered content. */
   read: {
     /** Path to read, resolved by the filesystem backend. */
@@ -392,6 +397,10 @@ interface ToolOutputMap {
     parent?: string;
     depth?: number;
   })[];
+  mermaid_render: {
+    diagram?: string;
+    type?: string;
+  } & Record<string, JsonValue>;
   read: {
     path: string;
     offset: number;
