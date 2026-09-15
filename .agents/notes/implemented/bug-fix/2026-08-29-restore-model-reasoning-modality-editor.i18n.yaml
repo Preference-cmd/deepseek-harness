@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-29-restore-model-reasoning-modality-editor.md
-2026-08-29-restore-model-reasoning-modality-editor.md: cdc48f4d9805c22afa9a78560e58e1a0a6de8da0
-2026-08-29-restore-model-reasoning-modality-editor.zh.md: 0f49f48c6f8d6d724a3b9b43b407e2e598fa2fb4
+2026-08-29-restore-model-reasoning-modality-editor.md: e305463eb4a70e9d18c7510ccfde03743ddb1d36
+2026-08-29-restore-model-reasoning-modality-editor.zh.md: 609e9ceafd7d34e52af9ccd905679c3be0722b1e

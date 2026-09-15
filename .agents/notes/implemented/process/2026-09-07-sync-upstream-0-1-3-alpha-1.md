@@ -6,7 +6,7 @@ English | [中文](2026-09-07-sync-upstream-0-1-3-alpha-1.zh.md)
 
 ## Problem
 
-Upstream advanced 292 commits past the fork's alpha.5 base (`49a606bc5b` to `d347e70390`): session format v2 with its migration chain and embedded assistant streams, generic file upload, proxy convergence to a util library, skill fuzzy search, clickable-link unification, a session write-ownership lease, and test tmp hygiene. The fork's 60 unique commits (mermaid tool plus client rendering, settings-models editors, preset-rename compatibility, the Node 24.11 `resolveSync` fix) had to survive the merge without breaking the tightened gates.
+Upstream advanced 292 commits past the fork's alpha.5 base (alpha.5 to 0.1.3-alpha.1): session format v2 with its migration chain and embedded assistant streams, generic file upload, proxy convergence to a util library, skill fuzzy search, clickable-link unification, a session write-ownership lease, and test tmp hygiene. The fork's 60 unique commits (mermaid tool plus client rendering, settings-models editors, preset-rename compatibility, the Node 24.11 `resolveSync` fix) had to survive the merge without breaking the tightened gates.
 
 ## Decision
 
