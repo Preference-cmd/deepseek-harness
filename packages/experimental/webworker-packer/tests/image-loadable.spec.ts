@@ -305,6 +305,9 @@ const archive = async (): Promise<Uint8Array> =>
     inventory.apply({
       baseUrl,
       loader: tree,
+      // The packed image installs no PluginPackages service, so the resolver
+      // keeps its manifest-search path.
+      get: () => undefined,
       deepseekLlmApiExtensions: {
         register: (field: string, contribution: { readonly prepare: Prepare }): void => {
           expect(field).toBe('dsh_plugin_packages')
