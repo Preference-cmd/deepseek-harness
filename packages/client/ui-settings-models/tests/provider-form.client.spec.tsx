@@ -521,7 +521,7 @@ describe('model list editing', () => {
     openEditor('openai')
     expandModel(1)
 
-    expect(screen.getByRole('checkbox', { name: en.modelInputImage }).checked).toBe(true)
+    expect(screen.getByRole<HTMLInputElement>('checkbox', { name: en.modelInputImage }).checked).toBe(true)
     expect(screen.getByRole('button', { name: 'high', pressed: true })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'low', pressed: false })).toBeTruthy()
   })
