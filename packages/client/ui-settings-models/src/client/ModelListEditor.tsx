@@ -14,15 +14,15 @@
  * rows the user can still fill in by hand.
  */
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { LlmDiscoveredModel } from '@deepseek-ai/dsh-api-remotes/client'
-import { Button, Modal, Pill } from '@deepseek-ai/dsh-client-ui-primitives'
-import { Image as ImageIcon, Text as TextIcon } from 'reicon-react'
+import { Button, IconPlusOutline16, Modal } from '@deepseek-ai/dsh-client-ui-primitives'
 import { formatCapacity, parseCapacity } from './DeepSeekModelsEditor.tsx'
 import type { ModelsOperations } from './operations.ts'
 import type { DeepSeekModelDraft } from './DeepSeekModelsEditor.tsx'
 import type { en } from './locales.ts'
+import { ModelRow, REASONING_LEVELS, type ReasoningLevel } from './ModelRow.tsx'
 import styles from './ModelsSection.module.css'
 
 /**
@@ -65,6 +65,10 @@ export interface ProbeTarget {
 export interface ModelListEditorProps {
   /** The rows as currently drafted. */
   models: readonly ModelDraft[]
+  /** Installed provider whose catalog supplies defaults without endpoint I/O. */
+  catalogProvider?: string | undefined
+  /** Route input types for models absent from the installed catalog. */
+  defaultInput?: readonly string[] | undefined
   /** Whether the user layer currently owns the whole array; absent on a create. */
   overridden?: boolean
   /** Replace the drafted rows. */
@@ -88,30 +92,6 @@ export interface ModelListEditorProps {
   disabled: boolean
 }
 
-/** Disclosure chevron; rotates to point down while its row is open. */
-function IconChevron({ open }: { open: boolean }): ReactNode {
-  return (
-    <svg
-      width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden
-      style={{ transform: open ? 'rotate(90deg)' : undefined, transition: 'transform 120ms ease' }}
-    >
-      <path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-/** Removal glyph for one model row. */
-function IconTrash(): ReactNode {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path
-        d="M2.5 4h11M6.5 4V2.5h3V4M4 4l.7 9a1 1 0 001 .9h4.6a1 1 0 001-.9L12 4M6.5 6.8v4.4M9.5 6.8v4.4"
-        stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
 /** The two token counts edited as K/M-suffixed text behind a row's disclosure. */
 type CapacityField = 'contextWindow' | 'maxTokens'
 
@@ -132,15 +112,26 @@ const CAPACITY_HINT: Readonly<Record<CapacityField, string>> = {
 }
 
 /**
- * The pi-ai reasoning levels a model row may declare, in escalation order.
- * `off` is never offered: a reasoning model always has it (the editor writes it
- * as `off: null`, "supported, send nothing"), and a non-reasoning one has
- * nothing to turn off. Each declared level is written at its own name — the
- * wire spelling most OpenAI-compatible gateways accept as `reasoning_effort` —
- * which keeps per-level spellings out of the card for now.
+ * Spell a stored count for a field that may be unset. The spelling itself is
+ * {@link formatCapacity}, shared with the DeepSeek catalog editor so both
+ * surfaces read and write one K/M vocabulary.
+ * @param value - stored capacity, or `undefined` for an unset field.
+ * @returns the field text, empty when unset.
  */
-const REASONING_LEVELS = ['minimal', 'low', 'medium', 'high', 'xhigh', 'max'] as const
-type ReasoningLevel = typeof REASONING_LEVELS[number]
+function capacitySpelling(value: number | undefined): string {
+  return value === undefined ? '' : formatCapacity(value)
+}
+
+/** Adopt a candidate, preserving disclosed capacities and input types. */
+function adopt(candidate: LlmDiscoveredModel): ModelDraft {
+  return {
+    id: candidate.id,
+    ...candidate.name === undefined ? {} : { name: candidate.name },
+    ...candidate.contextWindow === undefined ? {} : { contextWindow: candidate.contextWindow },
+    ...candidate.maxTokens === undefined ? {} : { maxTokens: candidate.maxTokens },
+    ...candidate.inputModalities === undefined ? {} : { input: [...candidate.inputModalities] },
+  }
+}
 
 /** Whether a draft value is a reasoning-efforts dict rather than `false` or absent. */
 function isReasoningDict(value: unknown): value is Record<string, unknown> {
@@ -161,40 +152,34 @@ function reasoningEfforts(levels: readonly ReasoningLevel[]): Record<string, str
 }
 
 /**
- * Spell a stored count for a field that may be unset. The spelling itself is
- * {@link formatCapacity}, shared with the DeepSeek catalog editor so both
- * surfaces read and write one K/M vocabulary.
- * @param value - stored capacity, or `undefined` for an unset field.
- * @returns the field text, empty when unset.
- */
-function capacitySpelling(value: number | undefined): string {
-  return value === undefined ? '' : formatCapacity(value)
-}
-
-/** Adopt a candidate, keeping whatever capacities the provider disclosed. */
-function adopt(candidate: LlmDiscoveredModel): ModelDraft {
-  return {
-    id: candidate.id,
-    ...candidate.name === undefined ? {} : { name: candidate.name },
-    ...candidate.contextWindow === undefined ? {} : { contextWindow: candidate.contextWindow },
-    ...candidate.maxTokens === undefined ? {} : { maxTokens: candidate.maxTokens },
-  }
-}
-
-/**
  * Render the model list with its fetch action.
  * @param props - the drafted rows, probe target, wire face, and copy.
  * @returns the model-list editor.
  */
 export function ModelListEditor(props: ModelListEditorProps): ReactNode {
   const { models, onChange, probe, operations, t, disabled } = props
+  const { catalogProvider } = props
   const [busy, setBusy] = useState(false)
   const [failure, setFailure] = useState<string | undefined>(undefined)
+  const [inheritedCatalog, setInheritedCatalog] = useState<{
+    provider: string
+    models: readonly LlmDiscoveredModel[]
+  } | undefined>(undefined)
+  useEffect(() => {
+    if (catalogProvider === undefined) return
+    let current = true
+    void operations.discoverModels(probe.settingsNs, { provider: catalogProvider }).then((answer) => {
+      if (!current) return
+      setInheritedCatalog({ provider: catalogProvider, models: answer.kind === 'found' ? answer.models : [] })
+      setFailure(answer.kind === 'refused' ? answer.message : undefined)
+    })
+    return () => { current = false }
+  }, [catalogProvider, operations, probe.settingsNs])
+  const catalog = inheritedCatalog?.provider === catalogProvider ? inheritedCatalog?.models : undefined
+  const inputDefaults = useMemo(() => new Map(catalog?.map(model => [model.id, model.inputModalities])), [catalog])
   const [candidates, setCandidates] = useState<readonly LlmDiscoveredModel[] | undefined>(undefined)
   const [picked, setPicked] = useState<ReadonlySet<string>>(new Set())
   const [candidateQuery, setCandidateQuery] = useState('')
-  // Rows carry an id and a name; capacities are the exception, so they stay
-  // folded until asked for rather than crowding every row with four inputs.
   const [expanded, setExpanded] = useState<ReadonlySet<number>>(new Set())
   // Capacities are edited as text, so a field's keystrokes are held here rather
   // than re-derived from the parsed count on every change — that would rewrite
@@ -256,21 +241,6 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
     }))
   }
 
-  /** Whether one row's input modalities include images. */
-  const hasImageInput = (model: ModelDraft): boolean =>
-    Array.isArray(model['input']) && (model['input'] as readonly unknown[]).includes('image')
-
-  /** Whether one row declares `level` as a supported reasoning level. */
-  const declaresLevel = (model: ModelDraft, level: ReasoningLevel): boolean =>
-    isReasoningDict(model['reasoningEfforts'])
-    && model['reasoningEfforts'][level] !== undefined
-    && model['reasoningEfforts'][level] !== null
-
-  /** Toggle a row's image-input declaration between text-only and text-plus-image. */
-  const toggleImageInput = (index: number, enabled: boolean): void => {
-    patch(index, { input: enabled ? ['text', 'image'] : ['text'] })
-  }
-
   /** Toggle one reasoning level; a row with none left is a non-reasoning model. */
   const toggleReasoningLevel = (index: number, level: ReasoningLevel, enabled: boolean): void => {
     const current = declaredLevels(models[index]?.['reasoningEfforts'])
@@ -293,6 +263,7 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
         return
       }
       const found = answer.models
+      if (catalogProvider !== undefined) setInheritedCatalog({ provider: catalogProvider, models: found })
       if (found.length === 0) {
         setFailure(t('fetchEmpty'))
         return
@@ -399,163 +370,57 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
         </button>
       </div>
       {models.length === 0 ? <p className={styles['modelEmpty']}>{t('modelsEmpty')}</p> : null}
-      {models.map((model, index) => (
-        <div key={index} className={styles['modelEntry']}>
-          <div className={styles['modelRow']}>
-            <input
-              className={styles['input']}
-              type="text"
-              value={textOf(model, 'id')}
-              placeholder={t('modelId')}
-              aria-label={`${t('modelId')} ${index + 1}`}
-              disabled={disabled}
-              onChange={(event) => { patch(index, { id: event.target.value }) }}
-            />
-            <input
-              className={styles['input']}
-              type="text"
-              value={textOf(model, 'name')}
-              placeholder={t('modelName')}
-              aria-label={`${t('modelName')} ${index + 1}`}
-              disabled={disabled}
-              onChange={(event) => { patch(index, { name: event.target.value === '' ? undefined : event.target.value }) }}
-            />
-            <button
-              type="button"
-              className={styles['iconButton']}
-              aria-label={`${t('modelAdvanced')} ${index + 1}`}
-              aria-expanded={expanded.has(index)}
-              title={t('modelAdvanced')}
-              onClick={() => { toggleExpanded(index) }}
-            >
-              <IconChevron open={expanded.has(index)} />
-            </button>
-            <button
-              type="button"
-              className={`${styles['iconButton']} ${styles['iconButtonDanger']}`}
-              aria-label={`${t('removeModel')} ${index + 1}`}
-              title={t('removeModel')}
-              disabled={disabled}
-              onClick={() => {
-                onChange(models.filter((_model, at) => at !== index))
-                // Both stores are keyed by position, so every row after this
-                // one shifts down and would otherwise inherit its neighbour's
-                // state — a different row's capacities popping open, or its
-                // half-typed text appearing in another row's field.
-                setExpanded((current) => {
-                  const next = new Set<number>()
-                  for (const at of current) {
-                    if (at < index) next.add(at)
-                    else if (at > index) next.add(at - 1)
-                  }
-                  return next
-                })
-                setEditing(current => reindexOnRemove(current, index))
-              }}
-            >
-              <IconTrash />
-            </button>
-          </div>
-          {expanded.has(index)
-            ? (
-              <div className={styles['modelAdvanced']}>
-                <label className={styles['modelField']}>
-                  <span className={styles['modelFieldLabel']}>{t('modelContextWindow')}</span>
-                  <input
-                    className={styles['input']}
-                    type="text"
-                    inputMode="numeric"
-                    value={capacityText(model, index, 'contextWindow')}
-                    placeholder={CAPACITY_HINT.contextWindow}
-                    aria-label={`${t('modelContextWindow')} ${index + 1}`}
-                    disabled={disabled}
-                    onChange={(event) => { editCapacity(index, 'contextWindow', event.target.value) }}
-                  />
-                </label>
-                <label className={styles['modelField']}>
-                  <span className={styles['modelFieldLabel']}>{t('modelMaxTokens')}</span>
-                  <input
-                    className={styles['input']}
-                    type="text"
-                    inputMode="numeric"
-                    value={capacityText(model, index, 'maxTokens')}
-                    placeholder={CAPACITY_HINT.maxTokens}
-                    aria-label={`${t('modelMaxTokens')} ${index + 1}`}
-                    disabled={disabled}
-                    onChange={(event) => { editCapacity(index, 'maxTokens', event.target.value) }}
-                  />
-                </label>
-                <div className={styles['modelField']}>
-                  <span className={styles['modelFieldLabel']}>{t('modelInputModalities')}</span>
-                  <span className={styles['chipRow']}>
-                    <Pill
-                      className={`${styles['chip']} ${styles['iconChip']}`}
-                      active
-                      aria-pressed
-                      aria-label={t('modelModalityText')}
-                      title={t('modelModalityText')}
-                      disabled
-                      onClick={() => {}}
-                    >
-                      <TextIcon size={16} />
-                    </Pill>
-                    <Pill
-                      className={`${styles['chip']} ${styles['iconChip']}`}
-                      active={hasImageInput(model)}
-                      aria-pressed={hasImageInput(model)}
-                      aria-label={t('modelModalityImage')}
-                      disabled={disabled}
-                      onClick={() => { toggleImageInput(index, !hasImageInput(model)) }}
-                    >
-                      <ImageIcon size={16} />
-                    </Pill>
-                  </span>
-                </div>
-                <div className={styles['modelField']}>
-                  <span className={styles['modelFieldLabel']}>{t('modelOutputModalities')}</span>
-                  <span className={styles['chipRow']}>
-                    <Pill
-                      className={`${styles['chip']} ${styles['iconChip']}`}
-                      active
-                      aria-pressed
-                      aria-label={t('modelModalityText')}
-                      title={t('modelModalityText')}
-                      disabled
-                      onClick={() => {}}
-                    >
-                      <TextIcon size={16} />
-                    </Pill>
-                  </span>
-                </div>
-                <div className={styles['modelField']}>
-                  <span className={styles['modelFieldLabel']}>{t('modelReasoningLevels')}</span>
-                  <span className={styles['chipRow']}>
-                    {REASONING_LEVELS.map(level => (
-                      <Pill
-                        key={level}
-                        className={styles['chip']}
-                        active={declaresLevel(model, level)}
-                        aria-pressed={declaresLevel(model, level)}
-                        disabled={disabled}
-                        onClick={() => { toggleReasoningLevel(index, level, !declaresLevel(model, level)) }}
-                      >
-                        {level}
-                      </Pill>
-                    ))}
-                  </span>
-                  <span className={styles['checkHint']}>{t('modelReasoningLevelsHint')}</span>
-                </div>
-              </div>
-            )
-            : null}
-        </div>
-      ))}
+      <div className={styles['modelList']}>
+        {models.map((model, index) => (
+          <ModelRow
+            key={index}
+            model={model}
+            position={index + 1}
+            inputField="input"
+            inputFallback={inputDefaults.get(textOf(model, 'id')) ?? props.defaultInput}
+            inputLoading={catalogProvider !== undefined && catalog === undefined}
+            reasoningLevels={{
+              declared: declaredLevels(model['reasoningEfforts']),
+              onToggle: (level, enabled) => { toggleReasoningLevel(index, level, enabled) },
+            }}
+            expanded={expanded.has(index)}
+            disabled={disabled}
+            t={t}
+            contextWindow={{
+              value: capacityText(model, index, 'contextWindow'),
+              placeholder: CAPACITY_HINT.contextWindow,
+              onChange: (text) => { editCapacity(index, 'contextWindow', text) },
+            }}
+            maxTokens={{
+              value: capacityText(model, index, 'maxTokens'),
+              placeholder: CAPACITY_HINT.maxTokens,
+              onChange: (text) => { editCapacity(index, 'maxTokens', text) },
+            }}
+            onFieldChange={(field, value) => { patch(index, { [field]: value }) }}
+            onChange={(next) => { onChange(models.map((row, at) => at === index ? next : row)) }}
+            onToggle={() => { toggleExpanded(index) }}
+            onRemove={() => {
+              onChange(models.filter((_model, at) => at !== index))
+              setExpanded((current) => {
+                const next = new Set<number>()
+                for (const at of current) {
+                  if (at < index) next.add(at)
+                  else if (at > index) next.add(at - 1)
+                }
+                return next
+              })
+              setEditing(current => reindexOnRemove(current, index))
+            }}
+          />
+        ))}
+      </div>
       <button
         type="button"
         className={styles['addModelButton']}
         disabled={disabled}
         onClick={() => { onChange([...models, { id: '' }]) }}
       >
+        <IconPlusOutline16 size={14} />
         {t('addModel')}
       </button>
       {failure !== undefined ? <p className={styles['error']}>{failure}</p> : null}
