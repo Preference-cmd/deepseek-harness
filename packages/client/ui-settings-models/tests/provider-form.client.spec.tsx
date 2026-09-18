@@ -473,7 +473,7 @@ describe('model list editing', () => {
     fireEvent.click(screen.getByRole('button', { name: en.addModel }))
     fireEvent.change(screen.getByLabelText(`${en.modelId} 1`), { target: { value: 'vision-reasoner' } })
     expandModel(1)
-    fireEvent.click(screen.getByRole('button', { name: en.modelModalityImage }))
+    fireEvent.click(screen.getByRole('checkbox', { name: en.modelInputImage }))
     fireEvent.click(screen.getByRole('button', { name: 'low' }))
     fireEvent.click(screen.getByRole('button', { name: 'high' }))
     fireEvent.click(screen.getByText(en.apply))
@@ -521,17 +521,9 @@ describe('model list editing', () => {
     openEditor('openai')
     expandModel(1)
 
-    expect(screen.getByRole('button', { name: en.modelModalityImage, pressed: true })).toBeTruthy()
+    expect(screen.getByRole('checkbox', { name: en.modelInputImage }).checked).toBe(true)
     expect(screen.getByRole('button', { name: 'high', pressed: true })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'low', pressed: false })).toBeTruthy()
-    // The always-selected text chip appears once per modality group and cannot
-    // be toggled off: both are disabled and pressed.
-    const textChips = screen.getAllByRole('button', { name: en.modelModalityText })
-    expect(textChips).toHaveLength(2)
-    for (const chip of textChips) {
-      expect(chip.getAttribute('aria-pressed')).toBe('true')
-      expect((chip as HTMLButtonElement).disabled).toBe(true)
-    }
   })
 
 })

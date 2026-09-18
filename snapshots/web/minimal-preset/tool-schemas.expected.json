@@ -15,6 +15,22 @@
           "command"
         ]
       }
+    },
+    {
+      "name": "mermaid_render",
+      "description": "Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "diagram": {
+            "type": "string",
+            "description": "The Mermaid diagram source code."
+          }
+        },
+        "required": [
+          "diagram"
+        ]
+      }
     }
   ],
   "changes": []
