@@ -297,6 +297,12 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 | `@deepseek-ai/dsh-mcp-client` | yes | MCP client bridge: connects to MCP servers and registers their tools on ctx.tools |
 | `@deepseek-ai/dsh-mcp-resources` | no | Scoped MCP resource discovery and reading through shared model tools |
 
+## mermaid
+
+| Package | Config | Description |
+|---|---|---|
+| `@deepseek-ai/dsh-tool-mermaid` | no | Model-facing Mermaid diagram tool: validates diagram source and returns it for browser-side rendering |
+
 ## plan
 
 | Package | Config | Description |
