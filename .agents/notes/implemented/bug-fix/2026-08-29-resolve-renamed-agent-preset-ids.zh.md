@@ -14,7 +14,7 @@ Web e2e 没有抓住这个问题,因为它们的种子会话与设置只使用�
 
 ## 决策
 
-由拥有 preset 词汇的 `agent-presets` 包在 `resolve()` 中把重命名前的 id 映射到当前拥有该组合的 preset。映射表只包含组合不变的重命名(`code` → `ptc`),且真实存在旧 id 的目录仍然优先,所以 authored preset 可以复用任意名字。组合调用方记录的是映射后的 id(`mount`/`select` 记录解析出的 preset id),因此被切换的遗留会话在日志中写入的是当前名称。
+由拥有 preset 词汇的 `packages/preset/agent-preset-registry` 包把重命名前的 id 映射到当前拥有该组合的 preset。私有方法 `currentId()` 先在定义表中查找请求的 id，仅当没有任何定义提供该 id 时才回落到映射，因此真正声明了旧 id 的定义仍然优先，authored preset 也可以复用任意名字。`resolve()` 与 `retain()` 都调用它；`retain()` 是 `mount()`/`select()` 背后的激活路径，而后者记录的是解析后的 preset id，因此被切换的遗留会话在日志中写入的是当前名称。
 
 这是被推迟的会话持久化词汇的对偶面:会话日志继续写 `code`,而 `resolve()` 是必须在 v0→v1 迁移改写词汇之前持续应答它的唯一接缝。
 
@@ -27,6 +27,6 @@ Web e2e 没有抓住这个问题,因为它们的种子会话与设置只使用�
 ## 影响
 
 - 记录为 `code` 的会话以 `ptc` 组合恢复;预设切换与模型切换在其上可用;`settings.default: code` 在用户更新前也能用于会话创建。
-- `resolve('code')` 成功,authoring 路径(`copy`/`delete`)同样解析重命名后的组合;删除 `code` 会落到随附的 `ptc` 行,被只读守卫拒绝,这是既有的随附 preset 保护。
+- `resolve('code')` 成功，`mount()`/`select()` 激活路径组合的是重命名后的 preset，因此记录为旧 id 的会话以 `ptc` 恢复。
 - 芯片在会话被切换前仍显示裸记录 id `code`;客户端对遗留 id 的命名延迟到重命名词汇迁移。
 - 通用场景——会话记录了一个已被部署删除的 preset——仍然按设计大声失败,无法恢复。

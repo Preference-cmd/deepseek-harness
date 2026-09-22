@@ -14,7 +14,7 @@ The web e2e lanes did not catch it, because they seed sessions and settings unde
 
 ## Decision
 
-`agent-presets` — the package that owns the preset vocabulary — maps the pre-rename id to the preset that now owns the composition in `resolve()`. The map holds only ids whose composition is unchanged by the rename (`code` → `ptc`), and a directory that actually supplies the legacy id still wins, so an authored preset may reuse any name. The mapped id is what composition callers record (`mount`/`select` record the resolved preset's id), so a switched legacy session's log writes the current name.
+`packages/preset/agent-preset-registry` — the package that owns the preset vocabulary — maps the pre-rename id to the preset that now owns the composition. A private `currentId()` looks the requested id up in the definition map and falls back to the mapping only when no definition supplies it, so a definition that really declares the legacy id still wins and an authored preset may reuse any name. Both `resolve()` and `retain()` call it; `retain()` is the activation path behind `mount()` and `select()`, which record the resolved preset's id, so a switched legacy session's log writes the current name.
 
 This is the counterpart of the deferred session-persistent vocabulary: the session log keeps saying `code`, and resolution is the one seam that must keep answering it until the v0→v1 migration rewrites the vocabulary.
 
@@ -27,6 +27,6 @@ This is the counterpart of the deferred session-persistent vocabulary: the sessi
 ## Consequences
 
 - A session recorded under `code` resumes with the `ptc` composition; preset and model switching work on it, and `settings.default: code` resolves for session creation until the user updates it.
-- `resolve('code')` succeeds, so the authoring paths (`copy`/`delete`) resolve the renamed composition as well; deleting `code` targets the shipped `ptc` row and is refused as read-only, which is the existing shipped-preset guard.
+- `resolve('code')` succeeds, and the `mount()`/`select()` activation paths compose the renamed preset, so a session that recorded the legacy id resumes under `ptc`.
 - The chip still shows the raw recorded id `code` until the session is switched; naming a legacy id in the client is deferred to the rename-vocabulary migration.
 - The general case — a session recording a preset the deployment deleted — still fails to resume, loudly, by design.

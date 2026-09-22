@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-29-resolve-renamed-agent-preset-ids.md
-2026-08-29-resolve-renamed-agent-preset-ids.md: 0c09f93e52bed13d23b0859f125901b49154eb2f
-2026-08-29-resolve-renamed-agent-preset-ids.zh.md: 0fd2dae983f6f08502b39df869ef462561248d39
+2026-08-29-resolve-renamed-agent-preset-ids.md: ce9fbdb7f5c7133046ad16475fc05c6785b787b6
+2026-08-29-resolve-renamed-agent-preset-ids.zh.md: 77046baff4559d81e9d68673c51e169e22f6ed63
