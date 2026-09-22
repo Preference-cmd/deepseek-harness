@@ -42,3 +42,4 @@ Python SDK single-exe 夹具新增了 V4 代，而 `scripts/smoke-python-runtime
 - fork 存续的独有工作是带 Web 渲染的 `tool-mermaid` 包、settings-models 的 `maxRetries` 控件与每模型推理档位、`llm-pi-ai` 的 `x-opencode-session` 头，以及重命名前的 preset id 映射（现位于 `agent-preset-registry`）。
 - `packages/client/ui-settings-unarchive-sessions`、`packages/experimental/agent-team-web-profile`、`packages/settings/settings-file`、`packages/preset/agent-presets` 均已移除；fork 承接上游的替代者，包括 `preset/agent-preset`、`preset/agent-preset-registry`、`session/session-format-v3-to-v4` 与 `skill/tool-workspace-dependencies`。
 - 上游新增的 `AGENTS.md` 规则适用于 fork 的后续工作：不得新增指向 `unknown` 的断言，以及统一的 `dev:web` / `dev:desktop` 与 `make web|desktop|build` 启动命令。
+- 已在合并后的树上验证：typecheck、lint、`doc-sync`（42 门）、`test:expected`（105 个用例）、`test:snapshot`（177 个场景中的 173 个），以及受影响包的聚焦单元测试（2628 个用例）。有两个快照场景只在本机失败：`snapshots/acp` 的 `escalation-approved` 与 `snapshots/session/fs-delete-recreate`，其 bash 工具结果多出的行来自本机的 `mavis-trash: moved to trash: …` 删除回显；本次合并并未改动这两个场景，其录制字节保持不变。
