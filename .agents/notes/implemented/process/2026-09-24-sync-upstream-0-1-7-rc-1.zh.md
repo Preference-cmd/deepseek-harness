@@ -20,6 +20,11 @@ Status: implemented
 - `pwsh-tool-turn`（20 → 21）与 `persistent-pwsh-tool-turn`（17 → 18）采用同样的插入：它们的组合在 headless profile 上打补丁且未禁用 `tool-mermaid`，因此承载的是 fork 那份更大的工具目录。执行本次合并的机器上没有 `pwsh`，这两处改动没有本机运行记录；`test:snapshot` 在本机跳过这两个场景。
 - `docs/tool-catalog.*`、`docs/config-catalog.*`、`docs/module-graph.*`、`THIRD_PARTY_NOTICES.md` 与组成参考包清单分别来自 `gen-tool-catalog`、`gen-config-catalog`、`gen-module-graph`、`gen-third-party-notices`、`gen-plugin-packages`、`gen-client-catalog`、`gen-dependency-catalog`。每个生成器重写出的内容都与合并结果完全一致，因此解决冲突后只有 `pnpm-lock.yaml` 需要二次写入。
 
+两项 fork 侧修补，均由本次合并导致失败的关卡暴露：
+
+- `packages/mermaid/tool-mermaid/package.json`：版本更新为 `0.1.7-rc.1`，其依赖段采用本窗口的区间策略（DSH 包用 `workspace:*`，`@deepseek-ai/cordis` 用 `workspace:~`）。`verify-npm-install-layout` 要求每个 `packages/*/*` 成员都携带家族版本，`release:verify --family dsh` 会对未携带的成员报错；该 fork 专属包在上游不存在，因此没有任何上游提交会更新它。
+- `scripts/rescope-vendor.ts`：把 `packages/extensions/ui-cordis/src/client/CordisPreparingRow.tsx` 加入裸 `cordis` 词元的跳过清单。本窗口新增了这条 preparing 卡片家族，其 `PropsLocale<'cordis'>` 指向 `locales.ts` 中以 `NS = 'cordis'` 声明的 UI locale 命名空间 —— 这是一个产品键，与它的四个同族行文件完全相同。否则 `rescope-vendor:check` 会把该词元报为残留，因为改写它等于把一个 locale 命名空间当作包名解析。
+
 ## 备选方案
 
 **让 `office-skills` 的伴随文件继续与 `text-turn` 共用。** 否决：上游自持的伴随文件记录的是一份与 `text-turn` 不同的 23 工具目录，共用文件会断言一个该场景已不具备的相等关系。
@@ -33,5 +38,5 @@ Status: implemented
 - fork 运行在 `0.1.7-rc.1`，`SESSION_FORMAT_VERSION` 保持 4。本窗口新增 app-boot 的插件兼容性预检、桌面端崩溃报告、voice-input 与 plugin-manager 的下载镜像选择，以及 cordis 4.0.4 的 vendor 升级。
 - fork 现存的独有工作为：`tool-mermaid` 包及其 Web 渲染、`ui-settings-models` 的 `maxRetries` 控件与每模型推理档位、`llm-pi-ai` 的 `x-opencode-session` 请求头、`agent-preset-registry` 中的重命名前 preset id 映射，以及 `reicon-react` 浏览器 devDependency。
 - fork 早先对检索包的退役无需重新施加：两侧都不再包含这些路径。
-- 已在合并后的树上验证：typecheck、lint、`doc-sync`（42 门）、`test:expected`（106 个用例）、`test:snapshot`（173 个场景中 169 个通过、2 个跳过）。
+- 已在合并后的树上验证：typecheck、lint、`hygiene`（18 门）、`doc-sync`（42 门）、`test:expected`（106 个用例）、`test:snapshot`（173 个场景中 169 个通过、2 个跳过）。
 - 有两个快照场景只在本机失败：`snapshots/acp` 的 `escalation-approved` 与 `snapshots/session/fs-delete-recreate`，其 bash 工具结果的录制文本为 `(no output)`，而本机 `rm` 会打印 `mavis-trash: moved to trash: …`。本次合并并未改动这两个场景，其录制字节保持不变。

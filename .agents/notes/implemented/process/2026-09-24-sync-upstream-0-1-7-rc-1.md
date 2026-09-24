@@ -20,6 +20,11 @@ The merge incorporates upstream `0.1.7-rc.1` into `sync/upstream-0.1.7-rc.1` as 
 - `pwsh-tool-turn` (20 → 21) and `persistent-pwsh-tool-turn` (17 → 18) take the same insertion, because their compositions patch the headless profile without disabling `tool-mermaid` and therefore carry the fork's larger catalog. No `pwsh` exists on the machine that merged this, so those two edits are recorded without a local run; `test:snapshot` skips both scenarios here.
 - `docs/tool-catalog.*`, `docs/config-catalog.*`, `docs/module-graph.*`, `THIRD_PARTY_NOTICES.md`, and the composition-reference package list come from `gen-tool-catalog`, `gen-config-catalog`, `gen-module-graph`, `gen-third-party-notices`, `gen-plugin-packages`, `gen-client-catalog`, and `gen-dependency-catalog`. Each generator reproduced the merged content exactly, so only `pnpm-lock.yaml` needed a second write after the conflict resolution.
 
+Two fork-side repairs, each surfaced by a gate the merge made fail:
+
+- `packages/mermaid/tool-mermaid/package.json`: the version moves to `0.1.7-rc.1` and its dependency sections adopt the window's range policy (`workspace:*` for DSH packages, `workspace:~` for `@deepseek-ai/cordis`). `verify-npm-install-layout` requires every `packages/*/*` member to carry the family version, and `release:verify --family dsh` fails on the member that does not; the fork-only package is absent upstream, so no upstream commit bumps it.
+- `scripts/rescope-vendor.ts`: `packages/extensions/ui-cordis/src/client/CordisPreparingRow.tsx` joins the skip list for the bare `cordis` token. The window adds this preparing-card family, whose `PropsLocale<'cordis'>` names the UI locale namespace that `locales.ts` declares as `NS = 'cordis'` — a product key, exactly as in its four sibling row files. `rescope-vendor:check` reports the token as residue otherwise, because rewriting it would resolve a locale namespace as a package name.
+
 ## Alternatives considered
 
 **Keep the `office-skills` sidecars shared with `text-turn`.** Rejected: upstream's own sidecar records a 23-tool catalog that differs from `text-turn`'s, so the shared file would assert an equality the scenario no longer has.
@@ -33,5 +38,5 @@ The merge incorporates upstream `0.1.7-rc.1` into `sync/upstream-0.1.7-rc.1` as 
 - The fork runs on `0.1.7-rc.1` with `SESSION_FORMAT_VERSION` 4. The window adds the app-boot plugin compatibility preflight, the desktop crash report, the voice-input and plugin-manager download-mirror selection, and the cordis 4.0.4 vendor bump.
 - The fork's surviving unique work is the `tool-mermaid` package with its Web rendering, the `ui-settings-models` `maxRetries` control and per-model reasoning levels, the `llm-pi-ai` `x-opencode-session` header, the pre-rename preset-id mapping in `agent-preset-registry`, and the `reicon-react` browser devDependency.
 - The fork's earlier retirement of the search packages needs no re-application: neither tree carries those paths.
-- Verified on the merged tree: typecheck, lint, `doc-sync` (42 gates), `test:expected` (106 tests), and `test:snapshot` (169 passed, 2 skipped in 173 scenarios).
+- Verified on the merged tree: typecheck, lint, `hygiene` (18 gates), `doc-sync` (42 gates), `test:expected` (106 tests), and `test:snapshot` (169 passed, 2 skipped in 173 scenarios).
 - Two scenarios fail on this host only: `snapshots/acp` `escalation-approved` and `snapshots/session/fs-delete-recreate` compare a bash tool result whose recorded text is `(no output)` against the `mavis-trash: moved to trash: …` line this machine's `rm` prints. The merge changes neither scenario, and their recorded bytes stay unchanged.
