@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-08-29-resolve-renamed-agent-preset-ids.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-29-resolve-renamed-agent-preset-ids.md
-2026-08-29-resolve-renamed-agent-preset-ids.md: ce9fbdb7f5c7133046ad16475fc05c6785b787b6
-2026-08-29-resolve-renamed-agent-preset-ids.zh.md: 77046baff4559d81e9d68673c51e169e22f6ed63
+/agent-note-resolve-agent-preset-ids-a-durable-session-header-recorded-before-a-rename:
+  en: f8512d6a185bb2cd
+  zh: b9402881a61bad6e
+/agent-note-resolve-agent-preset-ids-a-durable-session-header-recorded-before-a-rename/problem:
+  en: d1132aea94319bc7
+  zh: b67b23fd1e65ee5d
+/agent-note-resolve-agent-preset-ids-a-durable-session-header-recorded-before-a-rename/decision:
+  en: c149ee4cdd284473
+  zh: cb7e7d9b4fdd02a3
+/agent-note-resolve-agent-preset-ids-a-durable-session-header-recorded-before-a-rename/alternatives-considered:
+  en: 418d7763ec459baa
+  zh: 5ae968bc206f2c39
+/agent-note-resolve-agent-preset-ids-a-durable-session-header-recorded-before-a-rename/consequences:
+  en: 7c51c9495c7c69e4
+  zh: 122e11587ef471ae

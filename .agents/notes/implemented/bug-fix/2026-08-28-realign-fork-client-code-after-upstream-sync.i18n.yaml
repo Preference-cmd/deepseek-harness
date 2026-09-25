@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-08-28-realign-fork-client-code-after-upstream-sync.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-28-realign-fork-client-code-after-upstream-sync.md
-2026-08-28-realign-fork-client-code-after-upstream-sync.md: 48dc29187d7a074e6462afbd4dc6631045343fa1
-2026-08-28-realign-fork-client-code-after-upstream-sync.zh.md: 73a1300309fb8123c152e48ba76d58c2e37e02ae
+/agent-note-realign-fork-client-code-with-the-upstream-client-rewrite:
+  en: e66dc5803130b0f3
+  zh: 34c95f5026846f1b
+/agent-note-realign-fork-client-code-with-the-upstream-client-rewrite/problem:
+  en: 156f379ec7749b5b
+  zh: 4904ed22bb13414c
+/agent-note-realign-fork-client-code-with-the-upstream-client-rewrite/decision:
+  en: ed0cc3b6781ddffb
+  zh: 18ca9b112497cb44
+/agent-note-realign-fork-client-code-with-the-upstream-client-rewrite/alternatives-considered:
+  en: 9939b43c8e906eb0
+  zh: c6a94ec4c966332b
+/agent-note-realign-fork-client-code-with-the-upstream-client-rewrite/consequences:
+  en: 970a9206285ece69
+  zh: 07e2c5a4e6675474

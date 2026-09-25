@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-08-14-pi-ai-084-terminal-state-mapping.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-14-pi-ai-084-terminal-state-mapping.md
-2026-08-14-pi-ai-084-terminal-state-mapping.md: d33e39fa6d1fc470b77bfe308e060e72138647d2
-2026-08-14-pi-ai-084-terminal-state-mapping.zh.md: 03cf353f00866d854c6817fa5d48f2a606120763
+/agent-note-map-pi-ai-0-84-terminal-states-and-caller-abort-in-llm-pi-ai:
+  en: 2254fb3da023a5fd
+  zh: 5dd6987162bafa7b
+/agent-note-map-pi-ai-0-84-terminal-states-and-caller-abort-in-llm-pi-ai/problem:
+  en: fee6e769fcda5f68
+  zh: c25e6f21fc1759e0
+/agent-note-map-pi-ai-0-84-terminal-states-and-caller-abort-in-llm-pi-ai/decision:
+  en: f3abb798d9c530d1
+  zh: 44bcf5e03f7b81c4
+/agent-note-map-pi-ai-0-84-terminal-states-and-caller-abort-in-llm-pi-ai/alternatives-considered:
+  en: 30c27cd46ef31787
+  zh: 7fac9fccc6fc64ea
+/agent-note-map-pi-ai-0-84-terminal-states-and-caller-abort-in-llm-pi-ai/consequences:
+  en: b85b526fd49f97a0
+  zh: dd961d32dcf7876e

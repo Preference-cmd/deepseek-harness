@@ -1,6 +1,22 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-08-29-node-internal-resolvesync-orders.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-29-node-internal-resolvesync-orders.md
-2026-08-29-node-internal-resolvesync-orders.md: 630102ad7085eeb2a74554ec36b09dd0d85ffc95
-2026-08-29-node-internal-resolvesync-orders.zh.md: 8f447a282d8df99e98f1f3a26925de5cb132171c
+/agent-note-resolve-the-node-internal-resolvesync-across-its-parameter-orders:
+  en: 90d133fcc8ed2536
+  zh: 2989256e36636a27
+/agent-note-resolve-the-node-internal-resolvesync-across-its-parameter-orders/problem:
+  en: f14c06317af65ee9
+  zh: 18d00cd66155e2d8
+/agent-note-resolve-the-node-internal-resolvesync-across-its-parameter-orders/decision:
+  en: 552005356aa0a0ff
+  zh: 67595f429e9276b6
+/agent-note-resolve-the-node-internal-resolvesync-across-its-parameter-orders/alternatives-considered:
+  en: 081c6298beaacfeb
+  zh: 3d5a3472e49cfd8e
+/agent-note-resolve-the-node-internal-resolvesync-across-its-parameter-orders/consequences:
+  en: 74c32edcb58967a3
+  zh: 93f09df9ecd7466f
+/agent-note-resolve-the-node-internal-resolvesync-across-its-parameter-orders/related:
+  en: 0a7f46b7f0764e99
+  zh: 918241c688874b71

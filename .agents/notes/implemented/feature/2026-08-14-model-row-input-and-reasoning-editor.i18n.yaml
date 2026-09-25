@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-08-14-model-row-input-and-reasoning-editor.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-14-model-row-input-and-reasoning-editor.md
-2026-08-14-model-row-input-and-reasoning-editor.md: 8d79fc0ba44a479a4643cd7f7471207dc7366cfc
-2026-08-14-model-row-input-and-reasoning-editor.zh.md: 059a08222a12cdc60ccc9cada2e3ce795ac18f45
+/agent-note-edit-input-modalities-and-reasoning-levels-on-a-custom-provider-model:
+  en: ddf4a81f769e54b9
+  zh: ca871888f226f6fd
+/agent-note-edit-input-modalities-and-reasoning-levels-on-a-custom-provider-model/problem:
+  en: 77bc014eb0ef6490
+  zh: a5a2c699de2f1f19
+/agent-note-edit-input-modalities-and-reasoning-levels-on-a-custom-provider-model/decision:
+  en: e255bb35eaf1e001
+  zh: cfb13de82c48aa7c
+/agent-note-edit-input-modalities-and-reasoning-levels-on-a-custom-provider-model/alternatives-considered:
+  en: b095ab5671a39e63
+  zh: cd2f2813b64359d9
+/agent-note-edit-input-modalities-and-reasoning-levels-on-a-custom-provider-model/consequences:
+  en: bef59e33f2524b77
+  zh: 47a9ab4768ee44c0

@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-09-03-retire-fork-search-packages.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/simplification/2026-09-03-retire-fork-search-packages.md
-2026-09-03-retire-fork-search-packages.md: bef02b136fc2cdb5af6fe312c6d71ab3c12c54e9
-2026-09-03-retire-fork-search-packages.zh.md: 42f51c35e36c494cb39c83555144131cfe812d0e
+/agent-note-retire-the-fork-web-search-manager-and-tool-search-packages:
+  en: 8c2f8118dd0c3d5e
+  zh: c03148175ea32e46
+/agent-note-retire-the-fork-web-search-manager-and-tool-search-packages/problem:
+  en: a77d3d5c828ec24a
+  zh: 525200735297ef05
+/agent-note-retire-the-fork-web-search-manager-and-tool-search-packages/decision:
+  en: a6a5a9e929701847
+  zh: 6ca37e5fcc067566
+/agent-note-retire-the-fork-web-search-manager-and-tool-search-packages/alternatives-considered:
+  en: 81ff2c09976c51fd
+  zh: c5f5c29d4e524159
+/agent-note-retire-the-fork-web-search-manager-and-tool-search-packages/consequences:
+  en: c914c008b8893da1
+  zh: 73de14035f216d15
