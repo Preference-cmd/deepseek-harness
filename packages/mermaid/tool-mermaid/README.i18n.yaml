@@ -1,6 +1,64 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/mermaid/tool-mermaid/README.md
-README.md: d03d03a1e08856a634d091a73bb7f8240291ef13
-README.zh.md: 6db4e016f8f658a6d32eeba70d77dd1688e96ae1
+/:
+  en: c1f5a0abdd561ec9
+  zh: 78e1fc65504f04fe
+/deepseek-ai-dsh-tool-mermaid:
+  en: 350097534e17abc2
+  zh: b8970d84ce336830
+/deepseek-ai-dsh-tool-mermaid/summary:
+  en: e06f2be0a0defaed
+  zh: 3097b4b8ef9fe407
+/deepseek-ai-dsh-tool-mermaid/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: 09388d293f9be9cb
+/deepseek-ai-dsh-tool-mermaid/use-this-package:
+  en: e99ff92f647a5286
+  zh: 7c3ac20123115e8e
+/deepseek-ai-dsh-tool-mermaid/understand-the-implementation:
+  en: 893e6028ae9b9467
+  zh: ab603651aea896d0
+/deepseek-ai-dsh-tool-mermaid/understand-the-implementation/design-concept:
+  en: 8c63d873809b0b44
+  zh: d161ce12c056ece6
+/deepseek-ai-dsh-tool-mermaid/understand-the-implementation/source-map:
+  en: 935938b293e32c0e
+  zh: 203f47b5d2629dd5
+/deepseek-ai-dsh-tool-mermaid/further-exploration:
+  en: ff4e8f8bc537a9fd
+  zh: 7aad67d48bbe566e
+/deepseek-ai-dsh-tool-mermaid/model-experience:
+  en: 215e7ba838619b7b
+  zh: a311da3843709f90
+/deepseek-ai-dsh-tool-mermaid/model-experience/tool-schemas:
+  en: 3039bc5e7a796b21
+  zh: 6b7a9eaf69c9ea53
+/deepseek-ai-dsh-tool-mermaid/model-experience/tool-schemas/what-the-model-sees:
+  en: 6e12e37e03a4eaf6
+  zh: d173127f61b1bf2d
+/deepseek-ai-dsh-tool-mermaid/model-experience/tool-schemas/token-effect:
+  en: 68517f7d65ef7e9d
+  zh: af542108bfc17a1f
+/deepseek-ai-dsh-tool-mermaid/model-experience/tool-schemas/kv-cache-effect:
+  en: 1e6d3da20012762d
+  zh: 3218a4a465aca137
+/deepseek-ai-dsh-tool-mermaid/model-experience/tool-result:
+  en: f8ffc2b983f05ffc
+  zh: 8573891441963be4
+/deepseek-ai-dsh-tool-mermaid/model-experience/tool-result/what-the-model-sees:
+  en: b18360adb4f01b57
+  zh: 1f2630d44d847651
+/deepseek-ai-dsh-tool-mermaid/model-experience/tool-result/token-effect:
+  en: 39692c62594c2542
+  zh: 32827cc8b04a4480
+/deepseek-ai-dsh-tool-mermaid/model-experience/tool-result/kv-cache-effect:
+  en: f5d5f97a153f7c70
+  zh: fc53a2f3d9725bea
+/deepseek-ai-dsh-tool-mermaid/known-limitations-and-deferred-work:
+  en: 1861f1b37fd4de3f
+  zh: d125b8cd3f006603
+/deepseek-ai-dsh-tool-mermaid/known-limitations-and-deferred-work/dev-note:
+  en: e67f633dc6fe7773
+  zh: cdd2a143b725accd

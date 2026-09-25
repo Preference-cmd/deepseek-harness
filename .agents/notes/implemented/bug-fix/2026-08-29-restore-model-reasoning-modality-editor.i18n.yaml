@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-08-29-restore-model-reasoning-modality-editor.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-29-restore-model-reasoning-modality-editor.md
-2026-08-29-restore-model-reasoning-modality-editor.md: e305463eb4a70e9d18c7510ccfde03743ddb1d36
-2026-08-29-restore-model-reasoning-modality-editor.zh.md: 609e9ceafd7d34e52af9ccd905679c3be0722b1e
+/agent-note-restore-the-per-model-reasoning-and-modality-editor-lost-in-the-upstream-sync-merge:
+  en: e58999ab71275c64
+  zh: ee2c4f0b168b227b
+/agent-note-restore-the-per-model-reasoning-and-modality-editor-lost-in-the-upstream-sync-merge/problem:
+  en: a5c03eee1d960299
+  zh: 1e77e062d32e6b1c
+/agent-note-restore-the-per-model-reasoning-and-modality-editor-lost-in-the-upstream-sync-merge/decision:
+  en: cf099950b6ad4a28
+  zh: 04c942e4c4828b4c
+/agent-note-restore-the-per-model-reasoning-and-modality-editor-lost-in-the-upstream-sync-merge/alternatives-considered:
+  en: d16f508c5a2fec69
+  zh: d4fc05f20cbb0803
+/agent-note-restore-the-per-model-reasoning-and-modality-editor-lost-in-the-upstream-sync-merge/consequences:
+  en: f0202a2f3cfd774b
+  zh: cc4458e5b217fc4c

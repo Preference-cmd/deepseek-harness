@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/mermaid/README.md
-README.md: dbe48f5c866749d3ae9e60efb1338b259205982c
-README.zh.md: 5eed3c9770b74933850ee78ad4d31f291f8c8625
+/:
+  en: 45eacdead9ac8d61
+  zh: c051ecf834f0b112
+/packages-mermaid:
+  en: 6c3f778210e65c1c
+  zh: 14f039995c158884
+/packages-mermaid/summary:
+  en: 8c4bbe692aeb81ec
+  zh: e1ba32b905e087dd
+/packages-mermaid/packages:
+  en: 2e6f4cc83fb88d91
+  zh: ac7694d7e9ae4ddb
+/packages-mermaid/related-documentation:
+  en: 5fe69b9fb775c871
+  zh: 14396c7c5af5d1c0

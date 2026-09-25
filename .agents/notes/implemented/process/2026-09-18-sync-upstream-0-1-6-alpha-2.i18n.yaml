@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-09-18-sync-upstream-0-1-6-alpha-2.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/process/2026-09-18-sync-upstream-0-1-6-alpha-2.md
-2026-09-18-sync-upstream-0-1-6-alpha-2.md: ea7552264b3c4546c1c99e76c92857a3b5b27dfe
-2026-09-18-sync-upstream-0-1-6-alpha-2.zh.md: b2a68ef0b142fb651d3ff061ae68a1633daa27a4
+/agent-note-sync-upstream-master-0-1-6-alpha-2-into-the-fork:
+  en: 27f61262fd06f7a9
+  zh: 47b2680534aab9bb
+/agent-note-sync-upstream-master-0-1-6-alpha-2-into-the-fork/problem:
+  en: 89d06eb7a9a7ceb5
+  zh: 522660c5eaca0fce
+/agent-note-sync-upstream-master-0-1-6-alpha-2-into-the-fork/decision:
+  en: 2bda9aa41f18b6e7
+  zh: b87bff6796876d73
+/agent-note-sync-upstream-master-0-1-6-alpha-2-into-the-fork/alternatives-considered:
+  en: 902325d6d8dcaf9d
+  zh: 619e0a6524b67d84
+/agent-note-sync-upstream-master-0-1-6-alpha-2-into-the-fork/consequences:
+  en: 6215cffad4854a3d
+  zh: 4967e14d2b33dec8

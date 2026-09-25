@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-08-28-retire-dormant-ui-turn-nav-stub.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/simplification/2026-08-28-retire-dormant-ui-turn-nav-stub.md
-2026-08-28-retire-dormant-ui-turn-nav-stub.md: c10d28483ebe0476fb22ade46f24b667797a791a
-2026-08-28-retire-dormant-ui-turn-nav-stub.zh.md: 3ca72807b111f88b92c648a20a1a56b8c961e38a
+/agent-note-remove-the-dormant-ui-turn-nav-stub:
+  en: bb493fa0cafaf9eb
+  zh: 299db7fc73f1948b
+/agent-note-remove-the-dormant-ui-turn-nav-stub/problem:
+  en: ee17107b94f64013
+  zh: c9eb089b8bfa07b7
+/agent-note-remove-the-dormant-ui-turn-nav-stub/decision:
+  en: 4d1cd134f1605521
+  zh: 69000364722dc60f
+/agent-note-remove-the-dormant-ui-turn-nav-stub/alternatives-considered:
+  en: 7df941f500641a13
+  zh: 0b6e2402753a7c9c
+/agent-note-remove-the-dormant-ui-turn-nav-stub/consequences:
+  en: 6bbeff79f1d99508
+  zh: 9c306067a68c4e88

@@ -1,6 +1,19 @@
-# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
-# side as of the last confirmed-consistent state. Both languages carry equal authority;
-# after editing either side, bring the other along and re-record with:
+# Bilingual-pair consistency record for 2026-09-03-mermaid-diagram-tool.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-09-03-mermaid-diagram-tool.md
-2026-09-03-mermaid-diagram-tool.md: 4c029124375bf10ddf0eb0c1a43124ca3eb3698e
-2026-09-03-mermaid-diagram-tool.zh.md: 1ff0fdb1491122165dadd994ade4f1b588fd5829
+/agent-note-mermaid-diagram-tool-with-browser-side-rendering:
+  en: 1bf968879b74bde6
+  zh: a6669bfebb488db5
+/agent-note-mermaid-diagram-tool-with-browser-side-rendering/problem:
+  en: 8255776eb0fc64f5
+  zh: fd205ec3632e9740
+/agent-note-mermaid-diagram-tool-with-browser-side-rendering/decision:
+  en: 122d0dd17462309d
+  zh: 5315410fd0b09cf6
+/agent-note-mermaid-diagram-tool-with-browser-side-rendering/alternatives-considered:
+  en: 258e2369c76b2ff6
+  zh: 9d6615203d64f022
+/agent-note-mermaid-diagram-tool-with-browser-side-rendering/consequences:
+  en: 454e6cefe1de0727
+  zh: d5f57396035515a3
