@@ -26,7 +26,8 @@ import type { CodeToolbarLabels } from '../CodeToolbar.tsx'
 import { CodeBlock } from './CodeBlock.tsx'
 import { parseFileLink } from './file-link.ts'
 import { renderTexToReact } from './katex.tsx'
-import { useMermaidDiagram } from './mermaid.tsx'
+import { MermaidViewport, useMermaidDiagram } from './mermaid.tsx'
+import type { MermaidZoomLabels } from './mermaid.tsx'
 import { LinkIconMedium, classifyLinkPath } from '../LinkIcon.tsx'
 import { useMarkdownDelegate } from './MarkdownDelegate.tsx'
 import { HoverCard } from '../HoverCard.tsx'
@@ -49,6 +50,7 @@ export interface MarkdownCodeLabels {
 export interface MarkdownLabels {
   code: MarkdownCodeLabels
   footnotes: string
+  mermaid: MermaidZoomLabels
 }
 
 function sanitizeUrl(url: string): string {
@@ -374,12 +376,13 @@ function renderNode(node: Md.RootContent, key: Key, context: MarkdownRenderConte
 }
 
 /** A settled mermaid fence: the rendered diagram, or the code fallback. */
-function MermaidBlock({ source, code, lang, copyLabel, copiedLabel }: {
+function MermaidBlock({ source, code, lang, copyLabel, copiedLabel, labels }: {
   source: string
   code: string
   lang: string | undefined
   copyLabel: string
   copiedLabel: string
+  labels: MermaidZoomLabels
 }): ReactNode {
   const diagram = useMermaidDiagram(source)
   if (diagram === null || diagram === undefined) {
@@ -394,7 +397,7 @@ function MermaidBlock({ source, code, lang, copyLabel, copiedLabel }: {
       />
     )
   }
-  return <div className={css.mermaidDiagram}>{diagram}</div>
+  return <MermaidViewport tree={diagram} labels={labels} />
 }
 
 function renderCode(node: Md.Code, key: Key, context: MarkdownRenderContext): ReactNode {
@@ -424,6 +427,7 @@ function renderCode(node: Md.Code, key: Key, context: MarkdownRenderContext): Re
         lang={lang}
         copyLabel={context.labels.code.copyLabel}
         copiedLabel={context.labels.code.copiedLabel}
+        labels={context.labels.mermaid}
       />
     )
   }

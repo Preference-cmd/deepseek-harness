@@ -39,6 +39,9 @@ export const zh = {
   'json.label': 'JSON',
   'markdown.footnotes': '脚注',
   'markdown.truncatedCharacters': '… 已截断，共 {total} 字符',
+  'mermaid.zoomIn': '放大',
+  'mermaid.zoomOut': '缩小',
+  'mermaid.reset': '重置缩放',
   'number.thousand': '{value}K',
   'number.million': '{value}M',
 } satisfies Record<string, string>

@@ -9,7 +9,7 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-The `mermaid/` group holds the model-facing Mermaid diagram tool. `tool-mermaid/` (`mermaid_render`) validates diagram source on the host and returns it; the web client renders the returned fenced source as a diagram.
+The `mermaid/` group holds the model-facing Mermaid diagram tool. `tool-mermaid/` (`mermaid_render`) rejects an empty diagram on the host and returns the source unchanged; the web client renders the returned fenced source as a diagram fitted to the message column, with zoom, pan, and reset controls.
 
 ## Packages
 

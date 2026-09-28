@@ -2,20 +2,26 @@
  * Mermaid source to React, following the KaTeX renderer in `katex.tsx`: the
  * engine emits an SVG string, the browser's own HTML parser turns it into a
  * tree, and this module maps that tree onto React elements. The mermaid engine
- * sanitizes its output at `securityLevel: 'strict'` (scripts and event
- * handlers removed); the DOM-to-React mapping additionally drops every
- * `on*` attribute and `javascript:` URL, so no raw engine string reaches
- * `dangerouslySetInnerHTML`.
+ * sanitizes its output at `securityLevel: 'strict'` (scripts and event handlers
+ * removed); the DOM-to-React mapping additionally drops every `on*` attribute
+ * and `javascript:` URL, so no raw engine string reaches `dangerouslySetInnerHTML`.
  *
  * The engine loads lazily: `mermaid` is an ~84MB unpacked dependency, so the
- * first settled mermaid fence imports it once and every later fence reuses
- * the same module promise. While loading — or when the source does not
- * parse — the caller keeps its code-block fallback, the same degradation
- * every other fence gets.
+ * first settled mermaid fence imports it once and every later fence reuses the
+ * same module promise. While loading — or when the source does not parse —
+ * the caller keeps its code-block fallback, the same degradation every other
+ * fence gets.
+ *
+ * A settled diagram is wrapped in {@link MermaidViewport}, which fits it to the
+ * message column and lets the reader zoom and pan it.
  */
 
-import { createElement, useEffect, useState } from 'react'
+import { createElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
+import Panzoom from '@panzoom/panzoom'
+import { IconRefreshOutlineRegular, IconZoomInOutlineRegular, IconZoomOutOutlineRegular } from '../icons/index.tsx'
+import { Tooltip } from '../Tooltip.tsx'
+import css from './MarkdownText.module.css'
 
 type MermaidModule = typeof import('mermaid')
 
@@ -28,6 +34,19 @@ function loadEngine(): Promise<MermaidModule> {
     return module
   })
   return enginePromise
+}
+
+/** Largest scale the viewport offers; the panzoom default, named here as this feature's limit. */
+const MAX_SCALE = 4
+
+/** Localized controls of a rendered diagram. */
+export interface MermaidZoomLabels {
+  /** Action that enlarges the diagram one step. */
+  zoomIn: string
+  /** Action that shrinks the diagram one step. */
+  zoomOut: string
+  /** Action that restores the fitted view. */
+  reset: string
 }
 
 /** Convert one inline `style` attribute string into React's style object. */
@@ -114,4 +133,123 @@ function hashSource(value: string): string {
     hash = (Math.imul(hash, 31) + value.charCodeAt(index)) | 0
   }
   return Math.abs(hash).toString(36)
+}
+
+/**
+ * A settled diagram inside a fitted, zoomable container.
+ *
+ * The frame owns its border, the toolbar, and the canvas height; Panzoom owns
+ * the transform on the paper element alone. Keeping the two on separate
+ * elements is what lets React keep rendering the toolbar while Panzoom
+ * imperatively writes `style.transform` on the paper — a shared element would
+ * have the two fighting over its `style` attribute.
+ *
+ * The fit scale is the one that brings the diagram inside the canvas width,
+ * capped at the diagram's own size, so a small diagram is never enlarged. It
+ * is also the floor: zooming out stops there, which is the view the unzoomed
+ * fence already showed.
+ *
+ * @param props.tree - the rendered SVG tree, produced by {@link useMermaidDiagram}.
+ * @param props.labels - localized zoom controls.
+ * @returns the framed diagram with its zoom toolbar.
+ */
+export function MermaidViewport({ tree, labels }: { tree: ReactNode; labels: MermaidZoomLabels }) {
+  const canvasRef = useRef<HTMLDivElement | null>(null)
+  const paperRef = useRef<HTMLDivElement | null>(null)
+  // The fitted scale and its controller, or undefined while this diagram has no
+  // measurable box. Every control no-ops in that state, so the toolbar is inert
+  // on a diagram the browser has not laid out yet.
+  const viewRef = useRef<{ zoom: ReturnType<typeof Panzoom>; fit: number } | undefined>(undefined)
+  const [scale, setScale] = useState(1)
+  const [canvasHeight, setCanvasHeight] = useState<number | undefined>(undefined)
+
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current
+    const paper = paperRef.current
+    // Both divs render unconditionally, so React has attached both refs before
+    // this first layout effect.
+    /* v8 ignore next -- see above */
+    if (canvas === null || paper === null) return
+    // Measured before Panzoom writes a transform, so this is the diagram's own
+    // layout box. A zero box has no meaningful fit: a hidden ancestor, a fence
+    // that has not reached the viewport, or a render that has not settled.
+    const width = paper.offsetWidth
+    const height = paper.offsetHeight
+    const available = canvas.clientWidth
+    if (width === 0 || height === 0 || available === 0) return
+    const fit = Math.min(1, available / width)
+    const listeners = new AbortController()
+    const zoom = Panzoom(paper, {
+      canvas: true, startScale: fit, minScale: fit, maxScale: MAX_SCALE,
+      animate: false, pinchAndPan: true,
+    })
+    viewRef.current = { zoom, fit }
+    const report = (): void => { setScale(zoom.getScale()) }
+    paper.addEventListener('panzoomchange', report, { signal: listeners.signal })
+    // Panzoom binds pointer dragging on the paper's parent — the canvas — but
+    // binds no wheel listener of its own, which is why the documentation viewer
+    // wires one itself. Requiring the modifier here keeps an ordinary wheel
+    // over a diagram scrolling the message stream, which is where a reader's
+    // cursor usually is.
+    const onWheel = (event: WheelEvent): void => {
+      if (!event.ctrlKey && !event.metaKey) return
+      event.preventDefault()
+      zoom.zoomWithWheel(event)
+    }
+    canvas.addEventListener('wheel', onWheel, { passive: false })
+    // The canvas clips the fitted diagram, so it reserves the fitted height
+    // rather than the diagram's full layout height.
+    setCanvasHeight(height * fit)
+    setScale(fit)
+    return () => {
+      listeners.abort()
+      canvas.removeEventListener('wheel', onWheel)
+      zoom.destroy()
+      viewRef.current = undefined
+    }
+  }, [tree])
+
+  const reset = useCallback(() => {
+    const view = viewRef.current
+    if (view === undefined) return
+    view.zoom.zoom(view.fit, { animate: false })
+    view.zoom.pan(0, 0, { animate: false })
+  }, [])
+
+  return (
+    <div className={css.mermaidFrame}>
+      <div className={css.mermaidToolbar}>
+        <span className={css.mermaidScale}>{Math.round(scale * 100)}%</span>
+        <Tooltip label={labels.zoomOut} side="top" portal>
+          <button
+            type="button"
+            className={css.mermaidAction}
+            aria-label={labels.zoomOut}
+            onClick={() => viewRef.current?.zoom.zoomOut({ animate: false })}
+          >
+            <IconZoomOutOutlineRegular size={14} />
+          </button>
+        </Tooltip>
+        <Tooltip label={labels.zoomIn} side="top" portal>
+          <button
+            type="button"
+            className={css.mermaidAction}
+            aria-label={labels.zoomIn}
+            onClick={() => viewRef.current?.zoom.zoomIn({ animate: false })}
+          >
+            <IconZoomInOutlineRegular size={14} />
+          </button>
+        </Tooltip>
+        <Tooltip label={labels.reset} side="top" portal>
+          <button type="button" className={css.mermaidAction} aria-label={labels.reset} onClick={reset}>
+            <IconRefreshOutlineRegular size={14} />
+          </button>
+        </Tooltip>
+      </div>
+      <div className={css.mermaidCanvas} ref={canvasRef} style={canvasHeight === undefined ? undefined : { height: canvasHeight }}>
+        {/* Panzoom writes this element's transform; it must carry no React style prop. */}
+        <div className={css.mermaidPaper} ref={paperRef}>{tree}</div>
+      </div>
+    </div>
+  )
 }

@@ -1,0 +1,19 @@
+# Bilingual-pair consistency record for 2026-09-28-zoomable-mermaid-diagram.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-09-28-zoomable-mermaid-diagram.md
+/agent-note-mermaid:
+  en: db0540492567c043
+  zh: 4379a0280d8aaf2e
+/agent-note-mermaid/problem:
+  en: a9d7a93f1b86a7aa
+  zh: b6492fb22145658a
+/agent-note-mermaid/decision:
+  en: d375f64e87c18e90
+  zh: 41808792a860607c
+/agent-note-mermaid/alternatives-considered:
+  en: 117a4d4999bf1025
+  zh: 2b510579e53a3a6f
+/agent-note-mermaid/consequences:
+  en: 3c9ae15b4c9dec25
+  zh: a3cb02289db3c8b2

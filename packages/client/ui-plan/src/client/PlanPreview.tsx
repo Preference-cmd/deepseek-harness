@@ -24,6 +24,7 @@ export function PlanPreview({ useTabInfo, useResource, t }: PlanPreviewProps) {
   const labels = useMemo(() => ({
     code: { copyLabel: t('copy'), copiedLabel: t('copied'), toolbarLabels: { codeLabel: t('codeBlock.title'), wrapLabel: t('codeBlock.wrap'), unwrapLabel: t('codeBlock.unwrap') } },
     footnotes: t('markdown.footnotes'),
+    mermaid: { zoomIn: t('mermaid.zoomIn'), zoomOut: t('mermaid.zoomOut'), reset: t('mermaid.reset') },
   }), [t])
   if (plan === undefined) return (
     <div className={css.message} role="status">

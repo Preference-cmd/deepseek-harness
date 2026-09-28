@@ -3,32 +3,32 @@
 # After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/mermaid/tool-mermaid/README.md
 /:
-  en: c1f5a0abdd561ec9
-  zh: 78e1fc65504f04fe
+  en: 6d5785fcd7bbe6b4
+  zh: 7cbf8c6dd87f935a
 /deepseek-ai-dsh-tool-mermaid:
   en: 350097534e17abc2
   zh: b8970d84ce336830
 /deepseek-ai-dsh-tool-mermaid/summary:
-  en: e06f2be0a0defaed
-  zh: 3097b4b8ef9fe407
+  en: ec5676d2cb4a1b9b
+  zh: 86a6f38833896d5b
 /deepseek-ai-dsh-tool-mermaid/table-of-contents:
   en: d152484eb41ac6b4
   zh: 09388d293f9be9cb
 /deepseek-ai-dsh-tool-mermaid/use-this-package:
-  en: e99ff92f647a5286
-  zh: 7c3ac20123115e8e
+  en: 8e8f78a1bb1ae443
+  zh: ca7bc636817b0917
 /deepseek-ai-dsh-tool-mermaid/understand-the-implementation:
   en: 893e6028ae9b9467
   zh: ab603651aea896d0
 /deepseek-ai-dsh-tool-mermaid/understand-the-implementation/design-concept:
-  en: 8c63d873809b0b44
-  zh: d161ce12c056ece6
+  en: 3d50bbf80b51e65e
+  zh: 1e657d29b72feb8f
 /deepseek-ai-dsh-tool-mermaid/understand-the-implementation/source-map:
-  en: 935938b293e32c0e
-  zh: 203f47b5d2629dd5
+  en: 12cfdb94b759ef63
+  zh: 6a5bbe31ddfd78b7
 /deepseek-ai-dsh-tool-mermaid/further-exploration:
-  en: ff4e8f8bc537a9fd
-  zh: 7aad67d48bbe566e
+  en: 7ac36638c0b167db
+  zh: a31962d466f56f41
 /deepseek-ai-dsh-tool-mermaid/model-experience:
   en: 215e7ba838619b7b
   zh: a311da3843709f90
@@ -48,8 +48,8 @@
   en: f8ffc2b983f05ffc
   zh: 8573891441963be4
 /deepseek-ai-dsh-tool-mermaid/model-experience/tool-result/what-the-model-sees:
-  en: b18360adb4f01b57
-  zh: 1f2630d44d847651
+  en: 0d1c2b7d84fe0ca3
+  zh: 013e0866b61e210f
 /deepseek-ai-dsh-tool-mermaid/model-experience/tool-result/token-effect:
   en: 39692c62594c2542
   zh: 32827cc8b04a4480
@@ -57,8 +57,8 @@
   en: f5d5f97a153f7c70
   zh: fc53a2f3d9725bea
 /deepseek-ai-dsh-tool-mermaid/known-limitations-and-deferred-work:
-  en: 1861f1b37fd4de3f
-  zh: d125b8cd3f006603
+  en: d4fcf5fdeabe3a71
+  zh: 41f9cd6bf9908d05
 /deepseek-ai-dsh-tool-mermaid/known-limitations-and-deferred-work/dev-note:
   en: e67f633dc6fe7773
   zh: cdd2a143b725accd

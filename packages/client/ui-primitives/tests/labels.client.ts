@@ -11,6 +11,7 @@ import type {
 export const markdownLabels: MarkdownLabels = {
   code: { copyLabel: '复制', copiedLabel: '复制成功' },
   footnotes: 'Footnotes',
+  mermaid: { zoomIn: '放大', zoomOut: '缩小', reset: '重置缩放' },
 }
 
 export const diffBlockLabels: DiffBlockLabels = {

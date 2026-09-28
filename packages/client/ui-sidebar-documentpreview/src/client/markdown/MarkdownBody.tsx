@@ -29,7 +29,8 @@ export function MarkdownBody({ content, resourceAddress, useResource, t }: Markd
   const unwrapLabel = t('codeBlock.unwrap')
   const labels = useMemo<MarkdownLabels>(() => ({
     code: { copyLabel, copiedLabel, toolbarLabels: { codeLabel, wrapLabel, unwrapLabel } }, footnotes,
-  }), [copyLabel, copiedLabel, footnotes, codeLabel, wrapLabel, unwrapLabel])
+    mermaid: { zoomIn: t('mermaid.zoomIn'), zoomOut: t('mermaid.zoomOut'), reset: t('mermaid.reset') },
+  }), [copyLabel, copiedLabel, footnotes, codeLabel, wrapLabel, unwrapLabel, t])
   if (content.kind !== 'text') return null
   return (
     <div className={css.document} data-document-markdown>

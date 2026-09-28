@@ -1,5 +1,5 @@
 ---
-description: "面向模型的 Mermaid 图表工具：校验图表源码并交由浏览器端渲染。"
+description: "面向模型的 Mermaid 图表工具：原样返回图表源码，交由浏览器端渲染。"
 kind: "package-reference"
 ---
 
@@ -9,7 +9,7 @@ kind: "package-reference"
 
 ## 概述
 
-`tool-mermaid/` 包在 `ctx.tools` 上注册一个面向模型的工具 `mermaid_render`。该工具校验图表源码非空，按首关键字识别其类型，原样返回源码。渲染发生在网页客户端：工具返回的面向模型结果是一个 `mermaid` 围栏代码块，客户端的 markdown 渲染器将其画成图表。主机端不调用任何渲染器，也不持有浏览器依赖。
+`tool-mermaid/` 包在 `ctx.tools` 上注册一个面向模型的工具 `mermaid_render`。该工具拒绝空图表并原样返回源码，从不解析源码。渲染发生在网页客户端：工具返回的面向模型结果是一个 `mermaid` 围栏代码块，客户端的 markdown 渲染器将其画成一个按消息列适配的框内图表，带缩放、平移与复位控件。主机端不调用任何渲染器，也不持有浏览器依赖。
 
 ## 目录
 
@@ -25,12 +25,11 @@ kind: "package-reference"
 <a id="use-this-package"></a>
 ## 使用本包
 
-把本插件装到工具运行时旁边，即注册带必填 `diagram` 字符串参数的 `mermaid_render`。希望模型能画图的部署挂载本包（例如通过[示例 patch 覆盖层](examples/cordis.yml)），并提供网页客户端，由客户端负责渲染。
+`dsh-base` bundle 为每个 base 系 profile 挂载本插件，注册带必填 `diagram` 字符串参数的 `mermaid_render`。不需要该工具的 profile 禁用其 `tool-mermaid` 行；禁用后，助手以普通 markdown 写出的 mermaid 围栏仍会被渲染。绘图依赖网页客户端，由客户端负责。
 
 | File | Role |
 |---|---|
-| [`src/index.ts`](src/index.ts) | 插件入口：`Config`、`mermaid_render` 定义、类型识别、围栏结果渲染 |
-| [`src/types.ts`](src/types.ts) | `MermaidDiagramType` 与校验后的 `MermaidRenderResult` |
+| [`src/index.ts`](src/index.ts) | 插件入口：`mermaid_render` 定义与其围栏结果渲染 |
 
 本包不发布运行时 invariant 伴生，因为这个无状态适配器不拥有独立状态与事件协议；执行关系由它调用的工具缝面拥有。
 
@@ -46,14 +45,13 @@ kind: "package-reference"
 
 ### 设计理念
 
-校验在主机，渲染在浏览器。工具只检查源码非空，并为结果元数据分类；语法错误在客户端渲染时报告，由 mermaid 引擎指出出错行。这种分工让主机保持零依赖（无 Chromium、无 jsdom），而本就负责解析与排版图形的浏览器完成绘制。
+检查在主机，渲染在浏览器。工具拒绝空图表并原样返回源码；因为从不解析源码，语法错误在客户端渲染时报告，由 mermaid 引擎指出出错行。这种分工让主机保持零依赖（无 Chromium、无 jsdom），而本就负责解析与排版图形的浏览器完成绘制。
 
 ### 源码地图
 
 | File | Role |
 |---|---|
-| [`src/index.ts`](src/index.ts) | 插件入口：`Config`、工具组合、`mermaid_render` 执行器 |
-| [`src/types.ts`](src/types.ts) | `MermaidDiagramType` 与校验后的 `MermaidRenderResult` |
+| [`src/index.ts`](src/index.ts) | 插件入口：`mermaid_render` 执行器与其围栏结果渲染 |
 
 </details>
 
@@ -62,10 +60,9 @@ kind: "package-reference"
 <a id="further-exploration"></a>
 ## 进一步探索
 
-包级约定不够时再读这些页面。
+包级约定不够时再读这个页面。
 
 - [Generated tool catalog](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-mermaid) — 本包注册的完整 schema。
-- [Example patch overlay](examples/cordis.yml) — 在 base 组合上挂载本工具。
 
 -----
 
@@ -90,7 +87,7 @@ kind: "package-reference"
 
 #### 模型看到什么
 
-调用成功返回经校验的源码，以 `mermaid` 围栏代码块包装。空图表以 `mermaid_render: diagram must not be empty` 失败。
+调用成功原样返回源码，以 `mermaid` 围栏代码块包装。空图表以 `mermaid_render: diagram must not be empty` 失败。
 
 #### Token 影响
 
@@ -104,7 +101,7 @@ kind: "package-reference"
 ## 已知限制与延期工作
 
 - 渲染依赖网页客户端：headless 与纯 API 部署只能拿到源码、看不到图。
-- 语法错误在浏览器渲染时报告，不是工具错误；客户端展示引擎报错与出错行。
+- 主机端不检查语法，因此格式错误的图表仍是一次成功的工具调用，由客户端报错并展示引擎报错与出错行。
 - 不支持 PNG / PDF 导出；浏览器就地渲染 SVG。
 
 <a id="dev-note"></a>

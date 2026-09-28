@@ -331,6 +331,38 @@ export const IconRefreshOutlineMedium = (props: IconProps) => (
   <IconRefreshOutlineArtwork {...props} strokeWidth={ICON_MEDIUM_STROKE} />
 )
 
+const IconZoomInOutlineArtwork = ({ size = 16, className, strokeWidth }: WeightedIconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" strokeWidth={strokeWidth}>
+    <path d="M3.5 8h9M8 3.5v9" stroke="currentColor" />
+  </svg>
+)
+
+/** Regular one-pixel IconZoomInOutline artwork. */
+export const IconZoomInOutlineRegular = (props: IconProps) => (
+  <IconZoomInOutlineArtwork {...props} strokeWidth={ICON_REGULAR_STROKE} />
+)
+
+/** Medium IconZoomInOutline artwork with a 1.3px stroke. */
+export const IconZoomInOutlineMedium = (props: IconProps) => (
+  <IconZoomInOutlineArtwork {...props} strokeWidth={ICON_MEDIUM_STROKE} />
+)
+
+const IconZoomOutOutlineArtwork = ({ size = 16, className, strokeWidth }: WeightedIconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" strokeWidth={strokeWidth}>
+    <path d="M3.5 8h9" stroke="currentColor" />
+  </svg>
+)
+
+/** Regular one-pixel IconZoomOutOutline artwork. */
+export const IconZoomOutOutlineRegular = (props: IconProps) => (
+  <IconZoomOutOutlineArtwork {...props} strokeWidth={ICON_REGULAR_STROKE} />
+)
+
+/** Medium IconZoomOutOutline artwork with a 1.3px stroke. */
+export const IconZoomOutOutlineMedium = (props: IconProps) => (
+  <IconZoomOutOutlineArtwork {...props} strokeWidth={ICON_MEDIUM_STROKE} />
+)
+
 const IconLikeOutlineArtwork = ({ size = 16, className, strokeWidth }: WeightedIconProps) => (
   <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" strokeWidth={strokeWidth}>
     <path d="M13.537 8.12098L12.3983 12.8455C12.1818 13.7438 11.378 14.3769 10.454 14.3769L9.35595 14.3769H7.43799H5.16577C3.50892 14.3769 2.16577 13.0337 2.16577 11.3769V7.88668C2.16577 7.33439 2.61349 6.88668 3.16577 6.88668H4.02665C5.84943 6.88668 7.38083 3.28711 7.67689 2.54578C7.71259 2.45639 7.73501 2.36373 7.77922 2.27824C7.86506 2.11221 8.08228 1.87578 8.59039 2.07775C10.3291 2.76886 9.23144 6.04071 8.96955 6.75058C8.94502 6.81707 8.99495 6.88668 9.06581 6.88668H12.5648C13.2119 6.88668 13.6886 7.49192 13.537 8.12098Z" stroke="currentColor" />
