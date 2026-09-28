@@ -262,7 +262,7 @@
     },
     {
       "name": "mermaid_render",
-      "description": "Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram.",
+      "description": "Return Mermaid diagram source unchanged for the web client to render. Rejects an empty diagram.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -894,7 +894,7 @@
       },
       {
         "name": "mermaid_render",
-        "description": "Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram.",
+        "description": "Return Mermaid diagram source unchanged for the web client to render. Rejects an empty diagram.",
         "parameters": {
           "type": "object",
           "properties": {
@@ -1533,7 +1533,7 @@
       },
       {
         "name": "mermaid_render",
-        "description": "Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram.",
+        "description": "Return Mermaid diagram source unchanged for the web client to render. Rejects an empty diagram.",
         "parameters": {
           "type": "object",
           "properties": {

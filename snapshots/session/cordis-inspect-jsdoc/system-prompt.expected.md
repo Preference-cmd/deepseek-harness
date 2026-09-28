@@ -151,7 +151,7 @@ interface ToolArgsMap {
     /** children (default) lists direct children, which accept send_message in any status. descendants lists the whole tree below you with each entry's parent session id and depth; entries deeper than 1 accept only interrupt_agent. */
     scope?: "children" | "descendants";
   } & Record<string, JsonValue>;
-  /** Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram. */
+  /** Return Mermaid diagram source unchanged for the web client to render. Rejects an empty diagram. */
   mermaid_render: {
     /** The Mermaid diagram source code. */
     diagram: string;
@@ -416,7 +416,6 @@ interface ToolOutputMap {
   })[];
   mermaid_render: {
     diagram?: string;
-    type?: string;
   } & Record<string, JsonValue>;
   read: {
     path: string;

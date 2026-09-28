@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-tool-mermaid",
-  "description": "Model-facing Mermaid diagram tool: validates diagram source and returns it for browser-side rendering",
+  "description": "Model-facing Mermaid diagram tool: returns diagram source unchanged for browser-side rendering",
   "version": "0.1.7-rc.2",
   "publishConfig": {
     "access": "public"

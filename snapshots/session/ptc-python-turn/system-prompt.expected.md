@@ -290,7 +290,6 @@ class MermaidRenderArgs(TypedDict):
 
 class MermaidRenderOutput(TypedDict):
     diagram: NotRequired[str]
-    type: NotRequired[str]
     # Additional keys beyond those declared are allowed.
 
 class ReadArgs(TypedDict):
@@ -546,7 +545,7 @@ class Tools(Protocol):
     async def list_agents(self, args: ListAgentsArgs) -> list[ListAgentsOutput1 | ListAgentsOutput2]:
         """List subagents you started, with their ids, labels, and status. running means it is working; inactive means it is not currently working. You will be notified when a subagent finishes; there is no need to keep checking its status. Use send_message to continue the conversation."""
     async def mermaid_render(self, args: MermaidRenderArgs) -> MermaidRenderOutput:
-        """Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram."""
+        """Return Mermaid diagram source unchanged for the web client to render. Rejects an empty diagram."""
     async def read(self, args: ReadArgs) -> ReadOutput:
         """Read a UTF-8 text file and return line-numbered content."""
     async def read_image(self, args: ReadImageArgs) -> ReadImageOutput:

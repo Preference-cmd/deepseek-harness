@@ -304,7 +304,7 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 
 | Package | Config | Description |
 |---|---|---|
-| `@deepseek-ai/dsh-tool-mermaid` | no | Model-facing Mermaid diagram tool: validates diagram source and returns it for browser-side rendering |
+| `@deepseek-ai/dsh-tool-mermaid` | no | Model-facing Mermaid diagram tool: returns diagram source unchanged for browser-side rendering |
 
 ## plan
 

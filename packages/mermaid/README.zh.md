@@ -9,7 +9,7 @@ kind: "package-group"
 
 ## Summary
 
-`mermaid/` 组收纳面向模型的 Mermaid 图表工具。`tool-mermaid/`（`mermaid_render`）在主机端校验图表源码并返回；网页客户端把返回的围栏源码渲染为图表。
+`mermaid/` 组收纳面向模型的 Mermaid 图表工具。`tool-mermaid/`（`mermaid_render`）在主机端拒绝空图表并原样返回源码；网页客户端把返回的围栏源码渲染为按消息列适配的图表，带缩放、平移与复位控件。
 
 ## Packages
 

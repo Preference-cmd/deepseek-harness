@@ -184,14 +184,94 @@
   overflow-y: hidden;
 }
 
-.mermaidDiagram {
-  max-width: 100%;
-  overflow-x: auto;
+/* A settled mermaid diagram: the frame owns its border and clipping, the
+   toolbar floats over the top-right edge, and the canvas reserves only the
+   fitted height so a shrunk diagram leaves no empty band below it. */
+.mermaidFrame {
+  position: relative;
+  margin: 16px 0;
+  background: var(--dsw-alias-markdown-code-block);
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-lg);
+  overflow: hidden;
 }
 
-.mermaidDiagram svg {
-  max-width: 100%;
-  height: auto;
+.mermaidToolbar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px;
+  background: var(--dsw-alias-bg-layer-3);
+  border: 0.5px solid var(--dsw-alias-border-l3);
+  border-radius: var(--dsw-radius-sm);
+  /* Elevated surface: the scrollbar thumb takes the l2 elevation tokens. The
+     declaration sits on the toolbar rather than on the scrolling `.tableScroll`
+     rule below because the elevation is a property of this surface, and the
+     custom properties inherit down to whichever descendant actually scrolls
+     (see ui-theme styles/scrollbar.css for the rebinding contract). */
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+  /* Hidden chrome keeps a chat transcript free of per-diagram toolbars; the
+     buttons take no clicks until the reader hovers or tabs into the frame. */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.mermaidFrame:hover .mermaidToolbar,
+.mermaidFrame:focus-within .mermaidToolbar {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mermaidScale {
+  margin-right: 4px;
+  padding: 0 4px;
+  color: var(--dsw-alias-label-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.mermaidAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--dsw-radius-sm);
+  color: var(--dsw-alias-label-secondary);
+  background: transparent;
+  cursor: pointer;
+}
+
+.mermaidAction:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.mermaidAction:focus-visible {
+  outline: 1px solid var(--dsw-focus-ring-color, var(--dsw-alias-state-business-primary));
+  outline-offset: 2px;
+}
+
+/* A diagram wider than the column is clipped here and reached by panning, so
+   the flex item keeps its own width instead of shrinking to the canvas. */
+.mermaidCanvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.mermaidPaper {
+  flex: none;
+}
+
+.mermaidPaper svg {
+  display: block;
 }
 
 .markdown input[type='checkbox'] {

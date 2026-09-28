@@ -184,6 +184,12 @@ export default defineConfig({
             ...processBoundTests,
             ...coverageExemptExcludes,
           ],
+          // @panzoom/panzoom ships a UMD `main` and an ESM `module` with no
+          // `exports` map, so Node's resolution reaches the CommonJS bundle and
+          // the default import arrives as a namespace object. Inlining lets Vite
+          // take the `module` build, which is what the browser bundle already
+          // ships and what the documentation site's viewer uses.
+          server: { deps: { inline: ['@panzoom/panzoom'] } },
         },
       },
       {

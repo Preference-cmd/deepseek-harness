@@ -162,7 +162,7 @@ interface ToolArgsMap {
     /** Continuation cursor returned by this server. */
     cursor?: string;
   } & Record<string, JsonValue>;
-  /** Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram. */
+  /** Return Mermaid diagram source unchanged for the web client to render. Rejects an empty diagram. */
   mermaid_render: {
     /** The Mermaid diagram source code. */
     diagram: string;
@@ -434,7 +434,6 @@ interface ToolOutputMap {
   list_mcp_resources: JsonValue;
   mermaid_render: {
     diagram?: string;
-    type?: string;
   } & Record<string, JsonValue>;
   read: {
     path: string;

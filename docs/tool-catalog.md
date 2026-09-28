@@ -19,7 +19,7 @@ This table connects model-visible tool names to the plugin package and service s
 | `@deepseek-ai/dsh-mcp-resources` | `list_mcp_resource_templates`, `list_mcp_resources`, `read_mcp_resource` | `ctx.tools`, `ctx.mcpResources` | `tool/call`, `tool/result` | - | - |
 | `@deepseek-ai/dsh-experimental-browser-use-stagehand-native` | `stagehand_act`, `stagehand_extract`, `stagehand_navigate`, `stagehand_observe`, `stagehand_screenshot`, `stagehand_tabs` | `ctx.browserUse`, `ctx.agents`, `ctx.tools`, `ctx.systemPrompt` | `tool/call`, `tool/result` | - | - |
 | `@deepseek-ai/dsh-tool-ask-user` | `ask_user_question` | `ctx.tools`, `ctx.userQuestions` | `tool/call`, `tool/result after a UI/provider answers the question` | - | ask_user_question pauses the tool call until the active UI provider returns a human answer. |
-| `@deepseek-ai/dsh-tool-mermaid` | `mermaid_render` | `ctx.tools` | `tool/call`, `tool/result` | - | mermaid_render validates diagram source and returns it; the web client renders the returned fenced source as a diagram, so no execution side effects exist. |
+| `@deepseek-ai/dsh-tool-mermaid` | `mermaid_render` | `ctx.tools` | `tool/call`, `tool/result` | - | mermaid_render rejects an empty diagram and returns the source unchanged; the web client renders the returned fenced source as a diagram, so no execution side effects exist. |
 | `@deepseek-ai/dsh-tools` | `run_code` | `ctx.tools`, `ctx.ptcRuntime (execution time)`, `ctx.systemPrompt` | `tool/call`, `one tool/ptc-dispatch-start + tool/ptc-dispatch pair per bridged sub-call`, `tool/result` | - | Owned by the tool registry as a reserved transport outside filterable capability layers under `mode: ptc` / `mode: both` (see the PTC mode Agent Note). Under `ptc` it is the registry's only wire contribution; the other visible capabilities are declared in a generated SDK section in the loaded runtime's language, and a program calls them through bindings scheduled under the native concurrency contract (submission-ordered starts and policy; concurrency-safe bodies overlap up to `maxParallelSubCalls`) that re-enter the complete guarded tool pipeline and link each nested execution to this outer result. |
 | `@deepseek-ai/dsh-plan-mode` | `exit_plan_mode` | `ctx.tools`, `ctx.systemPrompt`, `ctx.userQuestions (execution time, opportunistic)` | `tool/call`, `plan/mode inactive on an approved review`, `tool/result` | - | exit_plan_mode stays in the model-facing schema while planning is inactive so transitions add no tool-catalog churn on top of the plan-policy change. Its execute path rejects calls outside plan mode; in plan mode it presents the plan over the user-questions seam (approve / keep planning with feedback), and approval logs plan mode inactive at the step boundary. |
 | `@deepseek-ai/dsh-tool-bash` | `bash` | `ctx.tools`, `ctx.shell`, `ctx.systemPrompt`, `ctx.shellEnv`, `ctx.jobs for run_in_background and the job-backed foreground path` | `tool/call`, `tool/result` | - | The bash tool is the model-facing consumer of the bash executor seam. With a job registry composed every call registers with the generic `ctx.jobs` runtime as it starts, collected/stopped through the `job_*` tools from `@deepseek-ai/dsh-tool-jobs`; without one, or with `enableRunInBackground: false`, the tool registers a foreground-only schema without the `run_in_background` parameter. |
@@ -524,7 +524,7 @@ ask_user_question pauses the tool call until the active UI provider returns a hu
 
 ### `mermaid_render`
 
-Validate Mermaid diagram source. Returns the source; the web client renders it as a diagram.
+Return Mermaid diagram source unchanged for the web client to render. Rejects an empty diagram.
 
 ```json
 {
@@ -543,7 +543,7 @@ Validate Mermaid diagram source. Returns the source; the web client renders it a
 
 Source: [`packages/mermaid/tool-mermaid/src/index.ts`](../packages/mermaid/tool-mermaid/src/index.ts)
 
-mermaid_render validates diagram source and returns it; the web client renders the returned fenced source as a diagram, so no execution side effects exist.
+mermaid_render rejects an empty diagram and returns the source unchanged; the web client renders the returned fenced source as a diagram, so no execution side effects exist.
 
 <a id="deepseek-aidsh-tools"></a>
 

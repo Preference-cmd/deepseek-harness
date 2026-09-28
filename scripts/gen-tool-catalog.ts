@@ -267,7 +267,7 @@ const TOOL_PACKAGES: ToolPackage[] = [
       await ctx.plugin(ToolMermaid)
     },
     note:
-      'mermaid_render validates diagram source and returns it; the web client renders the returned fenced source as a diagram, so no execution side effects exist.',
+      'mermaid_render rejects an empty diagram and returns the source unchanged; the web client renders the returned fenced source as a diagram, so no execution side effects exist.',
   },
   {
     pkg: '@deepseek-ai/dsh-tools',
