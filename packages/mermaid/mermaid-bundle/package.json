@@ -1,14 +1,15 @@
 {
-  "name": "@deepseek-ai/dsh-tool-mermaid",
-  "description": "Model-facing Mermaid diagram tool: returns diagram source unchanged for browser-side rendering",
+  "name": "@deepseek-ai/dsh-mermaid-bundle",
+  "description": "Return Mermaid diagram source for browser-side rendering.",
   "version": "0.2.1-alpha.2",
+  "icon": "./icon.svg",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
-    "directory": "packages/mermaid/tool-mermaid"
+    "directory": "packages/mermaid/mermaid-bundle"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -18,22 +19,31 @@
       "types": "./lib/types/index.d.ts",
       "default": "./lib/index.js"
     },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
     "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
   "files": [
+    "icon.svg",
+    "locale/*.json",
     "lib/index.js",
+    "cordis.patch.yml",
     "lib/types/**/*.d.ts"
   ],
   "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tool-mermaid": "workspace:*"
+  },
   "peerDependencies": {
-    "@deepseek-ai/dsh-tools": "workspace:*",
     "@deepseek-ai/cordis": "workspace:~"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-llm": "workspace:*",
-    "@deepseek-ai/dsh-system-prompt": "workspace:*",
-    "@deepseek-ai/dsh-tools": "workspace:*",
     "@deepseek-ai/cordis": "workspace:~"
   }
 }

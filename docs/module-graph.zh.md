@@ -335,6 +335,7 @@ flowchart TD
     pkg_mcp_resources["mcp-resources"]
   end
   subgraph group_mermaid["packages/mermaid"]
+    pkg_mermaid_bundle["mermaid-bundle"]
     pkg_tool_mermaid["tool-mermaid"]
   end
   subgraph group_preset["packages/preset"]
@@ -1549,6 +1550,7 @@ flowchart TD
 | [`host-directory-picker-native`](../packages/host/directory-picker-native) | `host` | — |
 | [`host-open-in-app`](../packages/host/open-in-app) | `host` | — |
 | [`host-webserver`](../packages/host/webserver) | `host` | — |
+| [`mermaid-bundle`](../packages/mermaid/mermaid-bundle) | `mermaid` | — |
 | [`session-format`](../packages/session/session-format) | `session` | — |
 | [`session-format-v0-to-v1`](../packages/session/session-format-v0-to-v1) | `session` | — |
 | [`session-format-v1-to-v2`](../packages/session/session-format-v1-to-v2) | `session` | — |

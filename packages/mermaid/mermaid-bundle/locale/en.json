@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Mermaid diagrams",
+    "description": "Return Mermaid diagram source for the web client to render as a zoomable diagram."
+  }
+}

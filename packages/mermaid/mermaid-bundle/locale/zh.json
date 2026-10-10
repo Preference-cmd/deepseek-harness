@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Mermaid 图表",
+    "description": "返回 Mermaid 图表源码，由网页客户端渲染为可缩放图表。"
+  }
+}
