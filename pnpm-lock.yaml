@@ -11154,31 +11154,6 @@ importers:
         specifier: workspace:*
         version: link:../../core/tools
 
-  packages/mermaid/mermaid-bundle:
-    dependencies:
-      '@deepseek-ai/dsh-tool-mermaid':
-        specifier: workspace:*
-        version: link:../tool-mermaid
-    devDependencies:
-      '@deepseek-ai/cordis':
-        specifier: workspace:~
-        version: link:../../../vendor/cordis
-
-  packages/mermaid/tool-mermaid:
-    devDependencies:
-      '@deepseek-ai/cordis':
-        specifier: workspace:~
-        version: link:../../../vendor/cordis
-      '@deepseek-ai/dsh-llm':
-        specifier: workspace:*
-        version: link:../../llm/llm
-      '@deepseek-ai/dsh-system-prompt':
-        specifier: workspace:*
-        version: link:../../core/system-prompt
-      '@deepseek-ai/dsh-tools':
-        specifier: workspace:*
-        version: link:../../core/tools
-
   packages/plan/plan-mode:
     dependencies:
       '@deepseek-ai/dsh-brand':
