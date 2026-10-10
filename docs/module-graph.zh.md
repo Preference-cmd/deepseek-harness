@@ -334,10 +334,6 @@ flowchart TD
     pkg_mcp_client["mcp-client"]
     pkg_mcp_resources["mcp-resources"]
   end
-  subgraph group_mermaid["packages/mermaid"]
-    pkg_mermaid_bundle["mermaid-bundle"]
-    pkg_tool_mermaid["tool-mermaid"]
-  end
   subgraph group_preset["packages/preset"]
     pkg_agent_preset["agent-preset"]
     pkg_agent_preset_registry["agent-preset-registry"]
@@ -969,7 +965,6 @@ flowchart TD
   pkg_mcp_resources --> pkg_scope
   pkg_mcp_resources --> pkg_system_prompt
   pkg_mcp_resources --> pkg_tools
-  pkg_tool_mermaid --> pkg_tools
   pkg_agent_preset_registry --> pkg_agent
   pkg_agent_preset_registry --> pkg_scope
   pkg_agent_preset_registry --> pkg_session
@@ -1550,7 +1545,6 @@ flowchart TD
 | [`host-directory-picker-native`](../packages/host/directory-picker-native) | `host` | — |
 | [`host-open-in-app`](../packages/host/open-in-app) | `host` | — |
 | [`host-webserver`](../packages/host/webserver) | `host` | — |
-| [`mermaid-bundle`](../packages/mermaid/mermaid-bundle) | `mermaid` | — |
 | [`session-format`](../packages/session/session-format) | `session` | — |
 | [`session-format-v0-to-v1`](../packages/session/session-format-v0-to-v1) | `session` | — |
 | [`session-format-v1-to-v2`](../packages/session/session-format-v1-to-v2) | `session` | — |
@@ -1708,7 +1702,6 @@ flowchart TD
 | [`tool-jobs`](../packages/jobs/tool-jobs) | `jobs` | [`agent`](../packages/core/agent), [`jobs`](../packages/jobs/jobs), [`llm`](../packages/llm/llm), [`output-retention`](../packages/util/output-retention), [`system-prompt`](../packages/core/system-prompt), [`tools`](../packages/core/tools) |
 | [`tool-lsp`](../packages/lsp/tool-lsp) | `lsp` | [`llm`](../packages/llm/llm), [`lsp`](../packages/lsp/lsp), [`system-prompt`](../packages/core/system-prompt), [`timeout`](../packages/util/timeout), [`tools`](../packages/core/tools), [`working-directory`](../packages/session/working-directory) |
 | [`mcp-resources`](../packages/mcp/mcp-resources) | `mcp` | [`llm`](../packages/llm/llm), [`scope`](../packages/core/scope), [`system-prompt`](../packages/core/system-prompt), [`tools`](../packages/core/tools) |
-| [`tool-mermaid`](../packages/mermaid/tool-mermaid) | `mermaid` | [`tools`](../packages/core/tools) |
 | [`agent-preset-registry`](../packages/preset/agent-preset-registry) | `preset` | [`agent`](../packages/core/agent), [`scope`](../packages/core/scope), [`session`](../packages/core/session), [`session-projection`](../packages/session/session-projection), [`settings`](../packages/settings/settings), [`system-prompt`](../packages/core/system-prompt), [`tools`](../packages/core/tools), [`typert-protocol`](../packages/typert/protocol) |
 | [`session-checkpoint-policy`](../packages/session/session-checkpoint-policy) | `session` | [`agent`](../packages/core/agent), [`llm`](../packages/llm/llm), [`session`](../packages/core/session), [`session-persistence`](../packages/session/session-persistence), [`tools`](../packages/core/tools) |
 | [`session-title-first-prompt-llm`](../packages/session/session-title-first-prompt-llm) | `session` | [`llm`](../packages/llm/llm), [`session`](../packages/core/session), [`session-title`](../packages/session/session-title), [`session-title-llm`](../packages/session/session-title-llm) |

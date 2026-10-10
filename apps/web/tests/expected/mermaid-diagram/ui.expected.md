@@ -1,16 +1,19 @@
 - banner:
-  - navigation "Session hierarchy":
-    - button "Mermaid diagram" [disabled]
-  - button "Session log":
-    - text: Session log
-    - img
+  - navigation "Session hierarchy": Mermaid diagram
+  - button "More actions"
+  - button "Open right sidebar"
   - tablist:
     - tab "Chat" [selected]
     - tab "Trajectory"
 - text: Draw the login flow. {{clock}}
-- button "Copy":
-  - img
+- button "Copy"
+- status: Completed
+- button "Completed in {{duration}}" [disabled]
 - heading "Login flow" [level=2]
+- text: 100%
+- button "Zoom out"
+- button "Zoom in"
+- button "Reset zoom"
 - document:
   - paragraph: "Yes"
   - paragraph: "No"
@@ -18,26 +21,20 @@
   - paragraph: Logged in?
   - paragraph: Dashboard
   - paragraph: Login form
+- text: 100%
+- button "Zoom out"
+- button "Zoom in"
+- button "Reset zoom"
 - document: B A B A login token
 - paragraph: MERMAID_DIAGRAM_DONE
-- button "Copy":
-  - img
-- button "Good response":
-  - img
-- button "Bad response":
-  - img
-- button "Branch into a new conversation":
-  - img
-- button "Ran for {{duration}}":
-  - img
-  - text: Ran for {{duration}}
+- button "Copy"
+- button "Good response"
+- button "Bad response"
+- button "Branch into a new conversation"
 - text: {{clock}}
-- textbox "Message or run a task... / commands, @ files or sessions"
-- button "Commands":
-  - img
+- textbox "Message or run a task, / commands, @ files or sessions"
+- button "Add files or run commands"
 - 'button "Access mode, current: Workspace Write"': Workspace Write
-- button "Select model, current DeepSeek-V4-Flash":
-  - text: DeepSeek-V4-Flash
-  - img
+- button "Select model, current DeepSeek-V4-Flash": DeepSeek-V4-Flash
 - button "Send message" [disabled]
-- text: 1 turns · 1 steps LLM {{duration}}
+- button "1 turns 1 steps"

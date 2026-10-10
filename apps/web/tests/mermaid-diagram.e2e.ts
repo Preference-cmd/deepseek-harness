@@ -83,6 +83,8 @@ function mermaidFixture(): string {
       id: '{{sessionId}}',
       createdAt: 0,
       cwd: '{{cwd}}',
+      isSeeded: false,
+      delegationDepth: 0,
     }),
     ...session.snapshotEvents().map(event => JSON.stringify({
       ...event,

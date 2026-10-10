@@ -10,7 +10,7 @@ The fork shipped `packages/mermaid/tool-mermaid` as a model-facing `mermaid_rend
 
 ## Decision
 
-The tool now conforms and renders for real. The host side validates that the diagram source is non-empty, detects its family from the first keyword, and returns the source unchanged; the model-facing result is a fenced `mermaid` code block. The package drops the empty invariant companion (with the README omission sentence), declares MIT, joins the tool catalog, the base bundle, and the generated composition and module graphs. Rendering lives in the web client: `packages/client/ui-primitives` renders settled `mermaid` fences through the `mermaid` engine (lazily imported, `securityLevel: 'strict'`), mapping the emitted SVG onto React elements through the same DOM-parser path as KaTeX, with `on*` attributes and `javascript:` URLs stripped. Engine load failure or an unparseable source keeps the code-block fallback, and streaming fences stay code until settled.
+The tool now conforms and renders for real. The host side validates that the diagram source is non-empty and returns the source unchanged; the model-facing result is a fenced `mermaid` code block. The tool now ships from the standalone `Preference-cmd/dsh-mermaid` repository, installed as an optional profile bundle (`dsh plugin --profile web add github:Preference-cmd/dsh-mermaid`); this fork keeps only the client-side rendering below. Rendering lives in the web client: `packages/client/ui-primitives` renders settled `mermaid` fences through the `mermaid` engine (lazily imported, `securityLevel: 'strict'`), mapping the emitted SVG onto React elements through the same DOM-parser path as KaTeX, with `on*` attributes and `javascript:` URLs stripped. Engine load failure or an unparseable source keeps the code-block fallback, and streaming fences stay code until settled.
 
 ## Alternatives considered
 
@@ -22,7 +22,7 @@ The tool now conforms and renders for real. The host side validates that the dia
 
 ## Consequences
 
-- `mermaid_render` is served by base-backed profiles; the `web-search-endpoint-guidance`-style snapshot lane is unaffected (no session events involved).
+- `mermaid_render` reaches a profile only when that profile installs and selects the standalone `dsh-mermaid` bundle; a base-backed profile without it does not offer the tool. The `web-search-endpoint-guidance`-style snapshot lane is unaffected (no session events involved).
 - The `mermaid-diagram` web e2e pins two settled fences (flowchart, sequence) rendering to inline SVG with zero page errors.
 - Host deployments without the web client receive validated source but no picture; this is stated in the package's Known Limitations.
 - Reintroducing server-side export (PNG/PDF) means a new execution path with its own sandbox story, not a change to this split.

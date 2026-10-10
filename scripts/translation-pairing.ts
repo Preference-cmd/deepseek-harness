@@ -123,6 +123,8 @@ const NON_SOURCE_DIRECTORIES = new Set([
   '.pytest_cache',
   '.artifacts',
   'vendor',
+  // Standalone plugin checkouts kept inside the fork working tree, ignored by its git.
+  'plugins',
 ])
 
 /** Glob traversal exclusions corresponding to the non-source path predicate. */
@@ -145,6 +147,7 @@ export const TRANSLATION_SCOPE_GLOB_EXCLUDES = [
   '.artifacts/**',
   'python/sdk-runtime/src/deepseek_harness_runtime/runtime/**',
   'vendor/**',
+  'plugins/**',
 ]
 
 /** Whether a repository-relative path belongs to a dependency or generated tree. */

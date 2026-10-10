@@ -4593,7 +4593,6 @@ These load from a `cordis.yml` entry with no `config:` block; they declare no co
 | `@deepseek-ai/dsh-terminal` | — | [`packages/terminal/terminal/src/index.ts`](../packages/terminal/terminal/src/index.ts) |
 | `@deepseek-ai/dsh-tool-call-timeout-policy` | `tools` | [`packages/guard/timeout-policy/src/index.ts`](../packages/guard/timeout-policy/src/index.ts) |
 | `@deepseek-ai/dsh-tool-cordis` | `tools` · `cordisInspect` | [`packages/extensions/tool-cordis/src/index.ts`](../packages/extensions/tool-cordis/src/index.ts) |
-| `@deepseek-ai/dsh-tool-mermaid` | `tools` | [`packages/mermaid/tool-mermaid/src/index.ts`](../packages/mermaid/tool-mermaid/src/index.ts) |
 | `@deepseek-ai/dsh-tool-schedule` | `tools` | [`packages/schedule/tool-schedule/src/index.ts`](../packages/schedule/tool-schedule/src/index.ts) |
 | `@deepseek-ai/dsh-tool-subagent-control` | `tools` · `subagents` | [`packages/subagent/tool-subagent-control/src/index.ts`](../packages/subagent/tool-subagent-control/src/index.ts) |
 | `@deepseek-ai/dsh-tool-working-directory` | `tools` · `workingDirectory` | [`packages/session/tool-working-directory/src/index.ts`](../packages/session/tool-working-directory/src/index.ts) |
@@ -4669,7 +4668,6 @@ Imported as libraries by other packages; a `cordis.yml` cannot load them.
 | `@deepseek-ai/dsh-llm-deepseek` | — | [`packages/llm/llm-deepseek/src/index.ts`](../packages/llm/llm-deepseek/src/index.ts) |
 | `@deepseek-ai/dsh-llm-mock-server` | — | [`packages/test-support/llm-mock-server/src/index.ts`](../packages/test-support/llm-mock-server/src/index.ts) |
 | `@deepseek-ai/dsh-loader-smoke` | — | [`packages/test-support/loader-smoke/src/index.ts`](../packages/test-support/loader-smoke/src/index.ts) |
-| `@deepseek-ai/dsh-mermaid-bundle` | — | [`packages/mermaid/mermaid-bundle/src/index.ts`](../packages/mermaid/mermaid-bundle/src/index.ts) |
 | `@deepseek-ai/dsh-native-command` | — | [`packages/util/native-command/src/index.ts`](../packages/util/native-command/src/index.ts) |
 | `@deepseek-ai/dsh-output-retention` | — | [`packages/util/output-retention/src/index.ts`](../packages/util/output-retention/src/index.ts) |
 | `@deepseek-ai/dsh-package-manifest` | — | [`packages/util/package-manifest/src/index.ts`](../packages/util/package-manifest/src/index.ts) |
