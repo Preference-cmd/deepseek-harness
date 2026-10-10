@@ -13,6 +13,7 @@ const labels: MarkdownLabels = {
     toolbarLabels: { codeLabel: 'Snippet', wrapLabel: 'Wrap snippet', unwrapLabel: 'Unwrap snippet' },
   },
   footnotes: 'References',
+  mermaid: { zoomIn: 'Zoom in', zoomOut: 'Zoom out', reset: 'Reset zoom' },
 }
 
 type WrappedBodyProps = PropsRuntime<'conversation.chat.reasoning.body'> & PropsRenderFactories
