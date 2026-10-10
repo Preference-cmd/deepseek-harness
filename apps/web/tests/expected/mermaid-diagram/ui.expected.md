@@ -17,7 +17,7 @@
 - document:
   - paragraph: "Yes"
   - paragraph: "No"
-  - paragraph: User
+  - paragraph: User account
   - paragraph: Logged in?
   - paragraph: Dashboard
   - paragraph: Login form

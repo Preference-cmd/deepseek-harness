@@ -88,11 +88,27 @@ function domToReact(node: ChildNode, key: number): ReactNode {
 }
 
 /**
+ * Parse one serialized engine document down to its `<svg>` root.
+ *
+ * The engine writes labels as HTML inside `<foreignObject>`: a line break in
+ * the source arrives as `<br>`, which is well-formed HTML but not well-formed
+ * XML, so an XML parse rejects the whole document and the fence would fall back
+ * to a code block. The HTML parser accepts both spellings and applies the
+ * spec's SVG attribute adjustments, the same parse the KaTeX renderer uses.
+ * @param svg - the engine's serialized SVG document.
+ * @returns the `<svg>` root, or null when the document holds no SVG element.
+ */
+function parseSvgRoot(svg: string): Element | null {
+  return new DOMParser().parseFromString(svg, 'text/html').querySelector('svg')
+}
+
+/**
  * Render Mermaid source to a React SVG tree.
  * @param value - the fence's source text, without the trailing newline the
  * code-block path appends for display trimming.
  * @returns the rendered diagram, null while the engine loads, or undefined
- * when the source does not parse (the caller keeps its code fallback).
+ * when the engine rejects the source or returns no SVG (the caller keeps its
+ * code fallback).
  */
 export function useMermaidDiagram(value: string): ReactNode | null | undefined {
   const [tree, setTree] = useState<ReactNode | null | undefined>(null)
@@ -104,12 +120,11 @@ export function useMermaidDiagram(value: string): ReactNode | null | undefined {
         try {
           const { svg } = await module.default.render(`dsh-mermaid-${hashSource(value)}`, value)
           if (cancelled) return
-          const parsed = new DOMParser().parseFromString(svg, 'image/svg+xml')
-          if (parsed.querySelector('parsererror') !== null) {
+          const root = parseSvgRoot(svg)
+          if (root === null) {
             setTree(undefined)
             return
           }
-          const root = parsed.documentElement
           setTree(domToReact(root, 0))
         } catch {
           if (!cancelled) setTree(undefined)

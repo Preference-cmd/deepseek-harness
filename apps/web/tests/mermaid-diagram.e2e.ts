@@ -56,7 +56,9 @@ function mermaidFixture(): string {
           '',
           '```mermaid',
           'flowchart TD',
-          '    A[User] --> B{Logged in?}',
+          // The engine serializes this break as HTML `<br>`, which only the
+          // HTML parser accepts; an XML parse would drop the fence to a code block.
+          '    A[User<br/>account] --> B{Logged in?}',
           '    B -->|Yes| C[Dashboard]',
           '    B -->|No| D[Login form]',
           '```',
@@ -129,6 +131,25 @@ describe('web e2e: settled mermaid diagram rendering', () => {
     // one diagram per fence, each carrying rendered node labels.
     await expect.poll(() => page.locator('svg[id^="dsh-mermaid-"]').count(), { timeout: 30_000 }).toBe(2)
     expect(await page.getByText('Dashboard', { exact: true }).count()).toBeGreaterThan(0)
+    // A line break in the source arrives as HTML `<br>` inside the label: the
+    // diagram must keep it, and the label host must stay a real SVG
+    // `foreignObject` whose children are HTML.
+    // A source line break arrives as HTML `<br>` inside the label markup: the
+    // diagram keeps it, and every label host stays an SVG `foreignObject`
+    // holding HTML paragraphs — the two things an XML parse would have thrown
+    // away with the whole diagram.
+    const labels = await page.evaluate(() => ({
+      hosts: [...document.querySelectorAll('svg[id^="dsh-mermaid-"] foreignObject')].map(host => host.localName),
+      namespaces: [...new Set([...document.querySelectorAll('svg[id^="dsh-mermaid-"] foreignObject p')]
+        .map(paragraph => paragraph.namespaceURI))],
+      breaks: document.querySelectorAll('svg[id^="dsh-mermaid-"] foreignObject br').length,
+    }))
+    expect(labels.hosts.length).toBeGreaterThan(0)
+    expect(labels.hosts.every(host => host === 'foreignObject')).toBe(true)
+    expect(labels.namespaces).toEqual(['http://www.w3.org/1999/xhtml'])
+    expect(labels.breaks).toBe(1)
+    expect(await page.getByText('Useraccount', { exact: true }).count()).toBeGreaterThan(0)
+    expect(await page.getByText('Useraccount', { exact: true }).count()).toBeGreaterThan(0)
     expect(await page.getByText('token', { exact: true }).count()).toBeGreaterThan(0)
 
     const snapshot = (await captureStableAria(page, '[class*="centerCol"]', scaffold.workspaceCwd))
