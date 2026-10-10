@@ -10,7 +10,7 @@ fork 自带面向模型的 `mermaid_render` 工具（`packages/mermaid/tool-merm
 
 ## Decision
 
-工具现已合规并真实渲染。主机端校验图表源码非空并原样返回源码；面向模型的结果是一个 `mermaid` 围栏代码块。工具改由独立仓库 `Preference-cmd/dsh-mermaid` 发布，作为可选组合包安装（`dsh plugin --profile web add github:Preference-cmd/dsh-mermaid`）；本 fork 只保留下面这半客户端渲染。渲染在网页客户端：`packages/client/ui-primitives` 对已落定的 `mermaid` 围栏调用 `mermaid` 引擎（懒加载，`securityLevel: 'strict'`），经与 KaTeX 相同的 DOM 解析路径把输出的 SVG 映射为 React 元素，并剥离 `on*` 属性与 `javascript:` URL。引擎加载失败或源码不可解析时保留代码块降级；流式围栏落定前保持代码形态。
+工具现已合规并真实渲染。主机端校验图表源码非空并原样返回源码；面向模型的结果是一个 `mermaid` 围栏代码块。工具改由独立仓库 `Preference-cmd/dsh-mermaid` 发布，作为可选组合包安装（`dsh plugin --profile web add github:Preference-cmd/dsh-mermaid`）；本 fork 只保留下面这半客户端渲染。该组合包还自带一张 keyed `tool.call.toolview` 卡片：优先用客户端的围栏渲染器，客户端把 `mermaid` 围栏当普通代码块渲染时改由卡片自己画 —— 引擎来自包内 chunk，经客户端模块系统的 `require.async` 请求。渲染在网页客户端：`packages/client/ui-primitives` 对已落定的 `mermaid` 围栏调用 `mermaid` 引擎（懒加载，`securityLevel: 'strict'`），经与 KaTeX 相同的 DOM 解析路径把输出的 SVG 映射为 React 元素，并剥离 `on*` 属性与 `javascript:` URL。引擎加载失败或源码不可解析时保留代码块降级；流式围栏落定前保持代码形态。
 
 ## Alternatives considered
 
@@ -24,5 +24,6 @@ fork 自带面向模型的 `mermaid_render` 工具（`packages/mermaid/tool-merm
 
 - 只有当 profile 安装并选中独立仓库的 `dsh-mermaid` 组合包时，`mermaid_render` 才可用；未安装它的 base 系 profile 不提供该工具。快照 lane 不受影响（不涉及 session 事件）。
 - `mermaid-diagram` web e2e 钉住两个落定围栏（流程图、时序图）渲染为内联 SVG 且零页面错误。
+- `mermaid-tool-card` web e2e 从两侧钉住独立插件：本 fork 的围栏渲染器画出它的结果；另用一页钉住卡片自带渲染器，证明无该支持时包内引擎 chunk 也能画出来。
 - 无网页客户端的主机部署只能拿到校验过的源码、看不到图；已在包的 Known Limitations 声明。
 - 将来重做服务端导出（PNG/PDF）是带自己沙箱故事的新执行路径，不是改这次的分工。

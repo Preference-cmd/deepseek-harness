@@ -115,18 +115,20 @@ describe('web e2e: dsh-mermaid tool card', () => {
   })
 
   /** Open every collapsed disclosure between the transcript and the tool card. */
-  async function openToolGroup(): Promise<void> {
+  async function openToolGroup(target: Page): Promise<void> {
     for (let pass = 0; pass < 6; pass++) {
-      const collapsed = page.locator('[data-process-activity][aria-expanded="false"], [data-expandable][aria-expanded="false"]')
+      const collapsed = target.locator('[data-process-activity][aria-expanded="false"], [data-expandable][aria-expanded="false"]')
       const count = await collapsed.count()
       if (count === 0) return
-      for (let index = 0; index < count; index++) await collapsed.nth(index).click()
+      for (let index = 0; index < count; index++) {
+        await collapsed.nth(index).click({ timeout: 2_000 }).catch(() => undefined)
+      }
     }
   }
 
   it.skipIf(!existsSync(PLUGIN_DIR))('draws the tool result and a plain fence as diagrams', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-mermaid-tool-card'))
-    await openToolGroup()
+    await openToolGroup(page)
     // The client module system loads the plugin asynchronously; the card's own
     // diagram label is the signal that it rendered, not the fence's.
     await expect.poll(() => page.getByText('Dashboard', { exact: true }).count(), { timeout: 30_000 }).toBeGreaterThan(0)
@@ -135,4 +137,29 @@ describe('web e2e: dsh-mermaid tool card', () => {
     expect(tripwire.pageErrors).toEqual([])
     expect(tripwire.warnings).toEqual([])
   }, 90_000)
+
+  it.skipIf(!existsSync(PLUGIN_DIR))('draws the tool result itself where the client has no fence support', async () => {
+    // The surrounding client draws every assistant fence here, so only a pinned
+    // renderer exercises the card's own engine chunk: the tool card's diagram
+    // must arrive without the client's viewport chrome, which the plain fence
+    // in the same transcript still carries.
+    const pinned = await newEnglishPage(browser)
+    const pinnedTripwire = watchConsole(pinned)
+    onTestFailed(() => saveFailureShot(pinned, 'web-e2e-mermaid-tool-card-self'))
+    await pinned.addInitScript(() => {
+      (globalThis as Record<string, unknown>)['__DSH_MERMAID_RENDERER__'] = 'card'
+    })
+    await pinned.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
+    await pinned.locator('[role="treeitem"]').first().click()
+    await pinned.locator('[role="treeitem"]').nth(1).click()
+    await pinned.getByText(DONE, { exact: true }).waitFor({ timeout: 30_000 })
+    await expandTurnProcesses(pinned)
+    await openToolGroup(pinned)
+    // Two diagrams and exactly one viewport: the engine chunk the card fetched
+    // drew the tool result, while the client drew the plain fence beside it.
+    await expect.poll(() => pinned.locator('svg[id^="dsh-mermaid-"]').count(), { timeout: 45_000 }).toBe(2)
+    expect(await pinned.locator('[class*="mermaidFrame"]').count()).toBe(1)
+    await pinned.close()
+    expect(pinnedTripwire.pageErrors).toEqual([])
+  }, 120_000)
 })
