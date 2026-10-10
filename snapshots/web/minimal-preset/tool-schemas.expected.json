@@ -17,19 +17,16 @@
       }
     },
     {
-      "name": "mermaid_render",
-      "description": "Return Mermaid diagram source unchanged for the web client to render. Rejects an empty diagram.",
+      "name": "working_directory",
+      "description": "Read the current working directory, or change it with cd. Relative paths use the current directory. Existing shells and running processes keep their own directories.",
       "parameters": {
         "type": "object",
         "properties": {
-          "diagram": {
+          "cd": {
             "type": "string",
-            "description": "The Mermaid diagram source code."
+            "description": "Existing directory to enter. Omit to read the current directory."
           }
-        },
-        "required": [
-          "diagram"
-        ]
+        }
       }
     }
   ],
