@@ -53,7 +53,7 @@ function mermaidToolFixture(): string {
   session.append('tool/result', {
     turn: 1,
     step: 1,
-    meta: { source: SOURCE },
+    meta: { source: SOURCE, title: 'Install flow' },
     message: createToolResultMessage({
       callId,
       content: [{ type: 'text', text: `\`\`\`mermaid\n${SOURCE}\n\`\`\`` }],
@@ -137,6 +137,35 @@ describe('web e2e: dsh-mermaid tool card', () => {
     expect(tripwire.pageErrors).toEqual([])
     expect(tripwire.warnings).toEqual([])
   }, 90_000)
+
+  it.skipIf(!existsSync(PLUGIN_DIR))('opens the diagram in the right-Sidebar viewer', async () => {
+    onTestFailed(() => saveFailureShot(page, 'web-e2e-mermaid-viewer'))
+    await openToolGroup(page)
+    await page.getByRole('button', { name: 'Open in viewer' }).first().click()
+    // The viewer tab mounts its own zoom/pan surface and draws the diagram on
+    // it; reopening the same call focuses the tab instead of stacking another.
+    const surface = page.locator('[aria-label="Mermaid diagram"]')
+    await expect.poll(() => surface.count(), { timeout: 30_000 }).toBe(1)
+    await expect.poll(() => surface.locator('svg').count(), { timeout: 45_000 }).toBe(1)
+    await page.getByRole('button', { name: 'Open in viewer' }).first().click()
+    await expect.poll(() => surface.count(), { timeout: 10_000 }).toBe(1)
+    expect(tripwire.pageErrors).toEqual([])
+  }, 120_000)
+
+  it.skipIf(!existsSync(PLUGIN_DIR))('lists the settled diagram at the turn tail', async () => {
+    onTestFailed(() => saveFailureShot(page, 'web-e2e-mermaid-tail'))
+    // The tail row comes from the definition's replay of the recorded call and
+    // result; it renders after the closing message without expanding anything,
+    // named by the host-persisted diagram title.
+    const tail = page.locator('[data-dsh-mermaid-tail]')
+    await expect.poll(() => tail.count(), { timeout: 30_000 }).toBe(1)
+    expect(await tail.getByText('Install flow', { exact: true }).count()).toBe(1)
+    expect(await tail.locator('button').count()).toBe(1)
+    await tail.getByRole('button', { name: 'Open in viewer' }).click()
+    const surface = page.locator('[aria-label="Mermaid diagram"]')
+    await expect.poll(() => surface.count(), { timeout: 30_000 }).toBe(1)
+    expect(tripwire.pageErrors).toEqual([])
+  }, 120_000)
 
   it.skipIf(!existsSync(PLUGIN_DIR))('draws the tool result itself where the client has no fence support', async () => {
     // The surrounding client draws every assistant fence here, so only a pinned
