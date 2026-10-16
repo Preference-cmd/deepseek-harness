@@ -2,33 +2,13 @@
 
 import type { ReactNode } from 'react'
 import {
-  IconChevronDownOutlineRegular, IconChevronRightOutlineRegular, IconTrashOutlineRegular, Pill,
+  IconChevronDownOutlineRegular, IconChevronRightOutlineRegular, IconTrashOutlineRegular,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { DeepSeekModelDraft } from './DeepSeekModelsEditor.tsx'
 import type { ModelsKey } from './locales.ts'
 import { ModelInputTypes } from './ModelInputTypes.tsx'
+import { ModelReasoningEfforts } from './ModelReasoningEfforts.tsx'
 import styles from './ModelsSection.module.css'
-
-/**
- * The pi-ai reasoning levels a model row may declare, in escalation order.
- * `off` is never offered: a reasoning model always has it (the editor writes it
- * as `off: null`, "supported, send nothing"), and a non-reasoning one has
- * nothing to turn off. Each declared level is written at its own name — the
- * wire spelling most OpenAI-compatible gateways accept as `reasoning_effort` —
- * which keeps per-level spellings out of the card for now.
- */
-export const REASONING_LEVELS = ['minimal', 'low', 'medium', 'high', 'xhigh', 'max'] as const
-
-/** One declarable reasoning level. */
-export type ReasoningLevel = typeof REASONING_LEVELS[number]
-
-/** A row's reasoning declaration, present only where the adapter offers the vocabulary. */
-interface ReasoningLevelsControl {
-  /** Levels this row currently declares. */
-  readonly declared: readonly ReasoningLevel[]
-  /** Toggle one level; a row left with none is a non-reasoning model. */
-  readonly onToggle: (level: ReasoningLevel, enabled: boolean) => void
-}
 
 /** A capacity's editable text and adapter-specific inherited hint. */
 interface CapacityInput {
@@ -45,8 +25,8 @@ interface ModelRowProps {
   inputField: 'inputModalities' | 'input'
   inputFallback?: readonly string[] | undefined
   inputLoading?: boolean
-  /** Declared reasoning levels; absent where the adapter's models have no such field. */
-  reasoningLevels?: ReasoningLevelsControl | undefined
+  /** Levels the row's `reasoningEfforts` may declare; absent or empty shows no reasoning control. */
+  reasoningLevels?: readonly string[] | undefined
   expanded: boolean
   disabled: boolean
   t: (key: ModelsKey) => string
@@ -66,7 +46,6 @@ interface ModelRowProps {
  */
 export function ModelRow(props: ModelRowProps): ReactNode {
   const { model, position, t, disabled } = props
-  const reasoning = props.reasoningLevels
   return (
     <div className={styles['modelEntry']}>
       <div className={styles['modelRow']}>
@@ -130,28 +109,13 @@ export function ModelRow(props: ModelRowProps): ReactNode {
               model={model} field={props.inputField} position={position}
               fallback={props.inputFallback} disabled={disabled || props.inputLoading === true} t={t} onChange={props.onChange}
             />
-            {reasoning === undefined
-              ? null
-              : (
-                <div className={styles['modelField']}>
-                  <span className={styles['modelFieldLabel']}>{t('modelReasoningLevels')}</span>
-                  <span className={styles['chipRow']}>
-                    {REASONING_LEVELS.map(level => (
-                      <Pill
-                        key={level}
-                        className={styles['chip']}
-                        active={reasoning.declared.includes(level)}
-                        aria-pressed={reasoning.declared.includes(level)}
-                        disabled={disabled}
-                        onClick={() => { reasoning.onToggle(level, !reasoning.declared.includes(level)) }}
-                      >
-                        {level}
-                      </Pill>
-                    ))}
-                  </span>
-                  <span className={styles['checkHint']}>{t('modelReasoningLevelsHint')}</span>
-                </div>
-              )}
+            {props.reasoningLevels !== undefined && props.reasoningLevels.length > 0
+              ? (
+                <ModelReasoningEfforts
+                  model={model} levels={props.reasoningLevels} position={position} disabled={disabled} t={t} onChange={props.onChange}
+                />
+              )
+              : null}
           </div>
         )
         : null}

@@ -22,7 +22,7 @@ import { formatCapacity, parseCapacity } from './DeepSeekModelsEditor.tsx'
 import type { ModelsOperations } from './operations.ts'
 import type { DeepSeekModelDraft } from './DeepSeekModelsEditor.tsx'
 import type { en } from './locales.ts'
-import { ModelRow, REASONING_LEVELS, type ReasoningLevel } from './ModelRow.tsx'
+import { ModelRow } from './ModelRow.tsx'
 import styles from './ModelsSection.module.css'
 
 /**
@@ -67,6 +67,12 @@ export interface ModelListEditorProps {
   models: readonly ModelDraft[]
   /** Installed provider whose catalog supplies defaults without endpoint I/O. */
   catalogProvider?: string | undefined
+  /**
+   * Reasoning levels a hand-declared route's rows may declare in
+   * `reasoningEfforts`, in escalation order; absent or empty shows no
+   * reasoning control, leaving a catalog model's levels to the catalog.
+   */
+  reasoningLevels?: readonly string[] | undefined
   /** Route input types for models absent from the installed catalog. */
   defaultInput?: readonly string[] | undefined
   /** Whether the user layer currently owns the whole array; absent on a create. */
@@ -138,24 +144,6 @@ function adopt(candidate: LlmDiscoveredModel): ModelDraft {
     ...candidate.maxTokens === undefined ? {} : { maxTokens: candidate.maxTokens },
     ...candidate.inputModalities === undefined ? {} : { input: [...candidate.inputModalities] },
   }
-}
-
-/** Whether a draft value is a reasoning-efforts dict rather than `false` or absent. */
-function isReasoningDict(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
-}
-
-/** The positive levels a reasoning-efforts draft declares. */
-function declaredLevels(value: unknown): readonly ReasoningLevel[] {
-  if (!isReasoningDict(value)) return []
-  return REASONING_LEVELS.filter(level => value[level] !== undefined && value[level] !== null)
-}
-
-/** A reasoning-efforts dict: the implicit `off` plus each declared level at its own name. */
-function reasoningEfforts(levels: readonly ReasoningLevel[]): Record<string, string | null> {
-  const efforts: Record<string, string | null> = { off: null }
-  for (const level of levels) efforts[level] = level
-  return efforts
 }
 
 /**
@@ -232,7 +220,7 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
     })
   }
 
-  const patch = (index: number, next: Record<string, unknown>): void => {
+  const patch = (index: number, next: Record<string, string | number | undefined>): void => {
     onChange(models.map((model, at) => {
       if (at !== index) return model
       // Rebuilt rather than spread over: an emptied optional field has to leave
@@ -247,13 +235,6 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
         Object.entries({ ...model, ...next }).filter(([key]) => !cleared.has(key)),
       )
     }))
-  }
-
-  /** Toggle one reasoning level; a row with none left is a non-reasoning model. */
-  const toggleReasoningLevel = (index: number, level: ReasoningLevel, enabled: boolean): void => {
-    const current = declaredLevels(models[index]?.['reasoningEfforts'])
-    const next = enabled ? [...current, level] : current.filter(existing => existing !== level)
-    patch(index, { reasoningEfforts: next.length === 0 ? false : reasoningEfforts(next) })
   }
 
   const fetchModels = async (): Promise<void> => {
@@ -387,10 +368,7 @@ export function ModelListEditor(props: ModelListEditorProps): ReactNode {
             inputField="input"
             inputFallback={inputDefaults.get(textOf(model, 'id')) ?? props.defaultInput}
             inputLoading={catalogProvider !== undefined && catalog === undefined}
-            reasoningLevels={{
-              declared: declaredLevels(model['reasoningEfforts']),
-              onToggle: (level, enabled) => { toggleReasoningLevel(index, level, enabled) },
-            }}
+            reasoningLevels={props.reasoningLevels}
             expanded={expanded.has(index)}
             disabled={disabled}
             t={t}
