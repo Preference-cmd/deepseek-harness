@@ -25,8 +25,6 @@
   "devDependencies": {
     "@deepseek-ai/dsh-client-store": "workspace:*",
     "@panzoom/panzoom": "4.6.2",
-    "@types/react": "~18.3.1",
-    "@types/react-dom": "~18.3.0",
     "@deepseek-ai/cordis": "workspace:~",
     "@deepseek-ai/dsh-util-code-language": "workspace:*",
     "react": "^18.2.0",
