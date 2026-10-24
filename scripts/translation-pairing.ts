@@ -123,8 +123,6 @@ const NON_SOURCE_DIRECTORIES = new Set([
   '.pytest_cache',
   '.artifacts',
   'vendor',
-  // Standalone plugin checkouts kept inside the fork working tree, ignored by its git.
-  'plugins',
 ])
 
 /** Glob traversal exclusions corresponding to the non-source path predicate. */
@@ -158,6 +156,9 @@ function isTranslationSourceExcluded(file: string): boolean {
     || segment.startsWith('.node-next-types-'))
     || file.startsWith('apps/web/dist/')
     || file.startsWith('python/sdk-runtime/src/deepseek_harness_runtime/runtime/')
+    // Standalone plugin checkouts kept inside the fork working tree, ignored by its git.
+    // A root prefix, not a segment: upstream fixtures live under tests/fixtures/plugins/.
+    || file.startsWith('plugins/')
 }
 
 /** Whether one discovered Markdown or sidecar path belongs to the bilingual source corpus. */
