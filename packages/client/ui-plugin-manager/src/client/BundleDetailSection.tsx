@@ -42,6 +42,7 @@ export function BundleDetailSection(props: BundleDetailSectionProps): ReactNode 
   const labels = useDetailDocumentLabels({
     title: t('detailTitle'), loading: t('detailLoading'), retry: t('retry'), copy: t('copy'), copied: t('copied'),
     codeBlock: t('codeBlock.title'), wrap: t('codeBlock.wrap'), unwrap: t('codeBlock.unwrap'), footnotes: t('detailFootnotes'),
+    mermaidZoomIn: t('mermaid.zoomIn'), mermaidZoomOut: t('mermaid.zoomOut'), mermaidReset: t('mermaid.reset'),
   })
   const detail = state?.status === 'ready' ? state.detail : undefined
   const document = detail?.status === 'found' ? detail.path : undefined

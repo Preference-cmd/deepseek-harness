@@ -228,7 +228,14 @@
   transition: opacity 120ms ease;
 }
 
-.mermaidFrame:hover .mermaidToolbar,
+/* Touch devices have no hover: the toolbar stays behind the focus path there. */
+@media (hover: hover) {
+  .mermaidFrame:hover .mermaidToolbar {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
 .mermaidFrame:focus-within .mermaidToolbar {
   opacity: 1;
   pointer-events: auto;
@@ -255,8 +262,10 @@
   cursor: pointer;
 }
 
-.mermaidAction:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
+@media (hover: hover) {
+  .mermaidAction:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
 }
 
 .mermaidAction:focus-visible {

@@ -42,6 +42,9 @@ export const es = {
   'json.label': 'JSON',
   'markdown.footnotes': 'Notas a pie de página',
   'markdown.truncatedCharacters': '… truncado a {total} caracteres',
+  'mermaid.zoomIn': 'Acercar',
+  'mermaid.zoomOut': 'Alejar',
+  'mermaid.reset': 'Restablecer zoom',
   'number.thousand': '{value}K',
   'number.million': '{value}M',
 } satisfies Record<keyof typeof en, string>

@@ -294,6 +294,9 @@ export const zh = {
   detailInvalid: '插件声明的详细介绍文件无效',
   detailFailed: '无法读取详细介绍',
   detailFootnotes: '脚注',
+  'mermaid.zoomIn': '放大',
+  'mermaid.zoomOut': '缩小',
+  'mermaid.reset': '重置缩放',
 } satisfies Record<string, string>
 
 /** Plugin manager locale key union. */
@@ -588,6 +591,9 @@ export const en = {
   detailInvalid: 'The plugin declares an invalid details file.',
   detailFailed: 'Could not read the details.',
   detailFootnotes: 'Footnotes',
+  'mermaid.zoomIn': 'Zoom in',
+  'mermaid.zoomOut': 'Zoom out',
+  'mermaid.reset': 'Reset zoom',
 } satisfies Record<PluginManagerLocaleKey, string>
 
 /** Japanese copy, checked against the English keys. */
@@ -879,6 +885,9 @@ export const ja = {
   'detailInvalid': 'プラグインが無効な詳細ファイルを宣言しています。',
   'detailFailed': '詳細を読み込めませんでした。',
   'detailFootnotes': '脚注',
+  'mermaid.zoomIn': '拡大',
+  'mermaid.zoomOut': '縮小',
+  'mermaid.reset': 'ズームをリセット',
 } satisfies Record<keyof typeof en, string>
 
 /** Spanish dictionary, checked against the English keys. */
@@ -1170,6 +1179,9 @@ export const es = {
   detailInvalid: 'El complemento declara un archivo de detalles no válido.',
   detailFailed: 'No se pudieron leer los detalles.',
   detailFootnotes: 'Notas a pie de página',
+  'mermaid.zoomIn': 'Acercar',
+  'mermaid.zoomOut': 'Alejar',
+  'mermaid.reset': 'Restablecer zoom',
 } satisfies Record<keyof typeof en, string>
 
 /** French dictionary, checked against the English keys. */
@@ -1461,6 +1473,9 @@ export const fr = {
   detailInvalid: 'Le plugin déclare un fichier de détails invalide.',
   detailFailed: 'Impossible de lire les détails.',
   detailFootnotes: 'Notes de bas de page',
+  'mermaid.zoomIn': 'Zoomer',
+  'mermaid.zoomOut': 'Dézoomer',
+  'mermaid.reset': 'Réinitialiser le zoom',
 } satisfies Record<keyof typeof en, string>
 
 /** German dictionary, checked against the English keys. */
@@ -1752,6 +1767,9 @@ export const de = {
   detailInvalid: 'Das Plugin deklariert eine ungültige Detaildatei.',
   detailFailed: 'Die Details konnten nicht gelesen werden.',
   detailFootnotes: 'Fußnoten',
+  'mermaid.zoomIn': 'Vergrößern',
+  'mermaid.zoomOut': 'Verkleinern',
+  'mermaid.reset': 'Zoom zurücksetzen',
 } satisfies Record<keyof typeof en, string>
 
 /** Russian dictionary, checked against the English keys. */
@@ -2043,6 +2061,9 @@ export const ru = {
   detailInvalid: 'Плагин объявляет неверный файл сведений.',
   detailFailed: 'Подробности прочитать не удалось.',
   detailFootnotes: 'Сноски',
+  'mermaid.zoomIn': 'Увеличить',
+  'mermaid.zoomOut': 'Уменьшить',
+  'mermaid.reset': 'Сбросить масштаб',
 } satisfies Record<keyof typeof en, string>
 
 /** Portuguese dictionary, checked against the English keys. */
@@ -2334,4 +2355,7 @@ export const pt = {
   detailInvalid: 'O plugin declara um arquivo de detalhes inválido.',
   detailFailed: 'Não foi possível ler os detalhes.',
   detailFootnotes: 'Notas de rodapé',
+  'mermaid.zoomIn': 'Ampliar',
+  'mermaid.zoomOut': 'Reduzir',
+  'mermaid.reset': 'Redefinir zoom',
 } satisfies Record<keyof typeof en, string>

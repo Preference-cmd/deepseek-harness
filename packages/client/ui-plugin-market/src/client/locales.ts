@@ -88,6 +88,9 @@ export const zh = {
   detailGitUnavailable: '详细介绍所在的仓库需要用 Git 读取，但无法运行 Git。请安装 Git 后重试',
   detailInvalid: '插件声明的详细介绍文件无效',
   detailFailed: '无法读取详细介绍',
+  'mermaid.zoomIn': '放大',
+  'mermaid.zoomOut': '缩小',
+  'mermaid.reset': '重置缩放',
   footnotes: '脚注',
 } as const
 
@@ -182,6 +185,9 @@ export const en = {
   detailGitUnavailable: 'The details are in a repository that must be read with Git, and Git could not run. Install Git, then retry.',
   detailInvalid: 'The plugin declares an invalid details file.',
   detailFailed: 'Could not read the details.',
+  'mermaid.zoomIn': 'Zoom in',
+  'mermaid.zoomOut': 'Zoom out',
+  'mermaid.reset': 'Reset zoom',
   footnotes: 'Footnotes',
 } satisfies Record<PluginMarketLocaleKey, string>
 
@@ -273,6 +279,9 @@ export const ja = {
   'detailGitUnavailable': '詳細は Git で読み取る必要があるリポジトリにありますが、Git を実行できませんでした。Git をインストールしてから再試行してください。',
   'detailInvalid': 'プラグインが無効な詳細ファイルを宣言しています。',
   'detailFailed': '詳細を読み取れませんでした。',
+  'mermaid.zoomIn': '拡大',
+  'mermaid.zoomOut': '縮小',
+  'mermaid.reset': 'ズームをリセット',
   'footnotes': '脚注',
 } satisfies Record<keyof typeof en, string>
 
@@ -364,6 +373,9 @@ export const es = {
   detailGitUnavailable: 'Los detalles están en un repositorio que debe leerse con Git y Git no se pudo ejecutar. Instale Git y vuelva a intentarlo.',
   detailInvalid: 'El complemento declara un archivo de detalles no válido.',
   detailFailed: 'No se pudieron leer los detalles.',
+  'mermaid.zoomIn': 'Acercar',
+  'mermaid.zoomOut': 'Alejar',
+  'mermaid.reset': 'Restablecer zoom',
   footnotes: 'Notas a pie de página',
 } satisfies Record<keyof typeof en, string>
 
@@ -455,6 +467,9 @@ export const fr = {
   detailGitUnavailable: "Les détails se trouvent dans un référentiel qui doit être lu avec Git, et Git n'a pas pu s'exécuter. Installez Git, puis réessayez.",
   detailInvalid: 'Le plugin déclare un fichier de détails invalide.',
   detailFailed: 'Impossible de lire les détails.',
+  'mermaid.zoomIn': 'Zoomer',
+  'mermaid.zoomOut': 'Dézoomer',
+  'mermaid.reset': 'Réinitialiser le zoom',
   footnotes: 'Notes de bas de page',
 } satisfies Record<keyof typeof en, string>
 
@@ -546,6 +561,9 @@ export const de = {
   detailGitUnavailable: 'Die Details befinden sich in einem Repository, das mit Git gelesen werden muss, und Git konnte nicht ausgeführt werden. Installieren Sie Git und versuchen Sie es erneut.',
   detailInvalid: 'Das Plugin deklariert eine ungültige Detaildatei.',
   detailFailed: 'Die Details konnten nicht gelesen werden.',
+  'mermaid.zoomIn': 'Vergrößern',
+  'mermaid.zoomOut': 'Verkleinern',
+  'mermaid.reset': 'Zoom zurücksetzen',
   footnotes: 'Fußnoten',
 } satisfies Record<keyof typeof en, string>
 
@@ -637,6 +655,9 @@ export const ru = {
   detailGitUnavailable: 'Подробности находятся в репозитории, который необходимо прочитать с помощью Git, и Git не удалось запустить. Установите Git и повторите попытку.',
   detailInvalid: 'Плагин объявляет неверный файл сведений.',
   detailFailed: 'Подробности прочитать не удалось.',
+  'mermaid.zoomIn': 'Увеличить',
+  'mermaid.zoomOut': 'Уменьшить',
+  'mermaid.reset': 'Сбросить масштаб',
   footnotes: 'Сноски',
 } satisfies Record<keyof typeof en, string>
 
@@ -728,5 +749,8 @@ export const pt = {
   detailGitUnavailable: 'Os detalhes estão em um repositório que deve ser lido com o Git, e o Git não pôde ser executado. Instale o Git e tente novamente.',
   detailInvalid: 'O plugin declara um arquivo de detalhes inválido.',
   detailFailed: 'Não foi possível ler os detalhes.',
+  'mermaid.zoomIn': 'Ampliar',
+  'mermaid.zoomOut': 'Reduzir',
+  'mermaid.reset': 'Redefinir zoom',
   footnotes: 'Notas de rodapé',
 } satisfies Record<keyof typeof en, string>

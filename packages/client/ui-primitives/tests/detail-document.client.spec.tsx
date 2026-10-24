@@ -7,7 +7,7 @@ afterEach(cleanup)
 
 const LABELS: DetailDocumentLabels = {
   title: 'Details', loading: 'Reading details', retry: 'Retry',
-  markdown: { code: { copyLabel: 'Copy', copiedLabel: 'Copied' }, footnotes: 'Footnotes' },
+  markdown: { code: { copyLabel: 'Copy', copiedLabel: 'Copied' }, footnotes: 'Footnotes', mermaid: { zoomIn: 'Zoom in', zoomOut: 'Zoom out', reset: 'Reset zoom' } },
 }
 
 it('shows a placeholder, the document with resolved images, or a failure with a retry, and nothing without a document', () => {
@@ -48,12 +48,13 @@ it('maps owner reads to shown states', () => {
 it('keeps label identity while the translated strings stay equal', () => {
   const copy: DetailDocumentCopy = {
     title: 'Details', loading: 'Reading', retry: 'Retry', copy: 'Copy', copied: 'Copied', codeBlock: 'Code', wrap: 'Wrap', unwrap: 'Unwrap', footnotes: 'Notes',
+    mermaidZoomIn: 'Zoom in', mermaidZoomOut: 'Zoom out', mermaidReset: 'Reset zoom',
   }
   const { result, rerender } = renderHook((props: DetailDocumentCopy) => useDetailDocumentLabels(props), { initialProps: copy })
   const first = result.current
   expect(first).toEqual({
     title: 'Details', loading: 'Reading', retry: 'Retry',
-    markdown: { code: { copyLabel: 'Copy', copiedLabel: 'Copied', toolbarLabels: { codeLabel: 'Code', wrapLabel: 'Wrap', unwrapLabel: 'Unwrap' } }, footnotes: 'Notes' },
+    markdown: { code: { copyLabel: 'Copy', copiedLabel: 'Copied', toolbarLabels: { codeLabel: 'Code', wrapLabel: 'Wrap', unwrapLabel: 'Unwrap' } }, footnotes: 'Notes', mermaid: { zoomIn: 'Zoom in', zoomOut: 'Zoom out', reset: 'Reset zoom' } },
   })
   rerender({ ...copy })
   expect(result.current).toBe(first)

@@ -42,6 +42,9 @@ export const ja = {
   'json.label': 'JSON',
   'markdown.footnotes': '脚注',
   'markdown.truncatedCharacters': '… {total}文字で切り捨て',
+  'mermaid.zoomIn': '拡大',
+  'mermaid.zoomOut': '縮小',
+  'mermaid.reset': 'ズームをリセット',
   'number.thousand': '{value}K',
   'number.million': '{value}M',
 } satisfies Record<keyof typeof en, string>

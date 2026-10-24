@@ -430,6 +430,9 @@ export const ja = {
   'onboardingSave': '保存して続ける',
   'onboardingSaving': '保存中…',
   'keyRequired': '続けるにはAPIキーを入力してください。',
+  retryMaxRetries: '最大リトライ回数',
+  retryMaxRetriesPlaceholder: '5（デフォルト）',
+  retryMaxRetriesInvalid: '最大リトライ回数は負でない整数である必要があります。',
 } satisfies Record<keyof typeof en, string>
 
 /** Spanish dictionary, checked against the English keys. */
@@ -571,6 +574,9 @@ export const es = {
   onboardingSave: 'Guardar y continuar',
   onboardingSaving: 'Guardando…',
   keyRequired: 'Ingrese una clave API para continuar.',
+  retryMaxRetries: 'Reintentos máximos',
+  retryMaxRetriesPlaceholder: '5 (predeterminado)',
+  retryMaxRetriesInvalid: 'Los reintentos máximos deben ser un entero no negativo.',
 } satisfies Record<keyof typeof en, string>
 
 /** French dictionary, checked against the English keys. */
@@ -712,6 +718,9 @@ export const fr = {
   onboardingSave: 'Enregistrer et continuer',
   onboardingSaving: 'Sauvegarde…',
   keyRequired: 'Entrez une clé API pour continuer.',
+  retryMaxRetries: 'Nombre maximal de tentatives',
+  retryMaxRetriesPlaceholder: '5 (par défaut)',
+  retryMaxRetriesInvalid: 'Le nombre maximal de tentatives doit être un entier non négatif.',
 } satisfies Record<keyof typeof en, string>
 
 /** German dictionary, checked against the English keys. */
@@ -853,6 +862,9 @@ export const de = {
   onboardingSave: 'Speichern und fortfahren',
   onboardingSaving: 'Speichern…',
   keyRequired: 'Geben Sie einen API-Schlüssel ein, um fortzufahren.',
+  retryMaxRetries: 'Maximale Wiederholungen',
+  retryMaxRetriesPlaceholder: '5 (Standard)',
+  retryMaxRetriesInvalid: 'Maximale Wiederholungen müssen eine nicht negative Ganzzahl sein.',
 } satisfies Record<keyof typeof en, string>
 
 /** Russian dictionary, checked against the English keys. */
@@ -994,6 +1006,9 @@ export const ru = {
   onboardingSave: 'Сохранить и продолжить',
   onboardingSaving: 'Сохранение…',
   keyRequired: 'Введите ключ API, чтобы продолжить.',
+  retryMaxRetries: 'Макс. число повторов',
+  retryMaxRetriesPlaceholder: '5 (по умолчанию)',
+  retryMaxRetriesInvalid: 'Максимальное число повторов должно быть неотрицательным целым числом.',
 } satisfies Record<keyof typeof en, string>
 
 /** Portuguese dictionary, checked against the English keys. */
@@ -1135,4 +1150,7 @@ export const pt = {
   onboardingSave: 'Salvar e continuar',
   onboardingSaving: 'Salvando…',
   keyRequired: 'Insira uma chave de API para continuar.',
+  retryMaxRetries: 'Tentativas máximas',
+  retryMaxRetriesPlaceholder: '5 (padrão)',
+  retryMaxRetriesInvalid: 'O número máximo de tentativas deve ser um inteiro não negativo.',
 } satisfies Record<keyof typeof en, string>

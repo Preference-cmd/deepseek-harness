@@ -133,7 +133,7 @@ describe('PiAiAdapter provider routing', () => {
     })
     await assemble(ctx, {
       provider: 'opencode-go',
-      model: 'deepseek-v4-flash',
+      model: 'deepseek-v4.1-flash',
       messages: [],
       sessionId: 'session-opencode-go' as never,
     })
@@ -167,7 +167,7 @@ describe('PiAiAdapter provider routing', () => {
         deepseek: { apiKeyEnv: 'PI_TEST_KEY', baseURL: deepseekServer.url },
       },
     })
-    await assemble(ctx, { provider: 'opencode-go', model: 'deepseek-v4-flash', messages: [] })
+    await assemble(ctx, { provider: 'opencode-go', model: 'deepseek-v4.1-flash', messages: [] })
     expect(goServer.headers[0]?.['x-opencode-session']).toBeUndefined()
     await assemble(ctx, {
       provider: 'deepseek',
@@ -193,7 +193,7 @@ describe('PiAiAdapter provider routing', () => {
     })
     await assemble(ctx, {
       provider: 'opencode-go',
-      model: 'deepseek-v4-flash',
+      model: 'deepseek-v4.1-flash',
       messages: [],
       sessionId: 'session-opencode-go' as never,
     })

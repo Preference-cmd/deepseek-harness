@@ -42,6 +42,9 @@ export const ru = {
   'json.label': 'JSON',
   'markdown.footnotes': 'Сноски',
   'markdown.truncatedCharacters': '… обрезано до {total} символов',
+  'mermaid.zoomIn': 'Увеличить',
+  'mermaid.zoomOut': 'Уменьшить',
+  'mermaid.reset': 'Сбросить масштаб',
   'number.thousand': '{value}K',
   'number.million': '{value}M',
 } satisfies Record<keyof typeof en, string>

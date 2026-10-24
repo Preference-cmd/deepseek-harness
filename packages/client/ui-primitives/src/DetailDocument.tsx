@@ -40,6 +40,9 @@ export interface DetailDocumentCopy {
   readonly wrap: string
   readonly unwrap: string
   readonly footnotes: string
+  readonly mermaidZoomIn: string
+  readonly mermaidZoomOut: string
+  readonly mermaidReset: string
 }
 
 /**
@@ -48,10 +51,13 @@ export interface DetailDocumentCopy {
  * @returns labels that keep their identity while the strings stay equal.
  */
 export function useDetailDocumentLabels(copy: DetailDocumentCopy): DetailDocumentLabels {
-  const { title, loading, retry, footnotes } = copy
+  const { title, loading, retry, footnotes, mermaidZoomIn, mermaidZoomOut, mermaidReset } = copy
   const { copy: copyLabel, copied: copiedLabel, codeBlock: codeLabel, wrap: wrapLabel, unwrap: unwrapLabel } = copy
-  const markdown = useMemo(() => ({ code: { copyLabel, copiedLabel, toolbarLabels: { codeLabel, wrapLabel, unwrapLabel } }, footnotes }),
-    [copyLabel, copiedLabel, codeLabel, wrapLabel, unwrapLabel, footnotes])
+  const mermaid = useMemo(() => ({ zoomIn: mermaidZoomIn, zoomOut: mermaidZoomOut, reset: mermaidReset }),
+    [mermaidZoomIn, mermaidZoomOut, mermaidReset])
+  const markdown = useMemo(
+    () => ({ code: { copyLabel, copiedLabel, toolbarLabels: { codeLabel, wrapLabel, unwrapLabel } }, footnotes, mermaid }),
+    [copyLabel, copiedLabel, codeLabel, wrapLabel, unwrapLabel, footnotes, mermaid])
   return useMemo(() => ({ title, loading, retry, markdown }), [title, loading, retry, markdown])
 }
 

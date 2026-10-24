@@ -36,6 +36,9 @@ export const ja = {
   'code.copy': 'コピー',
   'code.copied': 'コピーしました',
   'footnotes': '脚注',
+  'mermaid.zoomIn': '拡大',
+  'mermaid.zoomOut': '縮小',
+  'mermaid.reset': 'ズームをリセット',
 } satisfies Record<keyof typeof en, string>
 
 /** Spanish dictionary, checked against the English keys. */
@@ -44,6 +47,9 @@ export const es = {
   'code.copy': 'Copiar',
   'code.copied': 'Copiado',
   'footnotes': 'Notas a pie de página',
+  'mermaid.zoomIn': 'Acercar',
+  'mermaid.zoomOut': 'Alejar',
+  'mermaid.reset': 'Restablecer zoom',
 } satisfies Record<keyof typeof en, string>
 
 /** French dictionary, checked against the English keys. */
@@ -52,6 +58,9 @@ export const fr = {
   'code.copy': 'Copier',
   'code.copied': 'Copié',
   'footnotes': 'Notes de bas de page',
+  'mermaid.zoomIn': 'Zoomer',
+  'mermaid.zoomOut': 'Dézoomer',
+  'mermaid.reset': 'Réinitialiser le zoom',
 } satisfies Record<keyof typeof en, string>
 
 /** German dictionary, checked against the English keys. */
@@ -60,6 +69,9 @@ export const de = {
   'code.copy': 'Kopieren',
   'code.copied': 'Kopiert',
   'footnotes': 'Fußnoten',
+  'mermaid.zoomIn': 'Vergrößern',
+  'mermaid.zoomOut': 'Verkleinern',
+  'mermaid.reset': 'Zoom zurücksetzen',
 } satisfies Record<keyof typeof en, string>
 
 /** Russian dictionary, checked against the English keys. */
@@ -68,6 +80,9 @@ export const ru = {
   'code.copy': 'Копировать',
   'code.copied': 'Скопировано',
   'footnotes': 'Сноски',
+  'mermaid.zoomIn': 'Увеличить',
+  'mermaid.zoomOut': 'Уменьшить',
+  'mermaid.reset': 'Сбросить масштаб',
 } satisfies Record<keyof typeof en, string>
 
 /** Portuguese dictionary, checked against the English keys. */
@@ -76,4 +91,7 @@ export const pt = {
   'code.copy': 'Copiar',
   'code.copied': 'Copiado',
   'footnotes': 'Notas de rodapé',
+  'mermaid.zoomIn': 'Ampliar',
+  'mermaid.zoomOut': 'Reduzir',
+  'mermaid.reset': 'Redefinir zoom',
 } satisfies Record<keyof typeof en, string>

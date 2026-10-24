@@ -12,6 +12,7 @@ function readSelection(root: HTMLElement, selection: Selection | null) {
 const markdownLabels = {
   code: { copyLabel: 'Copy', copiedLabel: 'Copied' },
   footnotes: 'Footnotes',
+  mermaid: { zoomIn: 'Zoom in', zoomOut: 'Zoom out', reset: 'Reset zoom' },
 }
 
 afterEach(() => {
