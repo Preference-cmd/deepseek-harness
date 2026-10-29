@@ -1333,6 +1333,11 @@ function AnswerBody({ text, t }: { readonly text: string; readonly t: StatsTrans
       },
     },
     footnotes: t('detail.footnotes'),
+    mermaid: {
+      zoomIn: t('detail.mermaid.zoomIn'),
+      zoomOut: t('detail.mermaid.zoomOut'),
+      reset: t('detail.mermaid.reset'),
+    },
   }), [t])
   return <div className={css.answerBody}><MarkdownText text={text} labels={labels} variant="compact" /></div>
 }
