@@ -10,7 +10,7 @@ Status: implemented
 
 窗口内有两处改动触及 fork 自己的表面。`ask_user_question` 新增 `mode: timed` 选项，因此 fork 工具目录里该包的条目在双语两侧都会变。新的 `@deepseek-ai/dsh-tool-schedule` 包贡献 `schedule_create`、`schedule_delete`、`schedule_list`、`schedule_update` 四个 model 可见工具，而 fork 的 recorded-session 与 Python 单文件工具清单会枚举它们。
 
-上游 `master` 此后又比该 tag 前进了 258 个提交。本次同步以发布 tag 为目标，与此前每一次 fork 同步一致，因此这些提交被有意排除。其中 `f028f25667` 移除了运行时 invariant 插件与 `packages/runtime-diagnostics/invariants` 包，并删除了 `AGENTS.md` 中对应的规则。因为它落在 tag 之后，fork 保留该体系与那条规则；这个问题只在下次同步越过它时才重新出现。
+上游 `master` 此后又比该 tag 前进了 258 个提交。本次同步以发布 tag 为目标，与此前每一次 fork 同步一致，因此这些提交被有意排除。其中一项改动移除了运行时 invariant 插件与 `packages/runtime-diagnostics/invariants` 包，并删除了 `AGENTS.md` 中对应的规则。因为它落在 tag 之后，fork 保留该体系与那条规则；这个问题只在下次同步越过它时才重新出现。
 
 ## Decision
 

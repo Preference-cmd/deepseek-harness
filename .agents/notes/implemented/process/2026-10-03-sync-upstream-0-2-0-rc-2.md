@@ -10,7 +10,7 @@ Upstream released `0.2.0-rc.2`, 187 commits past the fork's `0.2.0-rc.1` base. T
 
 Two window changes reach the fork's own surface. `ask_user_question` gains a `mode: timed` option, so the fork's tool-catalog rows for that package change on both sides of the bilingual pair. And the new `@deepseek-ai/dsh-tool-schedule` package contributes `schedule_create`, `schedule_delete`, `schedule_list`, and `schedule_update` as model-visible tools, which the fork's recorded-session and Python single-exe tool lists enumerate.
 
-Upstream's `master` has since advanced 258 commits beyond the tag. This sync targets the release, matching every prior fork sync, so those commits are deliberately excluded. One of them, `f028f25667`, removes the runtime invariant plugins and the `packages/runtime-diagnostics/invariants` package, and deletes the matching `AGENTS.md` rule. Because it lands after the tag, the fork keeps the invariant system and that rule; the question resurfaces only when the fork next syncs past it.
+Upstream's `master` has since advanced 258 commits beyond the tag. This sync targets the release, matching every prior fork sync, so those commits are deliberately excluded. One of them removes the runtime invariant plugins and the `packages/runtime-diagnostics/invariants` package, and deletes the matching `AGENTS.md` rule. Because it lands after the tag, the fork keeps the invariant system and that rule; the question resurfaces only when the fork next syncs past it.
 
 ## Decision
 
