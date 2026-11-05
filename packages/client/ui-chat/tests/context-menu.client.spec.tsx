@@ -11,7 +11,7 @@ it('leaves undeclared plugin links alone and binds only explicitly rendered Mark
   const custom = vi.fn()
   const view = render(<MarkdownDelegateProvider getTriggerProps={contextMenuHook(open)().getTriggerProps} openFile={() => {}}>
     <a href="https://example.com/plugin">Plugin link</a>
-    <MarkdownText text="[File](docs/file.ts#L42)" labels={{ code: { copyLabel: 'Copy', copiedLabel: 'Copied' }, footnotes: 'Footnotes' }} />
+    <MarkdownText text="[File](docs/file.ts#L42)" labels={{ code: { copyLabel: 'Copy', copiedLabel: 'Copied' }, footnotes: 'Footnotes', mermaid: { zoomIn: 'Zoom in', zoomOut: 'Zoom out', reset: 'Reset zoom' } }} />
     <button {...contextMenuHook(custom)().getTriggerProps({ kind: 'pluginDocument', id: 'one' })}>Plugin target</button>
   </MarkdownDelegateProvider>)
   expect(fireEvent.contextMenu(view.getByRole('link', { name: 'Plugin link' }))).toBe(true)
