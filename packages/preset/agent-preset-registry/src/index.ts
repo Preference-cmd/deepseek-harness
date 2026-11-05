@@ -50,9 +50,6 @@ interface Binding {
   generation: Generation
 }
 
-/** Preset ids a durable session header recorded before a rename, mapped to the composition that now owns it. */
-const RENAMED_PRESET_IDS: Readonly<Record<string, string>> = { code: 'ptc' }
-
 /** Registry of YAML-declared presets and the revisions live Agents retain. */
 export class AgentPresetRegistry extends TypertRemoteService {
   static inject = ['loader', 'sessionProjections', 'agents']
@@ -216,23 +213,17 @@ export class AgentPresetRegistry extends TypertRemoteService {
     return { presets: (await this.list()).map(row => ({ ...row, isDefault: row.id === defaultId })) }
   }
 
-  /** Current definition id for a requested preset; a definition supplying the requested id wins over a recorded rename. */
-  private currentId(wanted: string): string {
-    return this.definitions.has(wanted) ? wanted : RENAMED_PRESET_IDS[wanted] ?? wanted
-  }
-
   /** Resolve an identity without starting an Agent.
    * @param id Explicit preset or the current default.
    * @returns Current metadata, including failure when activation failed.
    */
   async resolve(id?: string): Promise<AgentPreset> {
     const wanted = id ?? this.defaultId
-    const current = this.currentId(wanted)
-    const record = this.definitions.get(current)
+    const record = this.definitions.get(wanted)
     if (record === undefined) throw new RemoteError('agent-preset/not-found', `Unknown agent preset: ${wanted}`,
       { agentPreset: wanted, available: [...this.definitions.keys()] })
     const broken = await this.diagnostic(record)
-    return { id: current, ...(broken === undefined ? {} : { broken }) }
+    return { id: wanted, ...(broken === undefined ? {} : { broken }) }
   }
 
   /** Read one declaration's child plugin list as YAML, for viewing only.
@@ -255,7 +246,7 @@ export class AgentPresetRegistry extends TypertRemoteService {
   }
 
   private async retain(id?: string): Promise<Generation> {
-    const wanted = this.currentId(id ?? this.defaultId)
+    const wanted = id ?? this.defaultId
     while (true) {
       const record = this.definitions.get(wanted)
       if (record === undefined) throw new RemoteError('agent-preset/not-found', `Unknown agent preset: ${wanted}`,

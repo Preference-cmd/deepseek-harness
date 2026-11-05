@@ -412,39 +412,3 @@ it('reports every process-global service published by a preset', async () => {
   await declare(ctx, { id: 'leaks', plugins: [{ name: 'cordis:leaks' }] })
   expect((await ctx.agentPresets.resolve('leaks')).broken).toContain('presetAlpha, presetZulu')
 })
-
-describe('preset ids a durable session header recorded before a rename', () => {
-  it('maps the pre-rename `code` id to the `ptc` preset that owns the composition', async () => {
-    const ctx = await setup()
-    await declare(ctx, contribution('ptc'))
-    expect(await ctx.agentPresets.resolve('code')).toEqual({ id: 'ptc' })
-  })
-
-  it('resolves the deployment default under its legacy name', async () => {
-    const ctx = await harness({ default: 'code' })
-    contexts.push(ctx)
-    await declare(ctx, contribution('ptc'))
-    expect(await ctx.agentPresets.resolve()).toEqual({ id: 'ptc' })
-  })
-
-  it('lets a definition that really supplies the old id win over the rename', async () => {
-    const ctx = await setup()
-    await declare(ctx, contribution('ptc'))
-    await declare(ctx, contribution('code'))
-    expect(await ctx.agentPresets.resolve('code')).toEqual({ id: 'code' })
-  })
-
-  it('mounts the renamed composition for a session that recorded the legacy id', async () => {
-    const ctx = await setup()
-    await declare(ctx, contribution('ptc'))
-    const agent = await agentOn(ctx, 'legacy', 'code')
-    expect(ctx.tools.schemas(agent).map(row => row.name)).toEqual(['ptc'])
-  })
-
-  it('still refuses an id no definition supplies, legacy or not', async () => {
-    const ctx = await setup()
-    await declare(ctx, contribution('ptc'))
-    await expect(ctx.agentPresets.resolve('no-such-preset')).rejects.toMatchObject({ code: 'agent-preset/not-found' })
-    await expect(ctx.agentPresets.resolve('code')).resolves.toMatchObject({ id: 'ptc' })
-  })
-})
