@@ -1,0 +1,28 @@
+# Bilingual-pair consistency record for 2026-11-18-sync-upstream-0-2-3-alpha-2.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/process/2026-11-18-sync-upstream-0-2-3-alpha-2.md
+/agent-note-sync-upstream-0-2-3-alpha-2-into-the-fork:
+  en: 0a4c8177b5378903
+  zh: dbcc851eb8989684
+/agent-note-sync-upstream-0-2-3-alpha-2-into-the-fork/problem:
+  en: 370f4be75aaab63c
+  zh: 9d6d68095a10335c
+/agent-note-sync-upstream-0-2-3-alpha-2-into-the-fork/decision:
+  en: 72129c9e80e36f29
+  zh: 3d789c2a2b4129e3
+/agent-note-sync-upstream-0-2-3-alpha-2-into-the-fork/decision/the-mermaid-branch:
+  en: a649f9e2a9a0ce7e
+  zh: 5c3ff3d05c02713b
+/agent-note-sync-upstream-0-2-3-alpha-2-into-the-fork/decision/fork-work-upstream-supersedes:
+  en: 49a640e08502be2a
+  zh: 8abc4fc6e955784a
+/agent-note-sync-upstream-0-2-3-alpha-2-into-the-fork/decision/verification:
+  en: c2e4cf47b8d9a53c
+  zh: 3a96fc19da505701
+/agent-note-sync-upstream-0-2-3-alpha-2-into-the-fork/alternatives-considered:
+  en: 08fb792900ed3f0b
+  zh: da58ef9cd9c64a2f
+/agent-note-sync-upstream-0-2-3-alpha-2-into-the-fork/consequences:
+  en: dce7f23a607acfea
+  zh: 3b2f2d2674cdd5e8
